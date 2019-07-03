@@ -1,20 +1,104 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorGreenMedium</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorGreenMedium</item>
+<!--        <item name="sublimePickerStyle">@style/CustomSublimePicker</item> -->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="AppTheme.Green" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
+        <item name="colorControlNormal">@color/colorGreyDark</item>
+        <item name="colorControlActivated">@color/colorWhite</item>
+        <item name="colorControlHighlight">@color/colorWhite</item>
+        <item name="android:textColorHint">@color/colorGreyDark</item>
+        <item name="colorButtonNormal">@color/colorPrimaryDark</item>
+        <item name="android:colorButtonNormal">@color/colorPrimaryDark</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="MainActivityNavigationDrawer">
+        <item name="colorPrimary">@color/colorWhite</item>
+        <item name="colorControlHighlight">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="MenuLabelStyle">
+        <item name="android:background">@drawable/fab_background</item>
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/colorWhite</item>
+        <item name="android:textColorPrimary">@color/colorGreyDark</item>
+        <item name="android:background">@color/colorBlackDark</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- SublimePicker / INICIO
+    <style name="CustomSublimePicker" parent="SublimePickerStyleLight">
+        <item name="colorAccent">@color/colorGreenMedium</item>
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="android:textColorPrimary">@color/colorWhite</item>
+        <item name="android:textColorSecondary">@color/colorWhite</item>
+        <item name="android:textColorPrimaryInverse">@color/colorWhite</item>
+        <item name="spNumbersBackgroundColor">@color/colorWhite</item>
+        <item name="spNumbersTextColorPtr">@color/colorWhite</item>
+        <item name="spNumbersBackgroundColorPtr">@color/colorBlackMedium</item>
+        <item name="spNumbersInnerTextColorPtr">@color/colorWhite</item>
+        <item name="spDayPickerStyle">@style/MyDayPickerViewStyle</item>
+        <item name="spButtonLayoutStyle">@style/MyButtonLayoutStyle</item>
+    </style>
+
+    <style name="MyDayPickerViewStyle">
+        <item name="spDayPickerBgColor">@android:color/transparent</item>
+        <item name="spMonthTextAppearance">@style/SPMonthLabelTextAppearance</item>
+        <item name="spWeekDayTextAppearance">@style/MySPWeekDayLabelTextAppearance</item>
+        <item name="spDateTextAppearance">@style/MySPDayTextAppearance</item>
+        <item name="spDaySelectorColor">?attr/colorControlActivated</item>
+        <item name="spDayHighlightColor">?attr/colorControlHighlight</item>
+    </style>
+
+    <style name="MySPWeekDayLabelTextAppearance" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
+    <style name="MySPDayTextAppearance" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+
+    <style name="MyButtonLayoutStyle">
+        <item name="spPresentation">spButton</item>
+        <item name="spOkActionDrawable">@drawable/checkmark_medium_ff</item>
+        <item name="spCancelActionDrawable">@drawable/cancel_medium_ff</item>
+        <item name="spIconColor">?attr/colorAccent</item>
+        <item name="spButtonBgColor">?attr/colorButtonNormal</item>
+        <item name="spButtonPressedBgColor">?attr/colorControlHighlight</item>
+        <item name="spButtonBarBgColor">@android:color/transparent</item>
+        <item name="spButtonModeOkCancelButtonStyle">@style/MySButtonBarButtonStyleBase</item>
+        <item name="spButtonModeSwitcherButtonStyle">?attr/spButtonModeOkCancelButtonStyle</item>
+        <item name="spButtonInvertedBgColor">@color/colorWhite</item>
+        <item name="spButtonPressedInvertedBgColor">@color/sp_ripple_material_dark</item>
+    </style>
+
+    <style name="MySButtonBarButtonStyleBase">
+        <item name="android:textAppearance">@style/SButtonTextAppearance</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:minHeight">@dimen/sp_dialog_button_bar_height</item>
+    </style>
+    SublimePicker / FIM -->
+
 
 </resources>
