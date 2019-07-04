@@ -53,15 +53,15 @@ public class SplashActivity extends AppCompatActivity {
 
                 }
 
-            } else {
+            } else {*/
 
                 intent = new Intent(SplashActivity.this, ConfigurationActivity.class);
 
-            }
+            //}
 
             startActivity(intent);
 
-            finish();*/
+            finish();
 
         }, 2000);
 

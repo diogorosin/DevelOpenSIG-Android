@@ -12,7 +12,7 @@ public class AddressEdificationDwellerModel {
     private Integer dweller;
 
     @Embedded(prefix = "subject_")
-    private SubjectView subject;
+    private SubjectModel subject;
 
     public AddressEdificationModel getAddressEdification() {
 
@@ -38,13 +38,13 @@ public class AddressEdificationDwellerModel {
 
     }
 
-    public SubjectView getSubject() {
+    public SubjectModel getSubject() {
 
         return subject;
 
     }
 
-    public void setSubject(SubjectView subject) {
+    public void setSubject(SubjectModel subject) {
 
         this.subject = subject;
 

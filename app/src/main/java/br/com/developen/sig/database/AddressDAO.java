@@ -61,6 +61,6 @@ public interface AddressDAO {
             "INNER JOIN SubjectView Sv ON Sv.identifier = AED.subject " +
             "WHERE A.identifier = :address AND AED.'to' IS NULL " +
             "GROUP BY 1, 2")
-    List<SubjectView> getSubjectsOfAddress(int address);
+    List<SubjectModel> getSubjectsOfAddress(int address);
 
 }

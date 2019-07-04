@@ -2,11 +2,9 @@ package br.com.developen.sig.util;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import br.com.developen.sig.database.AddressDAO;
 import br.com.developen.sig.database.AddressEdificationDAO;
@@ -33,8 +31,8 @@ import br.com.developen.sig.database.OrganizationVO;
 import br.com.developen.sig.database.StateDAO;
 import br.com.developen.sig.database.StateVO;
 import br.com.developen.sig.database.SubjectDAO;
+import br.com.developen.sig.database.SubjectModel;
 import br.com.developen.sig.database.SubjectVO;
-import br.com.developen.sig.database.SubjectView;
 
 
 @Database(entities = {
@@ -48,11 +46,10 @@ import br.com.developen.sig.database.SubjectView;
         OrganizationVO.class,
         StateVO.class,
         SubjectVO.class,
-        SubjectView.class,
         ModifiedAddressVO.class,
         ModifiedAddressEdificationVO.class,
         ModifiedAddressEdificationDwellerVO.class},
-        version = 001, exportSchema = false)
+        version = 001, views = {SubjectModel.class}, exportSchema = false)
 public abstract class DB extends RoomDatabase {
 
     private static DB INSTANCE;
@@ -64,21 +61,7 @@ public abstract class DB extends RoomDatabase {
             INSTANCE = Room
                     .databaseBuilder(context.getApplicationContext(), DB.class, "sig-database")
                     .allowMainThreadQueries()
-                    .addCallback(new RoomDatabase.Callback() {
-                        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                            super.onCreate(db);
-                            db.execSQL("DROP TABLE IF EXISTS SubjectView");
-                            db.execSQL("CREATE VIEW IF NOT EXISTS SubjectView " +
-                                    "AS SELECT I.identifier, I.name AS nameOrDenomination, 'I' AS type " +
-                                    "FROM Subject S1 " +
-                                    "INNER JOIN Individual I ON I.identifier = S1.identifier " +
-                                    "UNION ALL " +
-                                    "SELECT O.identifier, O.denomination AS nameOrDenomination, 'O' AS type " +
-                                    "FROM Subject S2 " +
-                                    "INNER JOIN Organization O ON O.identifier = S2.identifier"
-                            );
-                        }
-                    }).build();
+                    .build();
 
         }
 
