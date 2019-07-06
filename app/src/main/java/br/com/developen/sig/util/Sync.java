@@ -377,8 +377,6 @@ public class Sync {
 
         } catch (Exception e){
 
-            e.printStackTrace();
-
             success = false;
 
         } finally {

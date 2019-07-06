@@ -60,7 +60,7 @@
             android:layout_marginBottom="5dp"
             android:background="@null"
             android:gravity="center"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:text="@string/preview"
             android:textColor="@color/colorWhite"/>
 

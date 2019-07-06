@@ -7,6 +7,7 @@
     <string name="skip">Pular</string>
     <string name="finish">Finalizar</string>
     <string name="email">Email</string>
+    <string name="login">Login</string>
     <string name="password">Senha</string>
     <string name="government">Órgão Público</string>
     <string name="sign_in">Acessar</string>
@@ -35,13 +36,11 @@
     <string name="settings">Configurações</string>
 
     <!-- AccountActivity -->
-    <string name="account_welcome">Bem-vindo!</string>
-    <string name="account_welcome_text"> Esse aplicativo contém informações sigilosas sobre população e território.
-        O servidor público ou qualquer outra pessoa que divulgar, expor ou utilizar de forma indevida essas informações
-        será responsabilizado nos termos da lei.</string>
-    <string name="account_login">Informe suas credenciais para efetuar o acesso:</string>
-    <string name="account_government">Selecione o órgão público e pressione avançar:</string>
-    <string name="account_finish">Parabéns! Dispositivo configurado com sucesso.</string>
+    <string name="configuration_welcome_step_title">Bem-vindo!</string>
+    <string name="configuration_welcome_step_message"> Esse aplicativo contém informações sigilosas sobre população e território. O servidor público ou qualquer outra pessoa que divulgar, expor ou utilizar de forma indevida essas informações será responsabilizado nos termos da lei.</string>
+    <string name="configuration_login_step_message">Informe suas credenciais para efetuar o acesso:</string>
+    <string name="configuration_government_step_message">Selecione o órgão público e pressione avançar:</string>
+    <string name="configuration_finish_step_message">Parabéns! Dispositivo configurado com sucesso.</string>
 
     <!-- Messages        -->
     <string name="error_invalid_email">O login informado é inválido.</string>
@@ -71,10 +70,7 @@
     <string name="socialName">Razão Social</string>
     <string name="fancyName">Fantasia</string>
     <string name="title_activity_configuration">ConfigurationActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="congratulation">Parabéns!</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
