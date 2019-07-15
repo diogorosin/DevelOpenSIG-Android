@@ -40,7 +40,7 @@
     <string name="configuration_welcome_step_message"> Esse aplicativo contém informações sigilosas sobre população e território. O servidor público ou qualquer outra pessoa que divulgar, expor ou utilizar de forma indevida essas informações será responsabilizado nos termos da lei.</string>
     <string name="configuration_login_step_message">Informe suas credenciais para efetuar o acesso:</string>
     <string name="configuration_government_step_message">Selecione o órgão público e pressione avançar:</string>
-    <string name="configuration_finish_step_message">Parabéns! Dispositivo configurado com sucesso.</string>
+    <string name="configuration_finish_step_message">Dispositivo configurado com sucesso.</string>
 
     <!-- Messages        -->
     <string name="error_invalid_email">O login informado é inválido.</string>
@@ -48,6 +48,7 @@
     <string name="error_user_not_active">O usuário não está ativo.</string>
     <string name="error_invalid_name">O nome informado é inválido.</string>
     <string name="error_field_required">O preenchimento desse campo é obrigatório.</string>
+    <string name="error_connection_failure">Não foi possível conectar ao servidor.</string>
 
     <!-- Dialogs         -->
     <string name="dlg_title_login_failure">Não foi possível efetuar o login:</string>

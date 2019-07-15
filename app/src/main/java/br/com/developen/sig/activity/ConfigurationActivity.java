@@ -3,54 +3,62 @@ package br.com.developen.sig.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.volley.AuthFailureError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.bean.CredentialBean;
+import br.com.developen.sig.bean.DatasetBean;
+import br.com.developen.sig.bean.ExceptionBean;
+import br.com.developen.sig.bean.GovernmentBean;
+import br.com.developen.sig.bean.IntegerBean;
+import br.com.developen.sig.bean.TokenBean;
+import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.Constants;
+import br.com.developen.sig.util.DB;
 import br.com.developen.sig.util.Messaging;
-
-
+import br.com.developen.sig.util.Sync;
 
 
 /*
@@ -199,6 +207,8 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         GsonBuilder gsonBuilder = new GsonBuilder();
 
+        gsonBuilder.setDateFormat("yyyy-MM-dd HH:mm:ss");
+
         gson = gsonBuilder.create();
 
     }
@@ -252,7 +262,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
             dotsTextView[i].setTextSize(35);
 
-            dotsTextView[i].setTextColor(ContextCompat.getColor(getBaseContext(), R.color.colorPrimaryDark));
+            dotsTextView[i].setTextColor(ContextCompat.getColor(getBaseContext(), R.color.colorWhite));
 
             dotsLayout.addView(dotsTextView[i]);
 
@@ -336,7 +346,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
                 case GOVERNMENT_STEP:
 
-                    //onBindGovernmentList();
+                    onBindGovernmentList();
 
                     break;
 
@@ -493,27 +503,73 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         } else {
 
+            showProgress(true);
+
             CredentialBean credentialBean = new CredentialBean();
 
             credentialBean.setLogin(login);
 
             credentialBean.setPassword(password);
 
-            StringRequest request = new StringRequest(Request.Method.POST, "http://200.98.202.29:8080/sig/rest/account/authenticate",
+            StringRequest request = new StringRequest(Request.Method.POST, Constants.SERVER_BASE_URL + "account/authenticate",
+
                     response -> {
 
-                        Log.d("DIOGO", response);
+                        TokenBean tokenBean = gson.fromJson(response, TokenBean.class);
 
+                        SharedPreferences.Editor editor = preferences.edit();
 
-                    }, error -> {
+                        editor.putString(Constants.TOKEN_IDENTIFIER_PROPERTY, tokenBean.getIdentifier());
 
-                Log.d("DIOGO", error.getMessage());
+                        editor.putInt(Constants.TOKEN_LEVEL_PROPERTY, tokenBean.getLevel());
 
-            }){
+                        editor.putInt(Constants.GOVERNMENT_IDENTIFIER_PROPERTY, tokenBean.getGovernment().getIdentifier());
+
+                        editor.putString(Constants.GOVERNMENT_DENOMINATION_PROPERTY, tokenBean.getGovernment().getDenomination());
+
+                        editor.putString(Constants.GOVERNMENT_FANCYNAME_PROPERTY, tokenBean.getGovernment().getFancyName());
+
+                        editor.putInt(Constants.USER_IDENTIFIER_PROPERTY, tokenBean.getUser().getIdentifier());
+
+                        editor.putString(Constants.USER_NAME_PROPERTY, tokenBean.getUser().getName());
+
+                        editor.putString(Constants.USER_LOGIN_PROPERTY, tokenBean.getUser().getLogin());
+
+                        editor.apply();
+
+                        viewPager.setCurrentItem(GOVERNMENT_STEP);
+
+                    },
+
+                    error -> {
+
+                        if (error instanceof NoConnectionError){
+
+                            Toast.makeText(getApplicationContext(), R.string.error_connection_failure, Toast.LENGTH_LONG).show();
+
+                        } else {
+
+                            try {
+
+                                String responseBody = new String(error.networkResponse.data, "utf-8");
+
+                                Messaging messaging = gson.fromJson(responseBody, ExceptionBean.class);
+
+                                if (messaging != null && messaging.getMessages().length > 0)
+
+                                    Toast.makeText(getApplicationContext(), messaging.getMessages()[0], Toast.LENGTH_LONG).show();
+
+                            } catch (UnsupportedEncodingException e) {}
+
+                        }
+
+                    })
+
+            {
 
                 public String getBodyContentType() {
 
-                    return "application/json; charset=utf-8";
+                    return Constants.JSON_CONTENT_TYPE;
 
                 }
 
@@ -527,7 +583,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
             requestQueue.add(request);
 
-            //new AuthenticateAsyncTask<>(this).execute(credentialBean);
+            requestQueue.addRequestFinishedListener((RequestQueue.RequestFinishedListener<String>) request1 -> showProgress(false));
 
         }
 
@@ -550,9 +606,73 @@ public class ConfigurationActivity extends AppCompatActivity {
 
     private void validateGovernmentStep() {
 
+        showProgress(true);
 
-        //new GetInitialDatasetAsyncTask<>(this).execute();
+        StringRequest request = new StringRequest(Request.Method.GET, Constants.SERVER_BASE_URL + "dataset/initial",
 
+                response -> {
+
+                    DatasetBean datasetBean = gson.fromJson(response, DatasetBean.class);
+
+                    new Sync(DB.getInstance(App.getContext())).dataset(datasetBean);
+
+                    SharedPreferences.Editor editor = preferences.edit();
+
+                    editor.putBoolean(Constants.DEVICE_CONFIGURED_PROPERTY, true);
+
+                    editor.apply();
+
+                    viewPager.setCurrentItem(FINISH_STEP);
+
+                },
+
+                error -> {
+
+                    if (error instanceof NoConnectionError){
+
+                        Toast.makeText(getApplicationContext(), R.string.error_connection_failure, Toast.LENGTH_LONG).show();
+
+                    } else {
+
+                        try {
+
+                            String responseBody = new String(error.networkResponse.data, "utf-8");
+
+                            Messaging messaging = gson.fromJson(responseBody, ExceptionBean.class);
+
+                            if (messaging != null && messaging.getMessages().length > 0)
+
+                                Toast.makeText(getApplicationContext(), messaging.getMessages()[0], Toast.LENGTH_LONG).show();
+
+                        } catch (UnsupportedEncodingException e) {}
+
+                    }
+
+                })
+
+        {
+
+            public String getBodyContentType() {
+
+                return Constants.JSON_CONTENT_TYPE;
+
+            }
+
+            public Map<String, String> getHeaders() {
+
+                Map<String, String> headers = new HashMap<>();
+
+                headers.put(Constants.AUTHORIZATION_HEADER, "Bearer " + preferences.getString(Constants.TOKEN_IDENTIFIER_PROPERTY, null));
+
+                return headers;
+
+            }
+
+        };
+
+        requestQueue.add(request);
+
+        requestQueue.addRequestFinishedListener((RequestQueue.RequestFinishedListener<String>) request1 -> showProgress(false));
 
     }
 
@@ -561,50 +681,6 @@ public class ConfigurationActivity extends AppCompatActivity {
 
 
     // IMPLEMENTATIONS //////////////////////////////////////////////
-
-    /*
-
-    public void onAuthenticatePreExecute() {
-
-        showProgress(true);
-
-    }
-
-
-    public void onAuthenticateSuccess(TokenBean tokenBean) {
-
-        SharedPreferences.Editor editor = preferences.edit();
-
-        editor.putString(Constants.TOKEN_IDENTIFIER_PROPERTY, tokenBean.getIdentifier());
-
-        editor.putInt(Constants.TOKEN_LEVEL_PROPERTY, tokenBean.getLevel());
-
-        editor.putInt(Constants.GOVERNMENT_IDENTIFIER_PROPERTY, tokenBean.getGovernment().getIdentifier());
-
-        editor.putString(Constants.GOVERNMENT_DENOMINATION_PROPERTY, tokenBean.getGovernment().getDenomination());
-
-        editor.putString(Constants.GOVERNMENT_FANCYNAME_PROPERTY, tokenBean.getGovernment().getFancyName());
-
-        editor.putInt(Constants.USER_IDENTIFIER_PROPERTY, tokenBean.getUser().getIdentifier());
-
-        editor.putString(Constants.USER_NAME_PROPERTY, tokenBean.getUser().getName());
-
-        editor.putString(Constants.USER_LOGIN_PROPERTY, tokenBean.getUser().getLogin());
-
-        editor.apply();
-
-        viewPager.setCurrentItem(GOVERNMENT_STEP, false);
-
-    }
-
-
-    public void onAuthenticateFailure(Messaging messaging) {
-
-        showProgress(false);
-
-        showAlertDialog(messaging, R.string.dlg_title_login_failure);
-
-    }
 
 
     public void onBindGovernmentList(){
@@ -615,7 +691,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         ArrayAdapter governmentAdapter = new ArrayAdapter<>(
                 ConfigurationActivity.this,
-                android.R.layout.simple_spinner_item,
+                R.layout.activity_configuration_company_spinner,
                 new ArrayList<>());
 
         governmentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -628,9 +704,91 @@ public class ConfigurationActivity extends AppCompatActivity {
 
                 if (++check > 1) {
 
+                    showProgress(true);
+
                     GovernmentBean governmentBean = (GovernmentBean) parentView.getItemAtPosition(position);
 
-                    //new ChangeGovernmentAsyncTask<>(ConfigurationActivity.this).execute(governmentBean.getIdentifier());
+                    StringRequest request = new StringRequest(Request.Method.POST, Constants.SERVER_BASE_URL + "account/government",
+
+                            response -> {
+
+                                TokenBean tokenBean = gson.fromJson(response, TokenBean.class);
+
+                                SharedPreferences.Editor editor = preferences.edit();
+
+                                editor.putString(Constants.TOKEN_IDENTIFIER_PROPERTY, tokenBean.getIdentifier());
+
+                                editor.putInt(Constants.TOKEN_LEVEL_PROPERTY, tokenBean.getLevel());
+
+                                editor.putInt(Constants.GOVERNMENT_IDENTIFIER_PROPERTY, tokenBean.getGovernment().getIdentifier());
+
+                                editor.putString(Constants.GOVERNMENT_DENOMINATION_PROPERTY, tokenBean.getGovernment().getDenomination());
+
+                                editor.putString(Constants.GOVERNMENT_FANCYNAME_PROPERTY, tokenBean.getGovernment().getFancyName());
+
+                                editor.putInt(Constants.USER_IDENTIFIER_PROPERTY, tokenBean.getUser().getIdentifier());
+
+                                editor.putString(Constants.USER_NAME_PROPERTY, tokenBean.getUser().getName());
+
+                                editor.putString(Constants.USER_LOGIN_PROPERTY, tokenBean.getUser().getLogin());
+
+                                editor.apply();
+
+                            },
+
+                            error -> {
+
+                                if (error instanceof NoConnectionError){
+
+                                    Toast.makeText(getApplicationContext(), R.string.error_connection_failure, Toast.LENGTH_LONG).show();
+
+                                } else {
+
+                                    try {
+
+                                        String responseBody = new String(error.networkResponse.data, "utf-8");
+
+                                        Messaging messaging = gson.fromJson(responseBody, ExceptionBean.class);
+
+                                        if (messaging != null && messaging.getMessages().length > 0)
+
+                                            Toast.makeText(getApplicationContext(), messaging.getMessages()[0], Toast.LENGTH_LONG).show();
+
+                                    } catch (UnsupportedEncodingException e) {}
+
+                                }
+
+                            })
+
+                    {
+
+                        public String getBodyContentType() {
+
+                            return Constants.JSON_CONTENT_TYPE;
+
+                        }
+
+                        public byte[] getBody() {
+
+                            return gson.toJson(new IntegerBean(governmentBean.getIdentifier())).getBytes(StandardCharsets.UTF_8);
+
+                        }
+
+                        public Map<String, String> getHeaders() {
+
+                            Map<String, String> headers = new HashMap<>();
+
+                            headers.put(Constants.AUTHORIZATION_HEADER, "Bearer " + preferences.getString(Constants.TOKEN_IDENTIFIER_PROPERTY, null));
+
+                            return headers;
+
+                        }
+
+                    };
+
+                    requestQueue.add(request);
+
+                    requestQueue.addRequestFinishedListener((RequestQueue.RequestFinishedListener<String>) request1 -> showProgress(false));
 
                 }
 
@@ -640,196 +798,95 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         });
 
-        new BindGovernmentListAsyncTask<>(
-                this,
-                governmentSpinner,
-                governmentAdapter)
-                .execute(0);
-
-    }
-
-
-    public void onBindGovernmentListPreExecute() {}
-
-
-    public void onBindGovernmentListSuccess() {
-
-        showProgress(false);
-
-    }
-
-
-    public void onBindGovernmentListFailure(Messaging messaging) {
-
-        showProgress(false);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(accountFormView.getContext());
-
-        builder.setMessage(TextUtils.join("\n", messaging.getMessages()));
-
-        builder.setTitle(R.string.dlg_title_request_failure);
-
-        builder.setPositiveButton(R.string.button_try_again,
-
-                (dialog, id) -> onBindGovernmentList());
-
-        AlertDialog alert = builder.create();
-
-        alert.show();
-
-    }
-
-
-    public void onChangeGovernmentPreExecute() {
-
         showProgress(true);
 
-    }
+        StringRequest request = new StringRequest(Request.Method.GET, Constants.SERVER_BASE_URL + "account/government",
 
+                response -> {
 
-    public void onChangeGovernmentSuccess(TokenBean tokenBean) {
+                    try {
 
-        SharedPreferences.Editor editor = preferences.edit();
+                        JSONArray jsonObject = new JSONArray(response);
 
-        editor.putString(Constants.TOKEN_IDENTIFIER_PROPERTY, tokenBean.getIdentifier());
+                        if (jsonObject.length() > 0){
 
-        editor.putInt(Constants.TOKEN_LEVEL_PROPERTY, tokenBean.getLevel());
+                            List<GovernmentBean> governments = Arrays.asList(gson.fromJson(jsonObject.toString(), GovernmentBean[].class));
 
-        editor.putInt(Constants.GOVERNMENT_IDENTIFIER_PROPERTY, tokenBean.getGovernment().getIdentifier());
+                            governmentAdapter.clear();
 
-        editor.putString(Constants.GOVERNMENT_DENOMINATION_PROPERTY, tokenBean.getGovernment().getDenomination());
+                            for (GovernmentBean governmentBean : governments)
 
-        editor.putString(Constants.GOVERNMENT_FANCYNAME_PROPERTY, tokenBean.getGovernment().getFancyName());
+                                governmentAdapter.add(governmentBean);
 
-        editor.putInt(Constants.USER_IDENTIFIER_PROPERTY, tokenBean.getUser().getIdentifier());
+                            int selected = preferences.getInt(Constants.GOVERNMENT_IDENTIFIER_PROPERTY,-1);
 
-        editor.putString(Constants.USER_NAME_PROPERTY, tokenBean.getUser().getName());
+                            if (selected != -1){
 
-        editor.putString(Constants.USER_LOGIN_PROPERTY, tokenBean.getUser().getLogin());
+                                GovernmentBean governmentBean = new GovernmentBean();
 
-        editor.apply();
+                                governmentBean.setIdentifier(selected);
 
-        showProgress(false);
+                                int position = governmentAdapter.getPosition(governmentBean);
 
-    }
+                                governmentSpinner.setSelection(position, false);
 
+                            }
 
-    public void onChangeGovernmentFailure(Messaging messaging) {
+                        }
 
-        showProgress(false);
+                    } catch (JSONException e) {}
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(accountFormView.getContext());
+                },
 
-        builder.setMessage(TextUtils.join("\n", messaging.getMessages()));
+                error -> {
 
-        builder.setTitle(R.string.dlg_title_request_failure);
+                    if (error instanceof NoConnectionError){
 
-        builder.setPositiveButton(R.string.button_ok,
+                        Toast.makeText(getApplicationContext(), R.string.error_connection_failure, Toast.LENGTH_LONG).show();
 
-                new DialogInterface.OnClickListener() {
+                    } else {
 
-                    public void onClick(DialogInterface dialog, int id) {
+                        try {
 
-                        dialog.cancel();
+                            String responseBody = new String(error.networkResponse.data, "utf-8");
 
-                    }
+                            Messaging messaging = gson.fromJson(responseBody, ExceptionBean.class);
 
-                });
+                            if (messaging != null && messaging.getMessages().length > 0)
 
-        AlertDialog alert = builder.create();
+                                Toast.makeText(getApplicationContext(), messaging.getMessages()[0], Toast.LENGTH_LONG).show();
 
-        alert.show();
-
-    }
-
-
-    public void onGetInitialDatasetPreExecute() {
-
-        showProgress(true);
-
-    }
-
-
-    public void onGetInitialDatasetSuccess() {
-
-        SharedPreferences.Editor editor = preferences.edit();
-
-        editor.putBoolean(Constants.DEVICE_CONFIGURED_PROPERTY, true);
-
-        editor.apply();
-
-        viewPager.setCurrentItem(FINISH_STEP, false);
-
-        showProgress(false);
-
-    }
-
-
-    public void onGetInitialDatasetFailure(Messaging messaging) {
-
-        showProgress(false);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(accountFormView.getContext());
-
-        builder.setMessage(TextUtils.join("\n", messaging.getMessages()));
-
-        builder.setTitle(R.string.dlg_title_request_failure);
-
-        builder.setPositiveButton(R.string.button_try_again,
-
-                new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        dialog.cancel();
+                        } catch (UnsupportedEncodingException e) {}
 
                     }
 
-                });
+                })
 
-        AlertDialog alert = builder.create();
+        {
 
-        alert.show();
+            public String getBodyContentType() {
 
-    } */
+                return Constants.JSON_CONTENT_TYPE;
 
+            }
 
-    // FUNCTIONS ////////////////////////////////////////////////////
+            public Map<String, String> getHeaders() {
 
+                Map<String, String> headers = new HashMap<>();
 
-    private void showAlertDialog(Messaging messaging, int title){
+                headers.put(Constants.AUTHORIZATION_HEADER, "Bearer " + preferences.getString(Constants.TOKEN_IDENTIFIER_PROPERTY, null));
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(accountFormView.getContext());
+                return headers;
 
-        builder.setMessage(TextUtils.join("\n", messaging.getMessages()));
+            }
 
-        builder.setTitle(title);
+        };
 
-        builder.setPositiveButton(android.R.string.ok,
+        requestQueue.add(request);
 
-                new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        dialog.cancel();
-
-                    }
-
-                });
-
-        AlertDialog alert = builder.create();
-
-        alert.show();
+        requestQueue.addRequestFinishedListener((RequestQueue.RequestFinishedListener<String>) request1 -> showProgress(false));
 
     }
-
-
-
-
-
-
-
-
 
 
 }

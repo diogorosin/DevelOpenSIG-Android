@@ -2,6 +2,12 @@ package br.com.developen.sig.util;
 
 public class Constants {
 
+    public static final String SERVER_BASE_URL = "http://200.98.202.29:8080/sig/rest/";
+
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
+    public static final String JSON_CONTENT_TYPE = "application/json;charset=utf-8";
+
     public static final String SHARED_PREFERENCES_NAME = "DEVELOPEN_SIG";
 
     public static final String DEVICE_CONFIGURED_PROPERTY = "DEVICE_CONFIGURED_PROPERTY";
