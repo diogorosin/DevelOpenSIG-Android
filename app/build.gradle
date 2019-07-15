@@ -25,6 +25,7 @@ android {
 dependencies {
     //Android
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':android-maps-utils-debug')
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
@@ -48,7 +49,6 @@ dependencies {
     //Maps
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.maps.android:android-maps-utils:0.5'
     //FloatingActionMenu
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     //ExpandableLayout

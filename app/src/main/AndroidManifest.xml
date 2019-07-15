@@ -38,6 +38,13 @@
             android:label="@string/title_activity_configuration"
             android:theme="@style/AppTheme.Green">
         </activity>
+
+        <activity android:name=".activity.MapActivity"/>
+        <activity android:name=".activity.ModifiedAddressActivity" android:label="@string/title_activity_address" android:theme="@style/AppTheme"/>
+        <activity android:name=".activity.ModifiedAddressEdificationActivity" android:label="@string/title_activity_edification" android:theme="@style/AppTheme"/>
+        <activity android:name=".activity.ModifiedAddressEdificationDwellerActivity" android:label="@string/title_activity_address" android:theme="@style/AppTheme"/>
+
+
     </application>
 
 </manifest>

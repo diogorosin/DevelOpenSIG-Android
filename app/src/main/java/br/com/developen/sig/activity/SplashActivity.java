@@ -41,23 +41,23 @@ public class SplashActivity extends AppCompatActivity {
             SharedPreferences preferences = getSharedPreferences(
                     Constants.SHARED_PREFERENCES_NAME, 0);
 
-            /*if (preferences.getBoolean(Constants.DEVICE_CONFIGURED_PROPERTY, false)) {
+            if (preferences.getBoolean(Constants.DEVICE_CONFIGURED_PROPERTY, false)) {
 
                 if (preferences.getInt(Constants.USER_IDENTIFIER_PROPERTY, 0) == 0) {
 
-                    intent = new Intent(SplashActivity.this, LoginActivity.class);
+                    intent = new Intent(SplashActivity.this, MapActivity.class);
 
                 } else {
 
-                    intent = new Intent(SplashActivity.this, MainActivity.class);
+                    intent = new Intent(SplashActivity.this, MapActivity.class);
 
                 }
 
-            } else {*/
+            } else {
 
                 intent = new Intent(SplashActivity.this, ConfigurationActivity.class);
 
-            //}
+            }
 
             startActivity(intent);
 
