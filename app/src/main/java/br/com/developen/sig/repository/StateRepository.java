@@ -2,26 +2,24 @@ package br.com.developen.sig.repository;
 
 import android.app.Application;
 
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
+import java.util.List;
+
 import br.com.developen.sig.database.StateDAO;
-import br.com.developen.sig.database.StateVO;
-import br.com.developen.sig.task.InsertOrUpdateStateAsynTask;
+import br.com.developen.sig.database.StateModel;
 import br.com.developen.sig.util.DB;
 
-public class StateRepository {
-
-    private Application application;
+public class StateRepository extends AndroidViewModel {
 
     private StateDAO dao;
 
+    private LiveData<List<StateModel>> states;
+
     public StateRepository(Application application){
 
-        this.application = application;
-
-    }
-
-    public void insertOrUpdate(StateVO... states){
-
-        new InsertOrUpdateStateAsynTask(getDao()).execute(states);
+        super(application);
 
     }
 
@@ -29,7 +27,7 @@ public class StateRepository {
 
         if (dao==null)
 
-            dao = DB.getInstance(application).stateDAO();
+            dao = DB.getInstance(getApplication()).stateDAO();
 
         return dao;
 
@@ -38,6 +36,16 @@ public class StateRepository {
     public void setDao(StateDAO dao) {
 
         this.dao = dao;
+
+    }
+
+    public LiveData<List<StateModel>> getStates(){
+
+        if (states==null)
+
+            states = getDao().getStates();
+
+        return states;
 
     }
 

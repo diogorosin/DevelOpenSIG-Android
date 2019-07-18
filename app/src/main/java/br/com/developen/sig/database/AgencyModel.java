@@ -57,8 +57,8 @@ public class AgencyModel {
 
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AgencyModel countryVO = (AgencyModel) o;
-        return identifier.equals(countryVO.identifier);
+        AgencyModel agencyModel = (AgencyModel) o;
+        return identifier.equals(agencyModel.identifier);
 
     }
 
@@ -69,5 +69,11 @@ public class AgencyModel {
 
     }
 
+
+    public String toString(){
+
+        return getAcronym();
+
+    }
 
 }

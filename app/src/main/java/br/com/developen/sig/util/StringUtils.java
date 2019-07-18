@@ -96,6 +96,7 @@ public class StringUtils {
 
     }
 
+
     public static String leftPad(String string, Integer size, Character character){
 
         String result = string;

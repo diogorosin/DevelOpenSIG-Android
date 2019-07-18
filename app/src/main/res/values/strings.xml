@@ -70,8 +70,9 @@
     <string name="gender">Gênero</string>
     <string name="socialName">Razão Social</string>
     <string name="fancyName">Fantasia</string>
-    <string name="title_activity_configuration">ConfigurationActivity</string>
     <string name="congratulation">Parabéns!</string>
-
+    <string name="try_again">Tentar novamente</string>
+    <string name="forgot_password">Esqueceu sua senha?</string>
+    <string name="title_activity_address_dweller">Morador</string>
 
 </resources>

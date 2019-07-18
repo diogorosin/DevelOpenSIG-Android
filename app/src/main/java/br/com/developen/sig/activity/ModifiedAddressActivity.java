@@ -1,5 +1,6 @@
 package br.com.developen.sig.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -61,6 +62,7 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
+            @SuppressLint("RestrictedApi")
             public void onPageSelected(int position) {
 
                 floatingActionButton.setVisibility(position==2?View.VISIBLE:View.GONE);

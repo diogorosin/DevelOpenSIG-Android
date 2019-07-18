@@ -13,8 +13,6 @@ import br.com.developen.sig.util.DB;
 
 public class ModifiedAddressEdificationRepository extends AndroidViewModel {
 
-    private Application application;
-
     private ModifiedAddressEdificationDAO dao;
 
     private LiveData<List<ModifiedAddressEdificationModel>> modifiedAddressEdifications;
@@ -25,15 +23,13 @@ public class ModifiedAddressEdificationRepository extends AndroidViewModel {
 
         super(application);
 
-        this.application = application;
-
     }
 
     public ModifiedAddressEdificationDAO getDao() {
 
         if (dao==null)
 
-            dao = DB.getInstance(application).modifiedAddressEdificationDAO();
+            dao = DB.getInstance(getApplication()).modifiedAddressEdificationDAO();
 
         return dao;
 

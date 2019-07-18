@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,14 @@ public class SplashActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        //OCULTA A BARRA DE NAVEGACAO
+//        View decorView = getWindow().getDecorView();
+
+//        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+
+//        decorView.setSystemUiVisibility(uiOptions);
+
+        //DEFINE O LAYOUT
         setContentView(R.layout.activity_splash);
 
         //INICIALIZA VARIAVEIS DO SISTEMA

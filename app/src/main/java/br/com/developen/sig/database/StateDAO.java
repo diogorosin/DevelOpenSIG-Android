@@ -1,10 +1,13 @@
 package br.com.developen.sig.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import java.util.List;
 
 @Dao
 public interface StateDAO {
@@ -26,5 +29,8 @@ public interface StateDAO {
 
     @Delete
     void delete(StateVO stateVO);
+
+    @Query("SELECT S.* from State S ORDER BY S.acronym")
+    LiveData<List<StateModel>> getStates();
 
 }

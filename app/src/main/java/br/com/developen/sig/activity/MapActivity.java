@@ -4,6 +4,7 @@
 package br.com.developen.sig.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,6 +15,8 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
@@ -345,11 +348,11 @@ public class MapActivity
 
                 drawer.closeDrawer(GravityCompat.START);
 
-                /*Intent intent = new Intent(MapActivity.this, LoginActivity.class);
+                Intent intent = new Intent(MapActivity.this, LoginActivity.class);
 
                 startActivity(intent);
 
-                finish();*/
+                finish();
 
                 break;
 
@@ -377,6 +380,7 @@ public class MapActivity
     }
 
 
+    @SuppressLint("MissingPermission")
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
         switch (requestCode) {

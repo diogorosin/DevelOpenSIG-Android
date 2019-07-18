@@ -3,6 +3,7 @@ package br.com.developen.sig.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Html;
@@ -27,9 +28,12 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
@@ -189,11 +193,11 @@ public class ConfigurationActivity extends AppCompatActivity {
 
                 case FINISH_STEP:
 
-//                        Intent intent = new Intent(AccountActivity.this, MapActivity.class);
+                    Intent intent = new Intent(ConfigurationActivity.this, MapActivity.class);
 
-//                        startActivity(intent);
+                    startActivity(intent);
 
-//                        finish();
+                    finish();
 
                     break;
 
@@ -573,6 +577,14 @@ public class ConfigurationActivity extends AppCompatActivity {
 
                 }
 
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                    String uft8String = new String(response.data, StandardCharsets.UTF_8);
+
+                    return Response.success(uft8String, HttpHeaderParser.parseCacheHeaders(response));
+
+                }
+
                 public byte[] getBody() {
 
                     return gson.toJson(credentialBean).getBytes(StandardCharsets.UTF_8);
@@ -658,6 +670,14 @@ public class ConfigurationActivity extends AppCompatActivity {
 
             }
 
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                String uft8String = new String(response.data, StandardCharsets.UTF_8);
+
+                return Response.success(uft8String, HttpHeaderParser.parseCacheHeaders(response));
+
+            }
+
             public Map<String, String> getHeaders() {
 
                 Map<String, String> headers = new HashMap<>();
@@ -688,7 +708,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         ArrayAdapter governmentAdapter = new ArrayAdapter<>(
                 ConfigurationActivity.this,
-                R.layout.activity_configuration_company_spinner,
+                R.layout.activity_configuration_government_spinner,
                 new ArrayList<>());
 
         governmentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -768,6 +788,14 @@ public class ConfigurationActivity extends AppCompatActivity {
                         public byte[] getBody() {
 
                             return gson.toJson(new IntegerBean(governmentBean.getIdentifier())).getBytes(StandardCharsets.UTF_8);
+
+                        }
+
+                        protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                            String uft8String = new String(response.data, StandardCharsets.UTF_8);
+
+                            return Response.success(uft8String, HttpHeaderParser.parseCacheHeaders(response));
 
                         }
 
@@ -864,6 +892,14 @@ public class ConfigurationActivity extends AppCompatActivity {
             public String getBodyContentType() {
 
                 return Constants.JSON_CONTENT_TYPE;
+
+            }
+
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                String uft8String = new String(response.data, StandardCharsets.UTF_8);
+
+                return Response.success(uft8String, HttpHeaderParser.parseCacheHeaders(response));
 
             }
 

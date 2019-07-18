@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:floatingSearch_searchBarMarginLeft="5dp"
-        app:floatingSearch_searchBarMarginTop="5dp"
+        app:floatingSearch_searchBarMarginTop="28dp"
         app:floatingSearch_searchBarMarginRight="5dp"
         app:floatingSearch_searchHint="@string/search_hint"
         app:floatingSearch_suggestionsListAnimDuration="250"
@@ -29,6 +29,6 @@
         android:layout_gravity="end|bottom"
         android:src="@drawable/icon_add_24"
         app:backgroundTint="@color/colorGreyDark"
-        android:layout_margin="16dp" />
+        android:layout_margin="20dp"/>
 
 </fragment>

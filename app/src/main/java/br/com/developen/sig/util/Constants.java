@@ -6,7 +6,7 @@ public class Constants {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
-    public static final String JSON_CONTENT_TYPE = "application/json;charset=utf-8";
+    public static final String JSON_CONTENT_TYPE = "application/json";
 
     public static final String SHARED_PREFERENCES_NAME = "DEVELOPEN_SIG";
 

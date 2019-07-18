@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
+    xmlns:tools="http://schemas.android.com/tools"
     package="br.com.developen.sig">
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -23,11 +24,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <activity android:name=".activity.SplashActivity">
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/AppTheme.Green">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -35,15 +39,17 @@
         </activity>
         <activity
             android:name=".activity.ConfigurationActivity"
-            android:label="@string/title_activity_configuration"
             android:theme="@style/AppTheme.Green">
         </activity>
 
-        <activity android:name=".activity.MapActivity"/>
+        <activity
+            android:name=".activity.MapActivity"
+            android:theme="@style/AppTheme.Main">
+        </activity>
+        <activity android:name=".activity.LoginActivity" android:theme="@style/AppTheme.Green"/>
         <activity android:name=".activity.ModifiedAddressActivity" android:label="@string/title_activity_address" android:theme="@style/AppTheme"/>
         <activity android:name=".activity.ModifiedAddressEdificationActivity" android:label="@string/title_activity_edification" android:theme="@style/AppTheme"/>
-        <activity android:name=".activity.ModifiedAddressEdificationDwellerActivity" android:label="@string/title_activity_address" android:theme="@style/AppTheme"/>
-
+        <activity android:name=".activity.ModifiedAddressEdificationDwellerActivity" android:label="@string/title_activity_address_dweller" android:theme="@style/AppTheme"/>
 
     </application>
 

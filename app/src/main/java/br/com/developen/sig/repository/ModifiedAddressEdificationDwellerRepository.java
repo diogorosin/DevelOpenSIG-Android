@@ -9,12 +9,11 @@ import java.util.List;
 
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerDAO;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
+import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.DB;
 
 public class ModifiedAddressEdificationDwellerRepository extends AndroidViewModel {
 
-
-    private Application application;
 
     private ModifiedAddressEdificationDwellerDAO dao;
 
@@ -27,8 +26,6 @@ public class ModifiedAddressEdificationDwellerRepository extends AndroidViewMode
 
         super(application);
 
-        this.application = application;
-
     }
 
 
@@ -36,7 +33,7 @@ public class ModifiedAddressEdificationDwellerRepository extends AndroidViewMode
 
         if (dao==null)
 
-            dao = DB.getInstance(application).modifiedAddressEdificationDwellerDAO();
+            dao = DB.getInstance(getApplication()).modifiedAddressEdificationDwellerDAO();
 
         return dao;
 

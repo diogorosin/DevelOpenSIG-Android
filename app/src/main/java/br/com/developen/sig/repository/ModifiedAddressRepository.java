@@ -11,8 +11,6 @@ import br.com.developen.sig.util.DB;
 
 public class ModifiedAddressRepository extends AndroidViewModel {
 
-    private Application application;
-
     private ModifiedAddressDAO dao;
 
     private LiveData<ModifiedAddressModel> modifiedAddress;
@@ -21,15 +19,13 @@ public class ModifiedAddressRepository extends AndroidViewModel {
 
         super(application);
 
-        this.application = application;
-
     }
 
     public ModifiedAddressDAO getDao() {
 
         if (dao==null)
 
-            dao = DB.getInstance(application).modifiedAddressDAO();
+            dao = DB.getInstance(getApplication()).modifiedAddressDAO();
 
         return dao;
 

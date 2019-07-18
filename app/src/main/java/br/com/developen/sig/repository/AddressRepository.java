@@ -13,8 +13,6 @@ import br.com.developen.sig.util.DB;
 
 public class AddressRepository extends AndroidViewModel {
 
-    private Application application;
-
     private AddressDAO dao;
 
     private LiveData<List<AddressModel>> addresses;
@@ -23,15 +21,13 @@ public class AddressRepository extends AndroidViewModel {
 
         super(application);
 
-        this.application = application;
-
     }
 
     public AddressDAO getDao() {
 
         if (dao==null)
 
-            dao = DB.getInstance(application).addressDAO();
+            dao = DB.getInstance(getApplication()).addressDAO();
 
         return dao;
 

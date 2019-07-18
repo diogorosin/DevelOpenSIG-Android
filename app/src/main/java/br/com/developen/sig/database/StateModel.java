@@ -78,4 +78,10 @@ public class StateModel {
         return Objects.hash(identifier);
     }
 
+    public String toString(){
+
+        return getAcronym();
+
+    }
+
 }

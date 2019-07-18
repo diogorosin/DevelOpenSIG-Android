@@ -1,10 +1,13 @@
 package br.com.developen.sig.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import java.util.List;
 
 @Dao
 public interface AgencyDAO {
@@ -23,5 +26,8 @@ public interface AgencyDAO {
 
     @Delete
     void delete(AgencyVO agencyVO);
+
+    @Query("SELECT A.* from Agency A ORDER BY A.acronym")
+    LiveData<List<AgencyModel>> getAgencies();
 
 }
