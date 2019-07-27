@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_modified_address_edification_dweller_individual_birthplace_autocomplete"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="16sp"
     android:gravity="start"
-    android:textAlignment="textStart"
     android:textColor="@color/black"
-    android:padding="5dp"/>
+    android:textAlignment="textStart"
+    android:padding="10dp"/>

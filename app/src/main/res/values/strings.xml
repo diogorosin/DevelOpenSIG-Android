@@ -74,5 +74,6 @@
     <string name="try_again">Tentar novamente</string>
     <string name="forgot_password">Esqueceu sua senha?</string>
     <string name="title_activity_address_dweller">Morador</string>
+    <string name="action_save">Salvar</string>
 
 </resources>

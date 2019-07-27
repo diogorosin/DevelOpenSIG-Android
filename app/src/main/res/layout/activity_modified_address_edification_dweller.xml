@@ -12,7 +12,7 @@
         android:id="@+id/activity_modified_address_edification_dweller_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorBlackMedium"
+        android:background="@color/colorGreenMedium"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:paddingTop="@dimen/appbar_padding_top">
 
@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
-            android:background="@color/colorBlackMedium"
+            android:background="@color/colorGreenMedium"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">

@@ -66,7 +66,7 @@ public class CityModel {
 
     public String toString(){
 
-        return getDenomination() + "-" + getState().getAcronym();
+        return getDenomination() + " - " + getState().getAcronym();
 
     }
 

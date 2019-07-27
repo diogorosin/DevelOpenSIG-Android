@@ -72,4 +72,10 @@ public class AgencyVO {
 
     }
 
+    public String toString(){
+
+        return acronym;
+
+    }
+
 }

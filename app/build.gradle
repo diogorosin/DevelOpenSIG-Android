@@ -59,6 +59,8 @@ dependencies {
     implementation 'org.hashids:hashids:1.0.3'
     //Search
     implementation 'com.github.arimorty:floatingsearchview:2.1.1'
+    //Mask
+    implementation 'mk.webfactory.dz:maskededittext:2.0'
 
 }
 

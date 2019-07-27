@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -9,10 +10,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
         android:scrollbarStyle="outsideInset"
         android:visibility="visible">
 
@@ -72,14 +73,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <br.com.developen.sig.widget.CPFEditText
+                <mk.webfactory.dz.maskededittext.MaskedEditText
                     android:id="@+id/fragment_modified_address_edification_dweller_individual_cpf_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/cpf"
                     android:imeOptions="actionNext"
                     android:inputType="number"
-                    android:maxLines="1"/>
+                    android:minWidth="200dp"
+                    android:maxLines="1"
+                    app:maskededittext_enforceMaskLength="true"
+                    app:maskededittext_mask="###.###.###-##"
+                    app:maskededittext_maskCharacter="#" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -88,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <!-- <TextView
                     android:layout_width="match_parent"
                     android:layout_height="14dp"
                     android:textSize="12sp"
@@ -98,41 +103,49 @@
                     android:layout_gravity="top|start"
                     android:labelFor="@id/fragment_modified_address_edification_dweller_individual_rgnumber_edittext"
                     android:paddingStart="5dp"
-                    android:text="@string/rgNumber"/>
+                    android:text="@string/rgNumber"/> -->
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="43dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="horizontal">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/fragment_modified_address_edification_dweller_individual_rgnumber_edittext"
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
-                        android:hint="@string/rgNumber"
-                        android:imeOptions="actionNext"
-                        android:inputType="number"
-                        android:maxLines="1"/>
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.45">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/fragment_modified_address_edification_dweller_individual_rgnumber_edittext"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:hint="@string/rgNumber"
+                            android:imeOptions="actionNext"
+                            android:inputType="number"
+                            android:maxLines="1"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <Spinner
                         android:id="@+id/fragment_modified_address_edification_dweller_individual_rgagency_spinner"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.25"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.30"
                         android:imeOptions="actionNext"
-                        android:textAlignment="textStart"
-                        android:spinnerMode="dropdown" />
+                        android:layout_gravity="center|bottom"
+                        android:spinnerMode="dropdown"
+                        style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
                     <Spinner
                         android:id="@+id/fragment_modified_address_edification_dweller_individual_rgstate_spinner"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="0.25"
                         android:imeOptions="actionNext"
-                        android:textAlignment="textStart"
-                        android:spinnerMode="dropdown" />
+                        android:layout_gravity="center|bottom"
+                        android:spinnerMode="dropdown"
+                        style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
                 </LinearLayout>
 
@@ -142,7 +155,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <AutoCompleteTextView
                     android:id="@+id/fragment_modified_address_edification_dweller_individual_birthplace_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -157,31 +170,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <mk.webfactory.dz.maskededittext.MaskedEditText
                     android:id="@+id/fragment_modified_address_edification_dweller_individual_birthdate_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/birthDate"
                     android:imeOptions="actionNext"
                     android:inputType="date"
-                    android:maxLines="1"/>
+                    android:minWidth="200dp"
+                    android:maxLines="1"
+                    app:maskededittext_enforceMaskLength="true"
+                    app:maskededittext_mask="##/##/####"
+                    app:maskededittext_maskCharacter="#"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <Spinner
+                android:id="@+id/fragment_modified_address_edification_dweller_individual_gender_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/fragment_modified_address_edification_dweller_individual_gender_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/gender"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="60dp"
+                android:imeOptions="actionNext"
+                android:hint="@string/gender"
+                android:textAlignment="textStart"
+                android:spinnerMode="dropdown"
+                style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
         </LinearLayout>
 

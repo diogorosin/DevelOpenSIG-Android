@@ -6,6 +6,10 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Date;
 
+import br.com.developen.sig.database.AgencyModel;
+import br.com.developen.sig.database.CityModel;
+import br.com.developen.sig.database.StateModel;
+
 public class StringUtils {
 
     private static final DecimalFormatSymbols symbols;
@@ -96,6 +100,23 @@ public class StringUtils {
 
     }
 
+    public static String formatShortState(StateModel stateModel){
+
+        return stateModel.getAcronym();
+
+    }
+
+    public static String formatShortAgency(AgencyModel agencyModel){
+
+        return agencyModel.getAcronym();
+
+    }
+
+    public static String formatShortCity(CityModel cityModel){
+
+        return cityModel.getDenomination() + " - " + cityModel.getState().getAcronym();
+
+    }
 
     public static String leftPad(String string, Integer size, Character character){
 

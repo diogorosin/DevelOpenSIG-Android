@@ -9,7 +9,6 @@ import java.util.List;
 
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerDAO;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
-import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.DB;
 
 public class ModifiedAddressEdificationDwellerRepository extends AndroidViewModel {
