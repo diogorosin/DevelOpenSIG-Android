@@ -93,18 +93,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="14dp"
-                    android:textSize="12sp"
-                    android:textColor="@color/colorBlackLight"
-                    android:textStyle="normal"
-                    android:textAlignment="textStart"
-                    android:layout_gravity="top|start"
-                    android:labelFor="@id/fragment_modified_address_edification_dweller_individual_rgnumber_edittext"
-                    android:paddingStart="5dp"
-                    android:text="@string/rgNumber"/> -->
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -130,20 +118,20 @@
                     <Spinner
                         android:id="@+id/fragment_modified_address_edification_dweller_individual_rgagency_spinner"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="0.30"
                         android:imeOptions="actionNext"
-                        android:layout_gravity="center|bottom"
+                        android:layout_gravity="start|bottom"
                         android:spinnerMode="dropdown"
                         style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
                     <Spinner
                         android:id="@+id/fragment_modified_address_edification_dweller_individual_rgstate_spinner"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="0.25"
                         android:imeOptions="actionNext"
-                        android:layout_gravity="center|bottom"
+                        android:layout_gravity="end|bottom"
                         android:spinnerMode="dropdown"
                         style="@style/Widget.AppCompat.Spinner.Underlined"/>
 

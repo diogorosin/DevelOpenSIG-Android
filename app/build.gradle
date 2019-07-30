@@ -40,8 +40,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata:2.2.0-alpha01'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha01'
     implementation 'androidx.room:room-runtime:2.1.0'
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.2.0-alpha01"
-    annotationProcessor "androidx.room:room-compiler:2.1.0"
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.2.0-alpha01'
+    annotationProcessor 'androidx.room:room-compiler:2.1.0'
     //Volley
     implementation 'com.android.volley:volley:1.1.1'
     //Gson
@@ -61,6 +61,8 @@ dependencies {
     implementation 'com.github.arimorty:floatingsearchview:2.1.1'
     //Mask
     implementation 'mk.webfactory.dz:maskededittext:2.0'
+    //Validators
+    implementation 'com.mobsandgeeks:android-saripaar:2.0.2'
 
 }
 

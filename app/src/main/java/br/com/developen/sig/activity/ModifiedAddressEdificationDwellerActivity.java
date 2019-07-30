@@ -17,12 +17,27 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ThemedSpinnerAdapter;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
+import java.util.Date;
 
 import br.com.developen.sig.R;
+import br.com.developen.sig.database.CityModel;
+import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
+import br.com.developen.sig.database.StateModel;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerIndividualFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerOrganizationFragment;
+import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
 
-public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity {
+public class ModifiedAddressEdificationDwellerActivity
+        extends AppCompatActivity
+        implements ModifiedAddressEdificationDwellerIndividualFragment.Listener {
+
+
+    private ModifiedAddressEdificationDwellerRepository modifiedAddressEdificationDwellerRepository;
+
+    private ModifiedAddressEdificationDwellerModel modifiedAddressEdificationDwellerModel;
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -30,6 +45,8 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
     public static final String EDIFICATION_IDENTIFIER = "ARG_EDIFICATION_IDENTIFIER";
 
     public static final String DWELLER_IDENTIFIER = "ARG_DWELLER_IDENTIFIER";
+
+    public static final String EDIT_FRAGMENT = "EDIT_FRAGMENT";
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +60,8 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Spinner spinner = findViewById(R.id.activity_modified_address_edification_dweller_spinner);
 
@@ -63,7 +82,7 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
                             .replace(R.id.container, ModifiedAddressEdificationDwellerIndividualFragment.newInstance(
                                     getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
                                     getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)))
+                                    getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)), EDIT_FRAGMENT)
                             .commit();
 
                         break;
@@ -72,7 +91,7 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
                             .replace(R.id.container, ModifiedAddressEdificationDwellerOrganizationFragment.newInstance(
                                     getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
                                     getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)))
+                                    getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)), EDIT_FRAGMENT)
                             .commit();
 
                         break;
@@ -84,6 +103,27 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
             public void onNothingSelected(AdapterView<?> parent) {}
 
         });
+
+        modifiedAddressEdificationDwellerRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationDwellerRepository.class);
+
+        modifiedAddressEdificationDwellerRepository.getModifiedAddressEdificationDweller(
+                getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
+                getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)).
+                observe(this, modifiedAddressEdificationDwellerModel -> {
+
+                    this.modifiedAddressEdificationDwellerModel = modifiedAddressEdificationDwellerModel;
+
+                });
+
+    }
+
+
+    public boolean onSupportNavigateUp(){
+
+        finish();
+
+        return true;
 
     }
 
@@ -101,7 +141,18 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_modified_address_edification_dweller_save) {
+
+            Fragment f = getSupportFragmentManager().findFragmentByTag(EDIT_FRAGMENT);
+
+            if (f instanceof ModifiedAddressEdificationDwellerIndividualFragment) {
+
+                ModifiedAddressEdificationDwellerIndividualFragment modifiedAddressEdificationDwellerIndividualFragment =
+                        (ModifiedAddressEdificationDwellerIndividualFragment) f;
+
+                modifiedAddressEdificationDwellerIndividualFragment.validate();
+
+            }
 
             return true;
 
@@ -157,6 +208,56 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
             mDropDownHelper.setDropDownViewTheme(theme);
 
         }
+
+    }
+
+
+    public void onNameChanged(String name) {
+
+    }
+
+
+    public void onMotherNameChanged(String motherName) {
+
+    }
+
+
+    public void onFatherNameChanged(String motherName) {
+
+    }
+
+
+    public void onCPFChanged(Long cpf) {
+
+    }
+
+
+    public void onRGNumberChanged(Long rgNumber) {
+
+    }
+
+
+    public void onRGAgencyChanged(StateModel rgAgency) {
+
+    }
+
+
+    public void onRGStateChanged(StateModel rgState) {
+
+    }
+
+
+    public void onBirthPlaceChanged(CityModel birthPlace) {
+
+    }
+
+
+    public void onBirthDateChanged(Date birthDate) {
+
+    }
+
+
+    public void onGenderChanged(String gender) {
 
     }
 

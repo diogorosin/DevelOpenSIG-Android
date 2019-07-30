@@ -46,8 +46,8 @@
     <string name="error_invalid_email">O login informado é inválido.</string>
     <string name="error_invalid_password">A senha informada é inválida.</string>
     <string name="error_user_not_active">O usuário não está ativo.</string>
-    <string name="error_invalid_name">O nome informado é inválido.</string>
     <string name="error_field_required">O preenchimento desse campo é obrigatório.</string>
+    <string name="error_invalid_name">O nome informado é inválido.</string>
     <string name="error_connection_failure">Não foi possível conectar ao servidor.</string>
 
     <!-- Dialogs         -->
@@ -75,5 +75,7 @@
     <string name="forgot_password">Esqueceu sua senha?</string>
     <string name="title_activity_address_dweller">Morador</string>
     <string name="action_save">Salvar</string>
+    <string name="error_invalid_cpf">CPF informado é inválido</string>
+    <string name="error_invalid_birthdate">Data de nascimento informada é inválida</string>
 
 </resources>

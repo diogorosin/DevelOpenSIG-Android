@@ -1,20 +1,29 @@
 package br.com.developen.sig.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+import com.mobsandgeeks.saripaar.annotation.Order;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import br.com.developen.sig.R;
@@ -27,9 +36,12 @@ import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerReposito
 import br.com.developen.sig.repository.StateRepository;
 import br.com.developen.sig.util.StringUtils;
 import br.com.developen.sig.widget.MyArrayAdapter;
+import br.com.developen.sig.widget.validator.Birthdate;
+import br.com.developen.sig.widget.validator.CPF;
+import br.com.developen.sig.widget.validator.IndividualName;
 import mk.webfactory.dz.maskededittext.MaskedEditText;
 
-public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragment {
+public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragment implements Validator.ValidationListener {
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -47,29 +59,52 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
 
     private ModifiedAddressEdificationDwellerRepository modifiedAddressEdificationDwellerRepository;
 
+    private ModifiedAddressEdificationDwellerIndividualFragment.Listener fragmentListener;
+
     private AgencyRepository agencyRepository;
 
     private StateRepository stateRepository;
 
     private CityRepository cityRepository;
 
+    private Validator validator;
 
+
+    @Order(0)
+    @NotEmpty(trim = true, messageResId = R.string.error_field_required)
+    @IndividualName
     private TextInputEditText nameEditText;
 
-    private TextInputEditText fatherNameEditText;
-
+    @Order(1)
+    @NotEmpty(trim = true, messageResId = R.string.error_field_required)
+    @IndividualName
     private TextInputEditText motherNameEditText;
 
+    @Order(2)
+
+    @IndividualName
+    private TextInputEditText fatherNameEditText;
+
+    @Order(3)
+    @NotEmpty(trim = true, messageResId = R.string.error_field_required)
+    @CPF
     private MaskedEditText cpfEditText;
 
+    @Order(4)
+    @NotEmpty(trim = true, messageResId = R.string.error_field_required)
     private TextInputEditText rgNumberEditText;
 
     private Spinner rgAgencySpinner;
 
     private Spinner rgStateSpinner;
 
+    @Order(5)
+    @NotEmpty(trim = true, messageResId = R.string.error_field_required)
     private AutoCompleteTextView birthPlaceEditText;
 
+    @Order(5)
+    @NotEmpty(trim = true, messageResId = R.string.error_field_required)
+    @Birthdate
     private MaskedEditText birthDateEditText;
 
     private Spinner genderSpinner;
@@ -105,9 +140,41 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
     }
 
 
+    public void validate(){
+
+        validator.validate();
+
+    }
+
+
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+    }
+
+
+    public void onAttach(Context context) {
+
+        super.onAttach(context);
+
+        if (context instanceof ModifiedAddressEdificationDwellerIndividualFragment.Listener)
+
+            fragmentListener = (ModifiedAddressEdificationDwellerIndividualFragment.Listener) context;
+
+        else
+
+            throw new RuntimeException(context.toString()
+                    + " must implement ModifiedAddressEdificationDwellerIndividualFragment.Listener");
+
+    }
+
+
+    public void onDetach() {
+
+        super.onDetach();
+
+        fragmentListener = null;
 
     }
 
@@ -116,20 +183,13 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
 
         super.onResume();
 
-        initData();
-
-    }
-
-
-    public void initData(){
-
-        modifiedAddressEdificationDwellerRepository = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ModifiedAddressEdificationDwellerRepository.class);
+        modifiedAddressEdificationDwellerRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationDwellerRepository.class);
 
         modifiedAddressEdificationDwellerRepository.getModifiedAddressEdificationDweller(
                 getArguments().getInt(MODIFIED_ADDRESS_IDENTIFIER),
                 getArguments().getInt(EDIFICATION_IDENTIFIER),
                 getArguments().getInt(DWELLER_IDENTIFIER)).
-                observe(getActivity(), modifiedAddressEdificationDwellerModel -> {
+                observe(this, modifiedAddressEdificationDwellerModel -> {
 
                     if (modifiedAddressEdificationDwellerModel != null){
 
@@ -178,7 +238,6 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
                 });
 
     }
-
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -234,9 +293,9 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
         genderSpinner = v.findViewById(R.id.fragment_modified_address_edification_dweller_individual_gender_spinner);
 
 
-        agencyRepository = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(AgencyRepository.class);
+        agencyRepository = ViewModelProviders.of(this).get(AgencyRepository.class);
 
-        agencyRepository.getAgencies().observe(getActivity(), agencyModels -> {
+        agencyRepository.getAgencies().observe(this, agencyModels -> {
 
             AgencyModel index = (AgencyModel) rgAgencySpinner.getSelectedItem();
 
@@ -257,9 +316,9 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
         });
 
 
-        stateRepository = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(StateRepository.class);
+        stateRepository = ViewModelProviders.of(this).get(StateRepository.class);
 
-        stateRepository.getStates().observe(getActivity(), stateModels -> {
+        stateRepository.getStates().observe(this, stateModels -> {
 
             StateModel index = (StateModel) rgStateSpinner.getSelectedItem();
 
@@ -280,9 +339,9 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
         });
 
 
-        cityRepository = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(CityRepository.class);
+        cityRepository = ViewModelProviders.of(this).get(CityRepository.class);
 
-        cityRepository.getCities().observe(getActivity(), citiesModels -> {
+        cityRepository.getCities().observe(this, citiesModels -> {
 
             int index = birthPlaceEditText.getListSelection();
 
@@ -311,9 +370,64 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
         genderSpinner.setAdapter(genderSpinnerAdapter);
 
 
+        validator = new Validator(this);
+
+        validator.setValidationListener(this);
+
+
         return v;
 
     }
 
+    public void onValidationSucceeded() {
+
+
+    }
+
+    public void onValidationFailed(List<ValidationError> errors) {
+
+        for (ValidationError error : errors) {
+
+            View view = error.getView();
+
+            String message = error.getCollatedErrorMessage(getActivity());
+
+            if (view instanceof EditText) {
+
+                ((EditText) view).setError(message);
+
+            } else {
+
+                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+
+            }
+
+        }
+
+    }
+
+    public interface Listener {
+
+        void onNameChanged(String name);
+
+        void onMotherNameChanged(String motherName);
+
+        void onFatherNameChanged(String motherName);
+
+        void onCPFChanged(Long cpf);
+
+        void onRGNumberChanged(Long rgNumber);
+
+        void onRGAgencyChanged(StateModel rgAgency);
+
+        void onRGStateChanged(StateModel rgState);
+
+        void onBirthPlaceChanged(CityModel birthPlace);
+
+        void onBirthDateChanged(Date birthDate);
+
+        void onGenderChanged(String gender);
+
+    }
 
 }
