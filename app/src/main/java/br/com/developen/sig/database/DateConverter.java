@@ -14,7 +14,7 @@ public class DateConverter {
     static DateFormat df = new SimpleDateFormat(DATE_FORMAT);
 
     @TypeConverter
-    public static Date fromTimestamp(String value) {
+    public static Date fromDate(String value) {
 
         if (value != null) {
 
@@ -39,7 +39,7 @@ public class DateConverter {
     }
 
     @TypeConverter
-    public static String dateToTimestamp(Date value) {
+    public static String toDate(Date value) {
 
         return value == null ? null : df.format(value);
 

@@ -26,6 +26,14 @@ public interface CityDAO {
             "INNER JOIN State St ON St.identifier = Ci.state " +
             "INNER JOIN Country Co ON Co.identifier = St.country " +
             "WHERE Ci.denomination LIKE :city " +
+            "AND St.acronym LIKE :stateAcronym")
+    CityVO findByCityStateAcronym(String city, String stateAcronym);
+
+    @Query("SELECT Ci.* " +
+            "FROM City Ci " +
+            "INNER JOIN State St ON St.identifier = Ci.state " +
+            "INNER JOIN Country Co ON Co.identifier = St.country " +
+            "WHERE Ci.denomination LIKE :city " +
             "AND St.denomination LIKE :state " +
             "AND Co.denomination LIKE :country")
     CityVO findByCityStateCountry(String city, String state, String country);

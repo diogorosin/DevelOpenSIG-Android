@@ -4,6 +4,8 @@ import android.text.format.DateFormat;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.com.developen.sig.database.AgencyModel;
@@ -151,6 +153,22 @@ public class StringUtils {
                 result = result + character;
 
         return result;
+
+    }
+
+    public static Date stringToDate(String date){
+
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
+        Date newDate = null;
+
+        try {
+
+            newDate = df.parse(date);
+
+        } catch (ParseException e) {}
+
+        return newDate;
 
     }
 

@@ -120,6 +120,8 @@ public class CreateAddressAsynTask<A extends Activity & CreateAddressAsynTask.Li
 
             modifiedAddressEdificationDwellerVO.setFrom(new Date());
 
+            modifiedAddressEdificationDwellerVO.setActive(true);
+
             database.modifiedAddressEdificationDwellerDAO().create(modifiedAddressEdificationDwellerVO);
 
 
@@ -159,6 +161,8 @@ public class CreateAddressAsynTask<A extends Activity & CreateAddressAsynTask.Li
             modifiedAddressEdificationDwellerVO.setRgState(24);
 
             modifiedAddressEdificationDwellerVO.setFrom(new Date());
+
+            modifiedAddressEdificationDwellerVO.setActive(true);
 
             database.modifiedAddressEdificationDwellerDAO().create(modifiedAddressEdificationDwellerVO);
 

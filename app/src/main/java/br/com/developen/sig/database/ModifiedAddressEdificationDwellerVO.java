@@ -36,7 +36,6 @@ public class ModifiedAddressEdificationDwellerVO {
     @ColumnInfo(name="subject")
     private Integer subject;
 
-    @NonNull
     @ColumnInfo(name="nameOrDenomination")
     private String nameOrDenomination;
 
@@ -83,6 +82,10 @@ public class ModifiedAddressEdificationDwellerVO {
     @ColumnInfo(name="to")
     @TypeConverters({TimestampConverter.class})
     private Date to;
+
+    @NonNull
+    @ColumnInfo(name="active")
+    private Boolean active;
 
 
     public Integer getModifiedAddress() {
@@ -333,6 +336,20 @@ public class ModifiedAddressEdificationDwellerVO {
     public void setTo(Date to) {
 
         this.to = to;
+
+    }
+
+
+    public Boolean getActive() {
+
+        return active;
+
+    }
+
+
+    public void setActive(Boolean active) {
+
+        this.active = active;
 
     }
 

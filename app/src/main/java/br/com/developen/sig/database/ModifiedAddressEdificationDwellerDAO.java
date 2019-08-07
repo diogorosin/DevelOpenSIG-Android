@@ -28,6 +28,11 @@ public interface ModifiedAddressEdificationDwellerDAO {
     @Query("SELECT COUNT(*) FROM ModifiedAddressEdificationDweller MAED")
     Integer count();
 
+    @Query("SELECT IFNULL(MAX(MAED.dweller), 0) " +
+            "FROM ModifiedAddressEdificationDweller MAED " +
+            "WHERE MAED.modifiedAddress = :modifiedAddress AND MAED.edification = :edification")
+    Integer retrieveLastDwellerIdOfModifiedAddressEdification(Integer modifiedAddress, Integer edification);
+
     @Update
     void update(ModifiedAddressEdificationDwellerVO modifiedAddressEdificationDwellerVO);
 
@@ -87,7 +92,8 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " MAED.birthDate AS 'birthDate', " +
             " MAED.gender AS 'gender', " +
             " MAED.'from' AS 'from', " +
-            " MAED.'to' AS 'to' " +
+            " MAED.'to' AS 'to', " +
+            " MAED.active AS 'active' " +
             "FROM ModifiedAddressEdificationDweller MAED " +
             "INNER JOIN ModifiedAddressEdification MAE ON MAE.modifiedAddress = MAED.modifiedAddress AND MAE.edification = MAED.edification " +
             "INNER JOIN ModifiedAddress MA ON MA.identifier = MAE.modifiedAddress " +
@@ -100,9 +106,8 @@ public interface ModifiedAddressEdificationDwellerDAO {
             "LEFT OUTER JOIN City BirthPlace ON BirthPlace.identifier = MAED.birthPlace " +
             "LEFT OUTER JOIN State BirthPlaceState ON BirthPlaceState.identifier = BirthPlace.state " +
             "LEFT OUTER JOIN Country BirthPlaceStateCountry ON BirthPlaceStateCountry.identifier = BirthPlaceState.country " +
-            "WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification")
+            "WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification AND MAED.active = 1")
     LiveData<List<ModifiedAddressEdificationDwellerModel>> getDwellersOfModifiedAddressEdification(Integer modifiedAddress, Integer edification);
-
 
     @Query("SELECT " +
             " MA.identifier AS 'modifiedAddressEdification_modifiedAddress_identifier', " +
@@ -157,7 +162,8 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " MAED.birthDate AS 'birthDate', " +
             " MAED.gender AS 'gender', " +
             " MAED.'from' AS 'from', " +
-            " MAED.'to' AS 'to' " +
+            " MAED.'to' AS 'to', " +
+            " MAED.active AS 'active' " +
             "FROM ModifiedAddressEdificationDweller MAED " +
             "INNER JOIN ModifiedAddressEdification MAE ON MAE.modifiedAddress = MAED.modifiedAddress AND MAE.edification = MAED.edification " +
             "INNER JOIN ModifiedAddress MA ON MA.identifier = MAE.modifiedAddress " +
@@ -172,6 +178,5 @@ public interface ModifiedAddressEdificationDwellerDAO {
             "LEFT OUTER JOIN Country BirthPlaceStateCountry ON BirthPlaceStateCountry.identifier = BirthPlaceState.country " +
             "WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification AND MAED.dweller = :dweller")
     LiveData<ModifiedAddressEdificationDwellerModel> getModifiedAddressEdificationDweller(Integer modifiedAddress, Integer edification, Integer dweller);
-
 
 }

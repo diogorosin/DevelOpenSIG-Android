@@ -1,6 +1,5 @@
 package br.com.developen.sig.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,18 +29,22 @@ import br.com.developen.sig.R;
 import br.com.developen.sig.database.AgencyModel;
 import br.com.developen.sig.database.CityModel;
 import br.com.developen.sig.database.StateModel;
+import br.com.developen.sig.exception.CityNotFoundException;
 import br.com.developen.sig.repository.AgencyRepository;
 import br.com.developen.sig.repository.CityRepository;
 import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
 import br.com.developen.sig.repository.StateRepository;
 import br.com.developen.sig.util.StringUtils;
+import br.com.developen.sig.widget.Editable;
 import br.com.developen.sig.widget.MyArrayAdapter;
 import br.com.developen.sig.widget.validator.Birthdate;
 import br.com.developen.sig.widget.validator.CPF;
 import br.com.developen.sig.widget.validator.IndividualName;
 import mk.webfactory.dz.maskededittext.MaskedEditText;
 
-public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragment implements Validator.ValidationListener {
+public class ModifiedAddressEdificationDwellerIndividualFragment
+        extends Fragment
+        implements Validator.ValidationListener, Editable {
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -58,8 +61,6 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
 
 
     private ModifiedAddressEdificationDwellerRepository modifiedAddressEdificationDwellerRepository;
-
-    private ModifiedAddressEdificationDwellerIndividualFragment.Listener fragmentListener;
 
     private AgencyRepository agencyRepository;
 
@@ -81,7 +82,6 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
     private TextInputEditText motherNameEditText;
 
     @Order(2)
-
     @IndividualName
     private TextInputEditText fatherNameEditText;
 
@@ -140,41 +140,9 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
     }
 
 
-    public void validate(){
-
-        validator.validate();
-
-    }
-
-
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-    }
-
-
-    public void onAttach(Context context) {
-
-        super.onAttach(context);
-
-        if (context instanceof ModifiedAddressEdificationDwellerIndividualFragment.Listener)
-
-            fragmentListener = (ModifiedAddressEdificationDwellerIndividualFragment.Listener) context;
-
-        else
-
-            throw new RuntimeException(context.toString()
-                    + " must implement ModifiedAddressEdificationDwellerIndividualFragment.Listener");
-
-    }
-
-
-    public void onDetach() {
-
-        super.onDetach();
-
-        fragmentListener = null;
 
     }
 
@@ -199,39 +167,56 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
 
                         motherNameEditText.setText(modifiedAddressEdificationDwellerModel.getMotherName());
 
-                        cpfEditText.setText(StringUtils.leftPad(String.valueOf(modifiedAddressEdificationDwellerModel.getCpf()), 11, '0'));
+                        //CPF
+                        if (modifiedAddressEdificationDwellerModel.getCpf()!=null && modifiedAddressEdificationDwellerModel.getCpf() > 0)
 
-                        rgNumberEditText.setText(String.valueOf(modifiedAddressEdificationDwellerModel.getRgNumber()));
+                            cpfEditText.setText(StringUtils.leftPad(String.valueOf(modifiedAddressEdificationDwellerModel.getCpf()), 11, '0'));
+
+                        //NUMERO DO RG
+                        if (modifiedAddressEdificationDwellerModel.getRgNumber()!=null && modifiedAddressEdificationDwellerModel.getRgNumber() > 0)
+
+                            rgNumberEditText.setText(String.valueOf(modifiedAddressEdificationDwellerModel.getRgNumber()));
 
                         int position;
 
-                        position = rgAgencySpinnerAdapter.getPosition(modifiedAddressEdificationDwellerModel.getRgAgency());
+                        //ORGAO EXPEDIDOR DO RG
+                        if (modifiedAddressEdificationDwellerModel.getRgAgency() != null && modifiedAddressEdificationDwellerModel.getRgAgency().getIdentifier() > 0) {
 
-                        if (position != -1)
+                            position = rgAgencySpinnerAdapter.getPosition(modifiedAddressEdificationDwellerModel.getRgAgency());
 
-                            rgAgencySpinner.setSelection(position, false);
+                            if (position != -1)
 
-                        position = rgStateSpinnerAdapter.getPosition(modifiedAddressEdificationDwellerModel.getRgState());
+                                rgAgencySpinner.setSelection(position, false);
 
-                        if (position != -1)
+                        }
 
-                            rgStateSpinner.setSelection(position, false);
+                        //ESTADO DO RG
+                        if (modifiedAddressEdificationDwellerModel.getRgState() != null && modifiedAddressEdificationDwellerModel.getRgState().getIdentifier() > 0) {
 
-                        birthPlaceEditText.setText(modifiedAddressEdificationDwellerModel.getBirthPlace().toString());
+                            position = rgStateSpinnerAdapter.getPosition(modifiedAddressEdificationDwellerModel.getRgState());
 
-                        position = birthPlaceAdapter.getPosition(modifiedAddressEdificationDwellerModel.getBirthPlace());
+                            if (position != -1)
 
-                        if (position != -1)
+                                rgStateSpinner.setSelection(position, false);
 
-                            birthPlaceEditText.setListSelection(position);
+                        }
 
-                        birthDateEditText.setText(StringUtils.formatDate(modifiedAddressEdificationDwellerModel.getBirthDate()));
+                        //LOCAL DE NASCIMENTO
+                        birthPlaceEditText.setText(modifiedAddressEdificationDwellerModel.getBirthPlace() == null ? null : modifiedAddressEdificationDwellerModel.getBirthPlace().toString());
 
-                        position = genderSpinnerAdapter.getPosition(modifiedAddressEdificationDwellerModel.getGender().equals("M") ? GENDER_MALE : GENDER_FEMALE);
+                        //DATA DE NASCIMENTO
+                        birthDateEditText.setText(modifiedAddressEdificationDwellerModel.getBirthDate() == null ? null : StringUtils.formatDate(modifiedAddressEdificationDwellerModel.getBirthDate()));
 
-                        if (position != -1)
+                        //GENERO
+                        if (modifiedAddressEdificationDwellerModel.getGender() != null) {
 
-                            genderSpinner.setSelection(position, false);
+                            position = genderSpinnerAdapter.getPosition(modifiedAddressEdificationDwellerModel.getGender().equals("M") ? GENDER_MALE : GENDER_FEMALE);
+
+                            if (position != -1)
+
+                                genderSpinner.setSelection(position, false);
+
+                        }
 
                     }
 
@@ -379,10 +364,58 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
 
     }
 
+
     public void onValidationSucceeded() {
 
 
+        String name = nameEditText.getText().toString();
+
+        String motherName = motherNameEditText.getText().toString();
+
+        String fatherName = fatherNameEditText.getText().toString();
+
+        Long cpf = Long.valueOf(cpfEditText.getRawInput());
+
+        Long rgNumber = Long.valueOf(rgNumberEditText.getText().toString());
+
+        Integer rgAgency = ((AgencyModel) rgAgencySpinner.getSelectedItem()).getIdentifier();
+
+        Integer rgState = ((StateModel) rgStateSpinner.getSelectedItem()).getIdentifier();
+
+        String birthPlace = birthPlaceEditText.getText().toString();
+
+        Date birthDate = StringUtils.stringToDate(birthDateEditText.getText().toString());
+
+        String gender = (String) genderSpinner.getSelectedItem();
+
+        gender = gender.equals(GENDER_FEMALE) ? "F" : "M";
+
+
+        try {
+
+            modifiedAddressEdificationDwellerRepository.saveAsIndividual(
+                    name,
+                    motherName,
+                    fatherName,
+                    cpf,
+                    rgNumber,
+                    rgAgency,
+                    rgState,
+                    birthPlace,
+                    birthDate,
+                    gender);
+
+            getActivity().finish();
+
+        } catch (CityNotFoundException e) {
+
+            birthPlaceEditText.setError(e.getMessage());
+
+        }
+
+
     }
+
 
     public void onValidationFailed(List<ValidationError> errors) {
 
@@ -406,28 +439,12 @@ public class ModifiedAddressEdificationDwellerIndividualFragment extends Fragmen
 
     }
 
-    public interface Listener {
 
-        void onNameChanged(String name);
+    public void save() {
 
-        void onMotherNameChanged(String motherName);
-
-        void onFatherNameChanged(String motherName);
-
-        void onCPFChanged(Long cpf);
-
-        void onRGNumberChanged(Long rgNumber);
-
-        void onRGAgencyChanged(StateModel rgAgency);
-
-        void onRGStateChanged(StateModel rgState);
-
-        void onBirthPlaceChanged(CityModel birthPlace);
-
-        void onBirthDateChanged(Date birthDate);
-
-        void onGenderChanged(String gender);
+        validator.validate();
 
     }
+
 
 }

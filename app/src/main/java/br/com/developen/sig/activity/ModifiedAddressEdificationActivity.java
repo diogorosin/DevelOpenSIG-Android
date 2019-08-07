@@ -1,7 +1,9 @@
 package br.com.developen.sig.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +22,12 @@ import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationTypeFragment;
+import br.com.developen.sig.task.CreateDwellerAsyncTask;
+import br.com.developen.sig.util.Messaging;
 
 public class ModifiedAddressEdificationActivity extends AppCompatActivity
-        implements ModifiedAddressEdificationDwellerFragment.ModifiedAddressEdificationDwellerFragmentListener {
+        implements ModifiedAddressEdificationDwellerFragment.ModifiedAddressEdificationDwellerFragmentListener,
+CreateDwellerAsyncTask.Listener{
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -57,9 +62,10 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
+            @SuppressLint("RestrictedApi")
             public void onPageSelected(int position) {
 
-                floatingActionButton.setVisibility(position==2 ? View.VISIBLE : View.GONE);
+                floatingActionButton.setVisibility(position==1 ? View.VISIBLE : View.GONE);
 
             }
 
@@ -72,6 +78,14 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
         floatingActionButton = findViewById(R.id.activity_modified_address_edification_fab);
+
+        floatingActionButton.setOnClickListener(v -> {
+
+            new CreateDwellerAsyncTask(ModifiedAddressEdificationActivity.this).execute(
+                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0));
+
+        });
 
     }
 
@@ -103,29 +117,46 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
     public void onDwellerClicked(ModifiedAddressEdificationDwellerModel modifiedAddressEdificationDwellerModel) {
 
+        editDweller(modifiedAddressEdificationDwellerModel.
+                getModifiedAddressEdification().
+                getModifiedAddress().
+                getIdentifier(), modifiedAddressEdificationDwellerModel.
+                        getModifiedAddressEdification().
+                        getEdification(), modifiedAddressEdificationDwellerModel.
+                        getDweller());
+
+    }
+
+
+    public void onDwellerLongClick(ModifiedAddressEdificationDwellerModel modifiedAddressEdificationDwellerModel) {}
+
+
+    public void onCreateDwellerSuccess(Integer dweller) {
+
+        editDweller(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER,0),
+                getIntent().getIntExtra(EDIFICATION_IDENTIFIER,0), dweller);
+
+    }
+
+
+    public void editDweller(Integer modifiedAddress, Integer edification, Integer dweller){
+
         Intent dwellerIntent = new Intent(ModifiedAddressEdificationActivity.this, ModifiedAddressEdificationDwellerActivity.class);
 
-        dwellerIntent.putExtra(ModifiedAddressEdificationDwellerActivity.MODIFIED_ADDRESS_IDENTIFIER,
-                modifiedAddressEdificationDwellerModel.
-                        getModifiedAddressEdification().
-                        getModifiedAddress().
-                        getIdentifier());
+        dwellerIntent.putExtra(ModifiedAddressEdificationDwellerActivity.MODIFIED_ADDRESS_IDENTIFIER, modifiedAddress);
 
-        dwellerIntent.putExtra(ModifiedAddressEdificationDwellerActivity.EDIFICATION_IDENTIFIER,
-                modifiedAddressEdificationDwellerModel.
-                        getModifiedAddressEdification().
-                        getEdification());
+        dwellerIntent.putExtra(ModifiedAddressEdificationDwellerActivity.EDIFICATION_IDENTIFIER, edification);
 
-        dwellerIntent.putExtra(ModifiedAddressEdificationDwellerActivity.DWELLER_IDENTIFIER,
-                modifiedAddressEdificationDwellerModel.
-                        getDweller());
+        dwellerIntent.putExtra(ModifiedAddressEdificationDwellerActivity.DWELLER_IDENTIFIER, dweller);
 
         startActivity(dwellerIntent);
 
     }
 
 
-    public void onDwellerLongClick(ModifiedAddressEdificationDwellerModel modifiedAddressEdificationDwellerModel) {}
+    public void onCreateDwellerFailure(Messaging messaging) {
+
+    }
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

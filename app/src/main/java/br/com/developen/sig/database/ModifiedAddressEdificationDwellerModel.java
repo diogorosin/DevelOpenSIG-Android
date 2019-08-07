@@ -50,6 +50,8 @@ public class ModifiedAddressEdificationDwellerModel {
     @TypeConverters({TimestampConverter.class})
     private Date to;
 
+    private Boolean active;
+
 
     public ModifiedAddressEdificationModel getModifiedAddressEdification() {
 
@@ -285,6 +287,20 @@ public class ModifiedAddressEdificationDwellerModel {
     public void setTo(Date to) {
 
         this.to = to;
+
+    }
+
+
+    public Boolean getActive() {
+
+        return active;
+
+    }
+
+
+    public void setActive(Boolean active) {
+
+        this.active = active;
 
     }
 

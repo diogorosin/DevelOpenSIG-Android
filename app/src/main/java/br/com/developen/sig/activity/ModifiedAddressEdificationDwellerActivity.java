@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -18,26 +19,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ThemedSpinnerAdapter;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
-import java.util.Date;
 
 import br.com.developen.sig.R;
-import br.com.developen.sig.database.CityModel;
-import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
-import br.com.developen.sig.database.StateModel;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerIndividualFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerOrganizationFragment;
 import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
+import br.com.developen.sig.widget.Editable;
 
-public class ModifiedAddressEdificationDwellerActivity
-        extends AppCompatActivity
-        implements ModifiedAddressEdificationDwellerIndividualFragment.Listener {
+public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity {
 
 
     private ModifiedAddressEdificationDwellerRepository modifiedAddressEdificationDwellerRepository;
-
-    private ModifiedAddressEdificationDwellerModel modifiedAddressEdificationDwellerModel;
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -104,7 +96,7 @@ public class ModifiedAddressEdificationDwellerActivity
 
         });
 
-        modifiedAddressEdificationDwellerRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationDwellerRepository.class);
+/*        modifiedAddressEdificationDwellerRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationDwellerRepository.class);
 
         modifiedAddressEdificationDwellerRepository.getModifiedAddressEdificationDweller(
                 getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
@@ -114,7 +106,7 @@ public class ModifiedAddressEdificationDwellerActivity
 
                     this.modifiedAddressEdificationDwellerModel = modifiedAddressEdificationDwellerModel;
 
-                });
+                }); */
 
     }
 
@@ -143,16 +135,19 @@ public class ModifiedAddressEdificationDwellerActivity
 
         if (id == R.id.menu_modified_address_edification_dweller_save) {
 
+            try {
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+            } catch (Exception e) { }
+
             Fragment f = getSupportFragmentManager().findFragmentByTag(EDIT_FRAGMENT);
 
-            if (f instanceof ModifiedAddressEdificationDwellerIndividualFragment) {
+            if (f instanceof Editable)
 
-                ModifiedAddressEdificationDwellerIndividualFragment modifiedAddressEdificationDwellerIndividualFragment =
-                        (ModifiedAddressEdificationDwellerIndividualFragment) f;
-
-                modifiedAddressEdificationDwellerIndividualFragment.validate();
-
-            }
+                ((Editable) f).save();
 
             return true;
 
@@ -208,56 +203,6 @@ public class ModifiedAddressEdificationDwellerActivity
             mDropDownHelper.setDropDownViewTheme(theme);
 
         }
-
-    }
-
-
-    public void onNameChanged(String name) {
-
-    }
-
-
-    public void onMotherNameChanged(String motherName) {
-
-    }
-
-
-    public void onFatherNameChanged(String motherName) {
-
-    }
-
-
-    public void onCPFChanged(Long cpf) {
-
-    }
-
-
-    public void onRGNumberChanged(Long rgNumber) {
-
-    }
-
-
-    public void onRGAgencyChanged(StateModel rgAgency) {
-
-    }
-
-
-    public void onRGStateChanged(StateModel rgState) {
-
-    }
-
-
-    public void onBirthPlaceChanged(CityModel birthPlace) {
-
-    }
-
-
-    public void onBirthDateChanged(Date birthDate) {
-
-    }
-
-
-    public void onGenderChanged(String gender) {
 
     }
 
