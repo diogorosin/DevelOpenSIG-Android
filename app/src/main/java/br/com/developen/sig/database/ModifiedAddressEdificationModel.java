@@ -7,14 +7,20 @@ import java.util.Objects;
 
 public class ModifiedAddressEdificationModel {
 
+
     @Embedded(prefix = "modifiedAddress_")
     private ModifiedAddressModel modifiedAddress;
 
     private Integer edification;
 
-    private Integer type;
+    @Embedded(prefix = "type_")
+    private TypeModel type;
 
     private String reference;
+
+    private Boolean active;
+
+    private Integer dwellersCount;
 
 
     public ModifiedAddressModel getModifiedAddress() {
@@ -41,13 +47,13 @@ public class ModifiedAddressEdificationModel {
 
     }
 
-    public Integer getType() {
+    public TypeModel getType() {
 
         return type;
 
     }
 
-    public void setType(Integer type) {
+    public void setType(TypeModel type) {
 
         this.type = type;
 
@@ -62,6 +68,30 @@ public class ModifiedAddressEdificationModel {
     public void setReference(String reference) {
 
         this.reference = reference;
+
+    }
+
+    public Boolean getActive() {
+
+        return active;
+
+    }
+
+    public void setActive(Boolean active) {
+
+        this.active = active;
+
+    }
+
+    public Integer getDwellersCount() {
+
+        return dwellersCount;
+
+    }
+
+    public void setDwellersCount(Integer dwellersCount) {
+
+        this.dwellersCount = dwellersCount;
 
     }
 

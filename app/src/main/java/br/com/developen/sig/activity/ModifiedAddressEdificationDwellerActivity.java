@@ -23,13 +23,9 @@ import androidx.fragment.app.Fragment;
 import br.com.developen.sig.R;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerIndividualFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerOrganizationFragment;
-import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
 import br.com.developen.sig.widget.Editable;
 
 public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity {
-
-
-    private ModifiedAddressEdificationDwellerRepository modifiedAddressEdificationDwellerRepository;
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -95,18 +91,6 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
             public void onNothingSelected(AdapterView<?> parent) {}
 
         });
-
-/*        modifiedAddressEdificationDwellerRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationDwellerRepository.class);
-
-        modifiedAddressEdificationDwellerRepository.getModifiedAddressEdificationDweller(
-                getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
-                getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)).
-                observe(this, modifiedAddressEdificationDwellerModel -> {
-
-                    this.modifiedAddressEdificationDwellerModel = modifiedAddressEdificationDwellerModel;
-
-                }); */
 
     }
 

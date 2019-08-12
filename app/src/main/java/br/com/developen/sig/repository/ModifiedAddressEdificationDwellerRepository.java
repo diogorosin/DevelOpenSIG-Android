@@ -147,4 +147,40 @@ public class ModifiedAddressEdificationDwellerRepository extends AndroidViewMode
     }
 
 
+    public void saveAsOrganization(String denomination, String fancyName) {
+
+
+        ModifiedAddressEdificationDwellerModel model = modifiedAddressEdificationDweller.getValue();
+
+        ModifiedAddressEdificationDwellerVO vo = new ModifiedAddressEdificationDwellerVO();
+
+
+        vo.setModifiedAddress(model.getModifiedAddressEdification().getModifiedAddress().getIdentifier());
+
+        vo.setEdification(model.getModifiedAddressEdification().getEdification());
+
+        vo.setDweller(model.getDweller());
+
+        vo.setSubject(model.getSubject());
+
+        vo.setFrom(model.getFrom());
+
+        vo.setActive(true);
+
+
+        vo.setType("J");
+
+        vo.setNameOrDenomination(denomination);
+
+        vo.setFancyName(fancyName);
+
+
+        if (getDao().exists(vo.getModifiedAddress(), vo.getEdification(), vo.getDweller()))
+
+            getDao().update(vo);
+
+
+    }
+
+
 }

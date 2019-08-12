@@ -18,6 +18,11 @@ public interface AddressEdificationDAO {
     @Query("SELECT COUNT(*) > 0 FROM AddressEdification AE WHERE AE.address = :address AND AE.edification = :edification")
     Boolean exists(int address, Integer edification);
 
+    @Query("SELECT IFNULL(MAX(MAE.edification), 0) " +
+            "FROM ModifiedAddressEdification MAE " +
+            "WHERE MAE.modifiedAddress = :modifiedAddress")
+    Integer retrieveLastEdificationIdOfModifiedAddress(Integer modifiedAddress);
+
     @Update
     void update(AddressEdificationVO addressEdificationVO);
 

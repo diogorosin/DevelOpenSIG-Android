@@ -74,6 +74,16 @@ public class StringUtils {
 
     }
 
+    public static String formatQuantity(Integer integer){
+
+        decimalFormatOfQuantity.setMinimumFractionDigits(0);
+
+        decimalFormatOfQuantity.setMaximumFractionDigits(0);
+
+        return decimalFormatOfQuantity.format(integer);
+
+    }
+
     public static String formatQuantityWithMinimumFractionDigit(Double currency){
 
         decimalFormatOfQuantity.setMinimumFractionDigits(3);

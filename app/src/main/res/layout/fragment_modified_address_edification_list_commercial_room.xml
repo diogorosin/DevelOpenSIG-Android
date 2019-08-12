@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="20dp"
-            android:background="@drawable/icon_house_60"
+            android:background="@drawable/icon_commercial_room_60"
             android:clickable="false"
             android:focusable="false"
             android:scaleType="fitXY"/>

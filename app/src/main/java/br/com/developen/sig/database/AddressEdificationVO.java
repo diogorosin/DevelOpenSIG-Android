@@ -13,8 +13,15 @@ import androidx.room.Index;
                         parentColumns = "identifier",
                         childColumns = "address",
                         onDelete = ForeignKey.RESTRICT,
-                        onUpdate = ForeignKey.CASCADE)},
-        indices = {@Index(value={"address", "edification"})})
+                        onUpdate = ForeignKey.CASCADE),
+
+                @ForeignKey(entity = TypeVO.class,
+                        parentColumns = "identifier",
+                        childColumns = "type",
+                        onDelete = ForeignKey.RESTRICT,
+                        onUpdate = ForeignKey.CASCADE)
+        },
+        indices = {@Index(value={"address", "edification"}), @Index(value={"type"})})
 public class AddressEdificationVO {
 
     @NonNull

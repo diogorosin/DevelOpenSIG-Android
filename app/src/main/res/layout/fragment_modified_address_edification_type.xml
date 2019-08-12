@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:id="@+id/fragment_modified_address_edification_type"
     tools:context=".activity.ModifiedAddressEdificationActivity">
 
     <ScrollView
@@ -23,20 +24,14 @@
             android:orientation="vertical"
             android:weightSum="1">
 
-            <com.google.android.material.textfield.TextInputLayout
+            <Spinner
+                android:id="@+id/fragment_modified_address_edification_type_type_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/fragment_modified_address_edification_type_type_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/thoroughfare"
-                    android:imeOptions="actionNext"
-                    android:inputType="textPostalAddress"
-                    android:maxLines="1"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
+                android:layout_gravity="center"
+                android:spinnerMode="dropdown"
+                style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

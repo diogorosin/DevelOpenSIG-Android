@@ -9,7 +9,8 @@ public class AddressEdificationModel {
 
     private Integer edification;
 
-    private Integer type;
+    @Embedded(prefix = "type_")
+    private TypeModel type;
 
     private String reference;
 
@@ -37,13 +38,13 @@ public class AddressEdificationModel {
 
     }
 
-    public Integer getType() {
+    public TypeModel getType() {
 
         return type;
 
     }
 
-    public void setType(Integer type) {
+    public void setType(TypeModel type) {
 
         this.type = type;
 

@@ -33,6 +33,8 @@ import br.com.developen.sig.database.StateVO;
 import br.com.developen.sig.database.SubjectDAO;
 import br.com.developen.sig.database.SubjectModel;
 import br.com.developen.sig.database.SubjectVO;
+import br.com.developen.sig.database.TypeDAO;
+import br.com.developen.sig.database.TypeVO;
 
 
 @Database(entities = {
@@ -40,6 +42,7 @@ import br.com.developen.sig.database.SubjectVO;
         AddressEdificationVO.class,
         AddressEdificationDwellerVO.class,
         AgencyVO.class,
+        TypeVO.class,
         CityVO.class,
         CountryVO.class,
         IndividualVO.class,
@@ -80,6 +83,8 @@ public abstract class DB extends RoomDatabase {
     public abstract CountryDAO countryDAO();
 
     public abstract StateDAO stateDAO();
+
+    public abstract TypeDAO typeDAO();
 
     public abstract CityDAO cityDAO();
 

@@ -63,7 +63,7 @@ public class ModifiedAddressEdificationDwellerFragment extends Fragment {
 
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        recyclerViewAdapter = new ModifiedAddressEdificationDwellerRecyclerViewAdapter(new ArrayList<ModifiedAddressEdificationDwellerModel>(), fragmentListener);
+        recyclerViewAdapter = new ModifiedAddressEdificationDwellerRecyclerViewAdapter(new ArrayList<>(), fragmentListener);
 
         recyclerView.setAdapter(recyclerViewAdapter);
 

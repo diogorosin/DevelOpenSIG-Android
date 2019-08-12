@@ -5,6 +5,8 @@ import java.util.List;
 
 public class DatasetBean {
 
+	private List<TypeBean> types;
+
 	private List<AgencyBean> agencies;
 
 	private List<IndividualBean> individuals;
@@ -22,6 +24,22 @@ public class DatasetBean {
 	private List<AddressEdificationBean> addressesEdifications;
 
 	private List<AddressEdificationDwellerBean> addressesEdificationsDwellers;
+
+	public List<TypeBean> getTypes() {
+
+		if (types == null)
+
+			types = new ArrayList<TypeBean>();
+
+		return types;
+
+	}
+
+	public void setTypes(List<TypeBean> types) {
+
+		this.types = types;
+
+	}
 
 	public List<AgencyBean> getAgencies() {
 

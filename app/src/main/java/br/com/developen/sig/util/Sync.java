@@ -10,6 +10,7 @@ import br.com.developen.sig.bean.DatasetBean;
 import br.com.developen.sig.bean.IndividualBean;
 import br.com.developen.sig.bean.OrganizationBean;
 import br.com.developen.sig.bean.StateBean;
+import br.com.developen.sig.bean.TypeBean;
 import br.com.developen.sig.database.AddressDAO;
 import br.com.developen.sig.database.AddressEdificationDAO;
 import br.com.developen.sig.database.AddressEdificationDwellerDAO;
@@ -30,6 +31,8 @@ import br.com.developen.sig.database.StateDAO;
 import br.com.developen.sig.database.StateVO;
 import br.com.developen.sig.database.SubjectDAO;
 import br.com.developen.sig.database.SubjectVO;
+import br.com.developen.sig.database.TypeDAO;
+import br.com.developen.sig.database.TypeVO;
 
 public class Sync {
 
@@ -48,6 +51,31 @@ public class Sync {
         try {
 
             database.beginTransaction();
+
+            if (datasetBean.getTypes() != null &&
+                    !datasetBean.getTypes().isEmpty()){
+
+                TypeDAO typeDAO = database.typeDAO();
+
+                for (TypeBean typeBean: datasetBean.getTypes()) {
+
+                    TypeVO typeVO = new TypeVO();
+
+                    typeVO.setIdentifier(typeBean.getIdentifier());
+
+                    typeVO.setDenomination(typeBean.getDenomination());
+
+                    if (typeDAO.exists(typeVO.getIdentifier()))
+
+                        typeDAO.update(typeVO);
+
+                    else
+
+                        typeDAO.create(typeVO);
+
+                }
+
+            }
 
             if (datasetBean.getAgencies() != null &&
                     !datasetBean.getAgencies().isEmpty()){

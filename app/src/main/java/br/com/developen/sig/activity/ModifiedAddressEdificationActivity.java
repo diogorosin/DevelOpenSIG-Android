@@ -3,10 +3,10 @@ package br.com.developen.sig.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,11 +23,13 @@ import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationTypeFragment;
 import br.com.developen.sig.task.CreateDwellerAsyncTask;
+import br.com.developen.sig.task.UpdateActiveOfModifiedAddressEdificationAsyncTask;
 import br.com.developen.sig.util.Messaging;
 
 public class ModifiedAddressEdificationActivity extends AppCompatActivity
         implements ModifiedAddressEdificationDwellerFragment.ModifiedAddressEdificationDwellerFragmentListener,
-CreateDwellerAsyncTask.Listener{
+        UpdateActiveOfModifiedAddressEdificationAsyncTask.Listener,
+        CreateDwellerAsyncTask.Listener{
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -52,6 +54,8 @@ CreateDwellerAsyncTask.Listener{
 
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         viewPager = findViewById(R.id.activity_modified_address_edification_container);
@@ -75,17 +79,28 @@ CreateDwellerAsyncTask.Listener{
 
         final TabLayout tabLayout = findViewById(R.id.activity_modified_address_edification_tabs);
 
+        tabLayout.setupWithViewPager(viewPager);
+
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
         floatingActionButton = findViewById(R.id.activity_modified_address_edification_fab);
 
-        floatingActionButton.setOnClickListener(v -> {
+        floatingActionButton.setOnClickListener(v ->
 
             new CreateDwellerAsyncTask(ModifiedAddressEdificationActivity.this).execute(
                     getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0));
+                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0))
 
-        });
+        );
+
+    }
+
+
+    public boolean onSupportNavigateUp(){
+
+        finish();
+
+        return true;
 
     }
 
@@ -103,9 +118,23 @@ CreateDwellerAsyncTask.Listener{
 
         int id = item.getItemId();
 
-        if (id == R.id.menu_modified_address_edification_action_settings)
+        if (id == R.id.menu_modified_address_edification_save) {
+
+            try {
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+            } catch (Exception e) { }
+
+            new UpdateActiveOfModifiedAddressEdificationAsyncTask<>(ModifiedAddressEdificationActivity.this).
+                    execute(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                            getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0));
 
             return true;
+
+        }
 
         return super.onOptionsItemSelected(item);
 
@@ -121,9 +150,9 @@ CreateDwellerAsyncTask.Listener{
                 getModifiedAddressEdification().
                 getModifiedAddress().
                 getIdentifier(), modifiedAddressEdificationDwellerModel.
-                        getModifiedAddressEdification().
-                        getEdification(), modifiedAddressEdificationDwellerModel.
-                        getDweller());
+                getModifiedAddressEdification().
+                getEdification(), modifiedAddressEdificationDwellerModel.
+                getDweller());
 
     }
 
@@ -154,16 +183,32 @@ CreateDwellerAsyncTask.Listener{
     }
 
 
-    public void onCreateDwellerFailure(Messaging messaging) {
+    public void onCreateDwellerFailure(Messaging messaging) {}
+
+
+    public void onUpdateActiveOfModifiedAddressEdificationSuccess() {
+
+        finish();
 
     }
 
 
+    public void onUpdateActiveOfModifiedAddressEdificationFailure(Messaging messaging) {}
+
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        private String[] tabTitles = new String[]{"Tipo", "Moradores"};
 
         public SectionsPagerAdapter(FragmentManager fm) {
 
             super(fm);
+
+        }
+
+        public CharSequence getPageTitle(int position) {
+
+            return tabTitles[position];
 
         }
 

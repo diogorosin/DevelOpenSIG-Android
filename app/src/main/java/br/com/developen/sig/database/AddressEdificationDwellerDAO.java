@@ -48,7 +48,8 @@ public interface AddressEdificationDwellerDAO {
             " AddressCityStateCountry.denomination AS 'addressEdification_address_city_state_country_denomination', " +
             " AddressCityStateCountry.acronym AS 'addressEdification_address_city_state_country_acronym', " +
             " AE.edification AS 'addressEdification_edification', " +
-            " AE.type AS 'addressEdification_type', " +
+            " AddressEdificationType.identifier AS 'addressEdification_type_identifier', " +
+            " AddressEdificationType.denomination AS 'addressEdification_type_denomination', " +
             " AE.reference AS 'addressEdification_reference', " +
             " AED.dweller AS 'dweller', " +
             " SV.identifier AS 'subject_identifier', " +
@@ -57,6 +58,7 @@ public interface AddressEdificationDwellerDAO {
             "FROM AddressEdificationDweller AED " +
             "INNER JOIN AddressEdification AE ON AE.address = AED.address AND AE.edification = AED.edification " +
             "INNER JOIN Address A ON A.identifier = AE.address " +
+            "INNER JOIN Type AddressEdificationType ON AddressEdificationType.identifier = AE.type " +
             "INNER JOIN City AddressCity ON AddressCity.identifier = A.city " +
             "INNER JOIN State AddressCityState ON AddressCityState.identifier = AddressCity.state " +
             "INNER JOIN Country AddressCityStateCountry ON AddressCityStateCountry.identifier = AddressCityState.country " +

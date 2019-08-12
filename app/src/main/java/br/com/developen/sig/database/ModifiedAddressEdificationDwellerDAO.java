@@ -61,8 +61,10 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " ModifiedAddressCityStateCountry.denomination AS 'modifiedAddressEdification_modifiedAddress_city_state_country_denomination', " +
             " ModifiedAddressCityStateCountry.acronym AS 'modifiedAddressEdification_modifiedAddress_city_state_country_acronym', " +
             " MAE.edification AS 'modifiedAddressEdification_edification', " +
-            " MAE.type AS 'modifiedAddressEdification_type', " +
+            " ModifiedAddressEdificationType.identifier AS 'modifiedAddressEdification_type_identifier', " +
+            " ModifiedAddressEdificationType.denomination AS 'modifiedAddressEdification_type_denomination', " +
             " MAE.reference AS 'modifiedAddressEdification_reference', " +
+            " MAE.active AS 'modifiedAddressEdification_active', " +
             " MAED.dweller AS 'dweller', " +
             " MAED.subject AS 'subject', " +
             " MAED.nameOrDenomination AS 'nameOrDenomination', " +
@@ -97,6 +99,7 @@ public interface ModifiedAddressEdificationDwellerDAO {
             "FROM ModifiedAddressEdificationDweller MAED " +
             "INNER JOIN ModifiedAddressEdification MAE ON MAE.modifiedAddress = MAED.modifiedAddress AND MAE.edification = MAED.edification " +
             "INNER JOIN ModifiedAddress MA ON MA.identifier = MAE.modifiedAddress " +
+            "LEFT OUTER JOIN Type ModifiedAddressEdificationType ON MAE.type = ModifiedAddressEdificationType.identifier " +
             "LEFT OUTER JOIN City ModifiedAddressCity ON ModifiedAddressCity.identifier = MA.city " +
             "LEFT OUTER JOIN State ModifiedAddressCityState ON ModifiedAddressCityState.identifier = ModifiedAddressCity.state " +
             "LEFT OUTER JOIN Country ModifiedAddressCityStateCountry ON ModifiedAddressCityStateCountry.identifier = ModifiedAddressCityState.country " +
@@ -131,8 +134,10 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " ModifiedAddressCityStateCountry.denomination AS 'modifiedAddressEdification_modifiedAddress_city_state_country_denomination', " +
             " ModifiedAddressCityStateCountry.acronym AS 'modifiedAddressEdification_modifiedAddress_city_state_country_acronym', " +
             " MAE.edification AS 'modifiedAddressEdification_edification', " +
-            " MAE.type AS 'modifiedAddressEdification_type', " +
+            " ModifiedAddressEdificationType.identifier AS 'modifiedAddressEdification_type_identifier', " +
+            " ModifiedAddressEdificationType.denomination AS 'modifiedAddressEdification_type_denomination', " +
             " MAE.reference AS 'modifiedAddressEdification_reference', " +
+            " MAE.active AS 'modifiedAddressEdification_active', " +
             " MAED.dweller AS 'dweller', " +
             " MAED.subject AS 'subject', " +
             " MAED.nameOrDenomination AS 'nameOrDenomination', " +
@@ -167,6 +172,7 @@ public interface ModifiedAddressEdificationDwellerDAO {
             "FROM ModifiedAddressEdificationDweller MAED " +
             "INNER JOIN ModifiedAddressEdification MAE ON MAE.modifiedAddress = MAED.modifiedAddress AND MAE.edification = MAED.edification " +
             "INNER JOIN ModifiedAddress MA ON MA.identifier = MAE.modifiedAddress " +
+            "LEFT OUTER JOIN Type ModifiedAddressEdificationType ON MAE.type = ModifiedAddressEdificationType.identifier " +
             "LEFT OUTER JOIN City ModifiedAddressCity ON ModifiedAddressCity.identifier = MA.city " +
             "LEFT OUTER JOIN State ModifiedAddressCityState ON ModifiedAddressCityState.identifier = ModifiedAddressCity.state " +
             "LEFT OUTER JOIN Country ModifiedAddressCityStateCountry ON ModifiedAddressCityStateCountry.identifier = ModifiedAddressCityState.country " +

@@ -13,11 +13,15 @@ import br.com.developen.sig.util.DB;
 
 public class ModifiedAddressEdificationRepository extends AndroidViewModel {
 
+
     private ModifiedAddressEdificationDAO dao;
 
     private LiveData<List<ModifiedAddressEdificationModel>> modifiedAddressEdifications;
 
-    private LiveData<ModifiedAddressEdificationModel> modifiedAddressEdification;
+    private LiveData<Integer> typeOfModifiedAddressEdification;
+
+    private LiveData<String> referenceOfModifiedAddressEdification;
+
 
     public ModifiedAddressEdificationRepository(Application application){
 
@@ -25,7 +29,8 @@ public class ModifiedAddressEdificationRepository extends AndroidViewModel {
 
     }
 
-    public ModifiedAddressEdificationDAO getDao() {
+
+    private ModifiedAddressEdificationDAO getDao() {
 
         if (dao==null)
 
@@ -35,11 +40,6 @@ public class ModifiedAddressEdificationRepository extends AndroidViewModel {
 
     }
 
-    public void setDao(ModifiedAddressEdificationDAO dao) {
-
-        this.dao = dao;
-
-    }
 
     public LiveData<List<ModifiedAddressEdificationModel>> getEdificationsOfModifiedAddress(Integer modifiedAddress){
 
@@ -51,7 +51,30 @@ public class ModifiedAddressEdificationRepository extends AndroidViewModel {
 
     }
 
-    public LiveData<ModifiedAddressEdificationModel> getModifiedAddressEdification(Integer modifiedAddress, Integer edification){
+
+    public LiveData<Integer> getTypeOfModifiedAddressEdification(Integer modifiedAddress, Integer edification){
+
+        if (typeOfModifiedAddressEdification == null)
+
+            typeOfModifiedAddressEdification = getDao().getTypeOfModifiedAddressEdification(modifiedAddress, edification);
+
+        return typeOfModifiedAddressEdification;
+
+    }
+
+
+    public LiveData<String> getReferenceOfModifiedAddressEdification(Integer modifiedAddress, Integer edification){
+
+        if (referenceOfModifiedAddressEdification == null)
+
+            referenceOfModifiedAddressEdification = getDao().getReferenceOfModifiedAddressEdification(modifiedAddress, edification);
+
+        return referenceOfModifiedAddressEdification;
+
+    }
+
+
+/*    public LiveData<ModifiedAddressEdificationModel> getModifiedAddressEdification(Integer modifiedAddress, Integer edification){
 
         if (modifiedAddressEdification==null)
 
@@ -60,5 +83,54 @@ public class ModifiedAddressEdificationRepository extends AndroidViewModel {
         return modifiedAddressEdification;
 
     }
+
+
+    public void save(Integer typeOfModifiedAddressEdification, String reference){
+
+
+        ModifiedAddressEdificationModel model = modifiedAddressEdification.getValue();
+
+        ModifiedAddressEdificationVO vo = new ModifiedAddressEdificationVO();
+
+        vo.setModifiedAddress(model.getModifiedAddress().getIdentifier());
+
+        vo.setEdification(model.getEdification());
+
+        vo.setType(typeOfModifiedAddressEdification);
+
+        vo.setReference(reference);
+
+        vo.setActive(true);
+
+        if (getDao().exists(vo.getModifiedAddress(), vo.getEdification()))
+
+            getDao().update(vo);
+
+
+    }
+
+    public Integer getType() {
+
+        return typeOfModifiedAddressEdification;
+
+    }
+
+    public void setType(Integer typeOfModifiedAddressEdification) {
+
+        this.typeOfModifiedAddressEdification = typeOfModifiedAddressEdification;
+
+    }
+
+    public String getReference() {
+
+        return reference;
+
+    }
+
+    public void setReference(String reference) {
+
+        this.reference = reference;
+
+    } */
 
 }

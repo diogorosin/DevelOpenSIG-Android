@@ -16,8 +16,15 @@ import java.util.Objects;
                         parentColumns = "identifier",
                         childColumns = "modifiedAddress",
                         onDelete = ForeignKey.RESTRICT,
-                        onUpdate = ForeignKey.CASCADE)},
-        indices = {@Index(value={"modifiedAddress", "edification"})})
+                        onUpdate = ForeignKey.CASCADE),
+                @ForeignKey(entity = TypeVO.class,
+                        parentColumns = "identifier",
+                        childColumns = "type",
+                        onDelete = ForeignKey.RESTRICT,
+                        onUpdate = ForeignKey.CASCADE)
+                },
+        indices = {@Index(value={"modifiedAddress", "edification"}),
+                @Index(value={"type"})})
 public class ModifiedAddressEdificationVO {
 
     @NonNull
@@ -34,6 +41,10 @@ public class ModifiedAddressEdificationVO {
 
     @ColumnInfo(name="reference")
     private String reference;
+
+    @NonNull
+    @ColumnInfo(name="active")
+    private Boolean active;
 
     public Integer getModifiedAddress() {
 
@@ -80,6 +91,18 @@ public class ModifiedAddressEdificationVO {
     public void setReference(String reference) {
 
         this.reference = reference;
+
+    }
+
+    public Boolean getActive() {
+
+        return active;
+
+    }
+
+    public void setActive(Boolean active) {
+
+        this.active = active;
 
     }
 

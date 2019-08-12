@@ -23,12 +23,15 @@ import br.com.developen.sig.database.ModifiedAddressEdificationModel;
 import br.com.developen.sig.fragment.ModifiedAddressAddressFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationFragment;
 import br.com.developen.sig.fragment.ModifiedAddressLocationFragment;
+import br.com.developen.sig.task.CreateDwellerAsyncTask;
+import br.com.developen.sig.task.CreateEdificationAsyncTask;
 import br.com.developen.sig.task.UpdateAddressLocationAsynTask;
 import br.com.developen.sig.util.Messaging;
 
 public class ModifiedAddressActivity extends AppCompatActivity
         implements ModifiedAddressLocationFragment.LocationListener,
         ModifiedAddressEdificationFragment.EdificationFragmentListener,
+        CreateEdificationAsyncTask.Listener,
         UpdateAddressLocationAsynTask.Listener {
 
 
@@ -79,6 +82,13 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
         floatingActionButton = findViewById(R.id.activity_modified_address_fab);
 
+        floatingActionButton.setOnClickListener(v ->
+
+                new CreateEdificationAsyncTask(ModifiedAddressActivity.this).
+                        execute(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0))
+
+        );
+
     }
 
 
@@ -125,21 +135,39 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
     public void onEdificationClicked(ModifiedAddressEdificationModel modifiedAddressEdificationModel) {
 
-        Intent addIntent = new Intent(ModifiedAddressActivity.this, ModifiedAddressEdificationActivity.class);
-
-        addIntent.putExtra(ModifiedAddressEdificationActivity.MODIFIED_ADDRESS_IDENTIFIER, modifiedAddressEdificationModel.
+        editEdification(modifiedAddressEdificationModel.
                 getModifiedAddress().
-                getIdentifier());
-
-        addIntent.putExtra(ModifiedAddressEdificationActivity.EDIFICATION_IDENTIFIER, modifiedAddressEdificationModel.
-                getEdification());
-
-        startActivity(addIntent);
+                getIdentifier(),
+                modifiedAddressEdificationModel.
+                        getEdification());
 
     }
 
 
     public void onEdificationLongClick(ModifiedAddressEdificationModel modifiedAddressEdificationModel) {}
+
+
+    public void onCreateEdificationSuccess(Integer identifier) {
+
+        editEdification(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER,0), identifier);
+
+    }
+
+
+    public void onCreateEdificationFailure(Messaging messaging) {}
+
+
+    public void editEdification(Integer modifiedAddress, Integer edification){
+
+        Intent edificationIntent = new Intent(ModifiedAddressActivity.this, ModifiedAddressEdificationActivity.class);
+
+        edificationIntent.putExtra(ModifiedAddressEdificationDwellerActivity.MODIFIED_ADDRESS_IDENTIFIER, modifiedAddress);
+
+        edificationIntent.putExtra(ModifiedAddressEdificationDwellerActivity.EDIFICATION_IDENTIFIER, edification);
+
+        startActivity(edificationIntent);
+
+    }
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

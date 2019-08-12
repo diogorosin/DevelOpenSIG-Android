@@ -1,17 +1,29 @@
 package br.com.developen.sig.fragment;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
 import br.com.developen.sig.R;
+import br.com.developen.sig.database.TypeModel;
 import br.com.developen.sig.repository.ModifiedAddressEdificationRepository;
+import br.com.developen.sig.repository.TypeRepository;
+import br.com.developen.sig.task.UpdateReferenceOfModifiedAddressEdificationAsyncTask;
+import br.com.developen.sig.task.UpdateTypeOfModifiedAddressEdificationAsyncTask;
 
 public class ModifiedAddressEdificationTypeFragment extends Fragment {
 
@@ -23,7 +35,11 @@ public class ModifiedAddressEdificationTypeFragment extends Fragment {
 
     private ModifiedAddressEdificationRepository modifiedAddressEdificationRepository;
 
-    private TextInputEditText typeEditText;
+    private TypeRepository typeRepository;
+
+    private ArrayAdapter typeSpinnerAdapter;
+
+    private Spinner typeSpinner;
 
     private TextInputEditText referenceEditText;
 
@@ -49,18 +65,48 @@ public class ModifiedAddressEdificationTypeFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
 
-        modifiedAddressEdificationRepository = ViewModelProviders.of(getActivity()).get(ModifiedAddressEdificationRepository.class);
+    }
 
-        modifiedAddressEdificationRepository.getModifiedAddressEdification(
+
+    public void onResume(){
+
+        super.onResume();
+
+        modifiedAddressEdificationRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationRepository.class);
+
+        modifiedAddressEdificationRepository.getTypeOfModifiedAddressEdification(
                 getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER),
                 getArguments().getInt(ARG_EDIFICATION_IDENTIFIER)).
-                observe(getActivity(), modifiedAddressEdificationModel -> {
+                observe(this, typeOfModifiedAddressEdification -> {
 
-                    if (modifiedAddressEdificationModel != null){
+                    TypeModel typeModel = new TypeModel();
 
-                        typeEditText.setText(modifiedAddressEdificationModel.getType().toString());
+                    typeModel.setIdentifier(typeOfModifiedAddressEdification);
 
-                        referenceEditText.setText(modifiedAddressEdificationModel.getReference());
+                    int position = typeSpinnerAdapter.getPosition(typeModel);
+
+                    if (position != -1)
+
+                        typeSpinner.setSelection(position, false);
+
+                });
+
+        modifiedAddressEdificationRepository.getReferenceOfModifiedAddressEdification(
+                getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER),
+                getArguments().getInt(ARG_EDIFICATION_IDENTIFIER)).
+                observe(this, referenceOfModifiedAddressEdification -> {
+
+                    if (referenceOfModifiedAddressEdification != null) {
+
+                        if (!referenceOfModifiedAddressEdification.equals(referenceEditText.getText().toString()))
+
+                            referenceEditText.setText(referenceOfModifiedAddressEdification);
+
+                    } else {
+
+                        if (referenceEditText.getText().toString() != null)
+
+                            referenceEditText.setText(null);
 
                     }
 
@@ -74,9 +120,72 @@ public class ModifiedAddressEdificationTypeFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_modified_address_edification_type, container, false);
 
-        typeEditText = v.findViewById(R.id.fragment_modified_address_edification_type_type_edittext);
+        typeSpinner = v.findViewById(R.id.fragment_modified_address_edification_type_type_spinner);
+
+        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                new UpdateTypeOfModifiedAddressEdificationAsyncTask().
+                        execute(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER),
+                                getArguments().getInt(ARG_EDIFICATION_IDENTIFIER),
+                                ((TypeModel)typeSpinnerAdapter.getItem(position)).getIdentifier());
+
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {}
+
+        });
+
+        typeSpinnerAdapter = new ArrayAdapter<>(
+                Objects.requireNonNull(getActivity()),
+                R.layout.fragment_modified_address_edification_type_spinner,
+                new ArrayList<>());
+
+        typeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        typeSpinner.setAdapter(typeSpinnerAdapter);
+
+        typeRepository = ViewModelProviders.of(this).get(TypeRepository.class);
+
+        typeRepository.getTypes().observe(this, typeModels -> {
+
+            TypeModel index = (TypeModel) typeSpinner.getSelectedItem();
+
+            typeSpinnerAdapter.clear();
+
+            for (TypeModel typeModel : typeModels)
+
+                typeSpinnerAdapter.add(typeModel);
+
+            if (index != null){
+
+                int position = typeSpinnerAdapter.getPosition(index);
+
+                typeSpinner.setSelection(position, false);
+
+            }
+
+        });
 
         referenceEditText = v.findViewById(R.id.fragment_modified_address_edification_type_reference_edittext);
+
+        referenceEditText.addTextChangedListener(new TextWatcher() {
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                new UpdateReferenceOfModifiedAddressEdificationAsyncTask()
+                        .execute(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER),
+                                getArguments().getInt(ARG_EDIFICATION_IDENTIFIER),
+                                String.valueOf(s));
+
+            }
+
+            public void afterTextChanged(Editable s) {}
+
+        });
 
         return v;
 

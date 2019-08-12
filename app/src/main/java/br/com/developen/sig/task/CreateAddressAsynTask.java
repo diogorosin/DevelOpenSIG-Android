@@ -81,6 +81,8 @@ public class CreateAddressAsynTask<A extends Activity & CreateAddressAsynTask.Li
 
             modifiedAddressEdificationVO.setType(1);
 
+            modifiedAddressEdificationVO.setActive(true);
+
             database.modifiedAddressEdificationDAO().create(modifiedAddressEdificationVO);
 
 
@@ -165,8 +167,6 @@ public class CreateAddressAsynTask<A extends Activity & CreateAddressAsynTask.Li
             modifiedAddressEdificationDwellerVO.setActive(true);
 
             database.modifiedAddressEdificationDwellerDAO().create(modifiedAddressEdificationDwellerVO);
-
-
 
 
             database.setTransactionSuccessful();
