@@ -104,6 +104,11 @@ public interface ModifiedAddressEdificationDAO {
     LiveData<ModifiedAddressEdificationModel> getModifiedAddressEdification(Integer modifiedAddress, Integer edification);
     */
 
+    @Query("SELECT " +
+            " MAE.active AS 'active' " +
+            "FROM ModifiedAddressEdification MAE " +
+            "WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification")
+    LiveData<Boolean> getActiveOfModifiedAddressEdification(Integer modifiedAddress, Integer edification);
 
     @Query("SELECT " +
             " MAE.type AS 'type' " +

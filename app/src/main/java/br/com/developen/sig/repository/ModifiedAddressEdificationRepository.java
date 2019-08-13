@@ -18,6 +18,8 @@ public class ModifiedAddressEdificationRepository extends AndroidViewModel {
 
     private LiveData<List<ModifiedAddressEdificationModel>> modifiedAddressEdifications;
 
+    private LiveData<Boolean> activeOfModifiedAddressEdification;
+
     private LiveData<Integer> typeOfModifiedAddressEdification;
 
     private LiveData<String> referenceOfModifiedAddressEdification;
@@ -48,6 +50,16 @@ public class ModifiedAddressEdificationRepository extends AndroidViewModel {
             modifiedAddressEdifications = getDao().getEdificationsOfModifiedAddress(modifiedAddress);
 
         return modifiedAddressEdifications;
+
+    }
+
+    public LiveData<Boolean> getActiveOfModifiedAddressEdification(Integer modifiedAddress, Integer edification){
+
+        if (activeOfModifiedAddressEdification == null)
+
+            activeOfModifiedAddressEdification = getDao().getActiveOfModifiedAddressEdification(modifiedAddress, edification);
+
+        return activeOfModifiedAddressEdification;
 
     }
 

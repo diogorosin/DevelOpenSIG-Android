@@ -4,14 +4,14 @@ import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
 
-import br.com.developen.sig.database.ModifiedAddressEdificationVO;
+import br.com.developen.sig.database.ModifiedAddressEdificationDwellerVO;
 import br.com.developen.sig.exception.CannotInitializeDatabaseException;
 import br.com.developen.sig.exception.InternalException;
 import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.DB;
 import br.com.developen.sig.util.Messaging;
 
-public class UpdateActiveOfModifiedAddressEdificationAsyncTask<L extends UpdateActiveOfModifiedAddressEdificationAsyncTask.Listener >
+public class UpdateActiveOfModifiedAddressEdificationDwellerAsyncTask<L extends UpdateActiveOfModifiedAddressEdificationDwellerAsyncTask.Listener >
         extends AsyncTask<Boolean, Void, Object> {
 
 
@@ -21,14 +21,18 @@ public class UpdateActiveOfModifiedAddressEdificationAsyncTask<L extends UpdateA
 
     private Integer edification;
 
+    private Integer dweller;
 
-    public UpdateActiveOfModifiedAddressEdificationAsyncTask(L listener, Integer modifiedAddress, Integer edification) {
+
+    public UpdateActiveOfModifiedAddressEdificationDwellerAsyncTask(L listener, Integer modifiedAddress, Integer edification, Integer dweller) {
 
         this.listener = new WeakReference<>(listener);
 
         this.modifiedAddress = modifiedAddress;
 
         this.edification = edification;
+
+        this.dweller = dweller;
 
     }
 
@@ -47,19 +51,17 @@ public class UpdateActiveOfModifiedAddressEdificationAsyncTask<L extends UpdateA
 
             database.beginTransaction();
 
-            ModifiedAddressEdificationVO modifiedAddressEdificationVO = database.modifiedAddressEdificationDAO().retrieve(modifiedAddress, edification);
+            ModifiedAddressEdificationDwellerVO modifiedAddressEdificationDwellerVO = database.modifiedAddressEdificationDwellerDAO().retrieve(modifiedAddress, edification, dweller);
 
-            modifiedAddressEdificationVO.setActive(active);
+            modifiedAddressEdificationDwellerVO.setActive(active);
 
-            database.modifiedAddressEdificationDAO().update(modifiedAddressEdificationVO);
+            database.modifiedAddressEdificationDwellerDAO().update(modifiedAddressEdificationDwellerVO);
 
             database.setTransactionSuccessful();
 
             return true;
 
         } catch(Exception e) {
-
-            e.printStackTrace();
 
             return new InternalException();
 
@@ -70,7 +72,6 @@ public class UpdateActiveOfModifiedAddressEdificationAsyncTask<L extends UpdateA
                 database.endTransaction();
 
         }
-
 
     }
 
@@ -83,13 +84,13 @@ public class UpdateActiveOfModifiedAddressEdificationAsyncTask<L extends UpdateA
 
             if (callResult instanceof Boolean){
 
-                listener.onUpdateActiveOfModifiedAddressEdificationSuccess();
+                listener.onUpdateActiveOfModifiedAddressEdificationDwellerSuccess();
 
             } else {
 
                 if (callResult instanceof Messaging){
 
-                    listener.onUpdateActiveOfModifiedAddressEdificationFailure((Messaging) callResult);
+                    listener.onUpdateActiveOfModifiedAddressEdificationDwellerFailure((Messaging) callResult);
 
                 }
 
@@ -102,9 +103,9 @@ public class UpdateActiveOfModifiedAddressEdificationAsyncTask<L extends UpdateA
 
     public interface Listener {
 
-        void onUpdateActiveOfModifiedAddressEdificationSuccess();
+        void onUpdateActiveOfModifiedAddressEdificationDwellerSuccess();
 
-        void onUpdateActiveOfModifiedAddressEdificationFailure(Messaging messaging);
+        void onUpdateActiveOfModifiedAddressEdificationDwellerFailure(Messaging messaging);
 
     }
 

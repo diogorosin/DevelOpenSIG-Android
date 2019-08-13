@@ -77,5 +77,6 @@
     <string name="action_save">Salvar</string>
     <string name="error_invalid_cpf">CPF informado é inválido</string>
     <string name="error_invalid_birthdate">Data de nascimento informada é inválida</string>
+    <string name="action_delete">Excluir</string>
 
 </resources>

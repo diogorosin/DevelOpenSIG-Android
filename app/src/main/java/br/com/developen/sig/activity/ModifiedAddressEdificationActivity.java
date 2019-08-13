@@ -1,18 +1,22 @@
 package br.com.developen.sig.activity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -22,6 +26,7 @@ import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationTypeFragment;
+import br.com.developen.sig.repository.ModifiedAddressEdificationRepository;
 import br.com.developen.sig.task.CreateDwellerAsyncTask;
 import br.com.developen.sig.task.UpdateActiveOfModifiedAddressEdificationAsyncTask;
 import br.com.developen.sig.util.Messaging;
@@ -37,11 +42,15 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
     public static final String EDIFICATION_IDENTIFIER = "ARG_EDIFICATION_IDENTIFIER";
 
 
+    private ModifiedAddressEdificationRepository modifiedAddressEdificationRepository;
+
     private SectionsPagerAdapter sectionsPagerAdapter;
 
     private FloatingActionButton floatingActionButton;
 
     private ViewPager viewPager;
+
+    private boolean active = false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +102,18 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
         );
 
+        modifiedAddressEdificationRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationRepository.class);
+
+        modifiedAddressEdificationRepository.getActiveOfModifiedAddressEdification(
+                getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0)).observe(this, isActive -> {
+
+            active = isActive;
+
+            invalidateOptionsMenu();
+
+        });
+
     }
 
 
@@ -107,7 +128,13 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu_modified_address_edification, menu);
+        MenuInflater menuInflater = getMenuInflater();
+
+        menuInflater.inflate(R.menu.menu_modified_address_edification, menu);
+
+        MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_edification_delete);
+
+        deleteItem.setVisible(active);
 
         return true;
 
@@ -118,21 +145,68 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.menu_modified_address_edification_save) {
+        switch (id) {
 
-            try {
+            case R.id.menu_modified_address_edification_save: {
 
-                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                try {
 
-                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-            } catch (Exception e) { }
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
-            new UpdateActiveOfModifiedAddressEdificationAsyncTask<>(ModifiedAddressEdificationActivity.this).
-                    execute(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                            getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0));
+                } catch (Exception e) { }
 
-            return true;
+                new UpdateActiveOfModifiedAddressEdificationAsyncTask<>(
+                        ModifiedAddressEdificationActivity.this,
+                        getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                        getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0)).execute(true);
+
+                return true;
+
+            }
+
+            case R.id.menu_modified_address_edification_delete: {
+
+                try {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                } catch (Exception e) {}
+
+                DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+
+                    switch (which){
+
+                        case DialogInterface.BUTTON_POSITIVE:
+
+                            new UpdateActiveOfModifiedAddressEdificationAsyncTask<>(this,
+                                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0)).execute(false);
+
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+
+                            break;
+
+                    }
+
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setMessage("Deseja realmente excluir a edificação?").
+                        setTitle("Atenção").
+                        setPositiveButton("Sim", dialogClickListener).
+                        setNegativeButton("Não", dialogClickListener).
+                        show();
+
+                return true;
+
+            }
 
         }
 

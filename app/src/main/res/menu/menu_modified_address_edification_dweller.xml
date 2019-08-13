@@ -3,8 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="br.com.developen.sig.ModifiedAddressEdificationDwellerActivity">
     <item
+        android:id="@+id/menu_modified_address_edification_dweller_delete"
+        android:orderInCategory="100"
+        android:title="@string/action_delete"
+        android:icon="@drawable/icon_delete_24"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_modified_address_edification_dweller_save"
         android:orderInCategory="100"
         android:title="@string/action_save"
+        android:icon="@drawable/icon_save_24"
         app:showAsAction="always" />
 </menu>
