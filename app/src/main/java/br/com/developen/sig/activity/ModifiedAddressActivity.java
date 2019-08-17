@@ -1,48 +1,63 @@
 package br.com.developen.sig.activity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.Map;
+
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
 import br.com.developen.sig.fragment.ModifiedAddressAddressFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationFragment;
 import br.com.developen.sig.fragment.ModifiedAddressLocationFragment;
-import br.com.developen.sig.task.CreateDwellerAsyncTask;
+import br.com.developen.sig.repository.ModifiedAddressRepository;
 import br.com.developen.sig.task.CreateEdificationAsyncTask;
-import br.com.developen.sig.task.UpdateAddressLocationAsynTask;
+import br.com.developen.sig.task.UpdateActiveOfModifiedAddressAsyncTask;
+import br.com.developen.sig.task.UpdateAddressLocationAsyncTask;
 import br.com.developen.sig.util.Messaging;
+import br.com.developen.sig.widget.ValidableFragment;
 
 public class ModifiedAddressActivity extends AppCompatActivity
         implements ModifiedAddressLocationFragment.LocationListener,
         ModifiedAddressEdificationFragment.EdificationFragmentListener,
+        UpdateActiveOfModifiedAddressAsyncTask.Listener,
         CreateEdificationAsyncTask.Listener,
-        UpdateAddressLocationAsynTask.Listener {
+        ValidableFragment.Listener,
+        UpdateAddressLocationAsyncTask.Listener{
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
 
+
+    private ModifiedAddressRepository modifiedAddressRepository;
 
     private SectionsPagerAdapter sectionsPagerAdapter;
 
     private FloatingActionButton floatingActionButton;
 
     private ViewPager viewPager;
+
+    private boolean active = false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +69,8 @@ public class ModifiedAddressActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.activity_modified_address_toolbar);
 
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -68,7 +85,7 @@ public class ModifiedAddressActivity extends AppCompatActivity
             @SuppressLint("RestrictedApi")
             public void onPageSelected(int position) {
 
-                floatingActionButton.setVisibility(position==2?View.VISIBLE:View.GONE);
+                floatingActionButton.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
 
             }
 
@@ -77,6 +94,8 @@ public class ModifiedAddressActivity extends AppCompatActivity
         });
 
         final TabLayout tabLayout = findViewById(R.id.activity_modified_address_tabs);
+
+        tabLayout.setupWithViewPager(viewPager);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
@@ -89,12 +108,38 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
         );
 
+        modifiedAddressRepository = ViewModelProviders.of(this).get(ModifiedAddressRepository.class);
+
+        modifiedAddressRepository.getActive(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0)).
+                observe(this, isActive -> {
+
+                    active = isActive;
+
+                    invalidateOptionsMenu();
+
+                });
+
+    }
+
+
+    public boolean onSupportNavigateUp(){
+
+        finish();
+
+        return true;
+
     }
 
 
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu_modified_address, menu);
+        MenuInflater menuInflater = getMenuInflater();
+
+        menuInflater.inflate(R.menu.menu_modified_address, menu);
+
+        MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_delete);
+
+        deleteItem.setVisible(active);
 
         return true;
 
@@ -105,9 +150,62 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.menu_modified_address_action_settings)
+        switch (id){
 
-            return true;
+            case R.id.menu_modified_address_save: {
+
+                for (Fragment f: getSupportFragmentManager().getFragments())
+
+                    if (f instanceof ValidableFragment)
+
+                        ((ValidableFragment) f).validate();
+
+                return true;
+
+            }
+
+            case R.id.menu_modified_address_delete: {
+
+                try {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                } catch (Exception e) {}
+
+                DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+
+                    switch (which){
+
+                        case DialogInterface.BUTTON_POSITIVE:
+
+                            new UpdateActiveOfModifiedAddressAsyncTask<>(this,
+                                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0)).execute(false);
+
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+
+                            break;
+
+                    }
+
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setMessage("Deseja realmente excluir o endereço?").
+                        setTitle("Atenção").
+                        setPositiveButton("Sim", dialogClickListener).
+                        setNegativeButton("Não", dialogClickListener).
+                        show();
+
+                return true;
+
+            }
+
+        }
 
         return super.onOptionsItemSelected(item);
 
@@ -119,7 +217,7 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
     public void onLocationChanged(LatLng latLng) {
 
-        new UpdateAddressLocationAsynTask<>(this).execute(
+        new UpdateAddressLocationAsyncTask<>(this).execute(
                 getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER,0),
                 latLng.latitude,
                 latLng.longitude);
@@ -137,9 +235,8 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
         editEdification(modifiedAddressEdificationModel.
                 getModifiedAddress().
-                getIdentifier(),
-                modifiedAddressEdificationModel.
-                        getEdification());
+                getIdentifier(), modifiedAddressEdificationModel.
+                getEdification());
 
     }
 
@@ -170,11 +267,29 @@ public class ModifiedAddressActivity extends AppCompatActivity
     }
 
 
+    public void onUpdateActiveOfModifiedAddressSuccess() {
+
+        finish();
+
+    }
+
+
+    public void onUpdateActiveOfModifiedAddressFailure(Messaging messaging) {}
+
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        private String[] tabTitles = new String[]{"Localização", "Endereço", "Edificação"};
 
         public SectionsPagerAdapter(FragmentManager fm) {
 
             super(fm);
+
+        }
+
+        public CharSequence getPageTitle(int position) {
+
+            return tabTitles[position];
 
         }
 
@@ -216,6 +331,22 @@ public class ModifiedAddressActivity extends AppCompatActivity
             return 3;
 
         }
+
+    }
+
+
+    public void onValidationFailed(Fragment f) {
+
+        if (f instanceof ModifiedAddressAddressFragment)
+
+            viewPager.setCurrentItem(1, true);
+
+    }
+
+
+    public void onValidationSucceeded(Fragment f) {
+
+        finish();
 
     }
 

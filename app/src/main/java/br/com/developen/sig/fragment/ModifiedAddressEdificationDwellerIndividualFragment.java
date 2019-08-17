@@ -35,7 +35,7 @@ import br.com.developen.sig.repository.CityRepository;
 import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
 import br.com.developen.sig.repository.StateRepository;
 import br.com.developen.sig.util.StringUtils;
-import br.com.developen.sig.widget.Editable;
+import br.com.developen.sig.widget.ValidableFragment;
 import br.com.developen.sig.widget.MyArrayAdapter;
 import br.com.developen.sig.widget.validator.Birthdate;
 import br.com.developen.sig.widget.validator.CPF;
@@ -44,7 +44,7 @@ import mk.webfactory.dz.maskededittext.MaskedEditText;
 
 public class ModifiedAddressEdificationDwellerIndividualFragment
         extends Fragment
-        implements Validator.ValidationListener, Editable {
+        implements Validator.ValidationListener, ValidableFragment {
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -440,7 +440,7 @@ public class ModifiedAddressEdificationDwellerIndividualFragment
     }
 
 
-    public void save() {
+    public void validate() {
 
         validator.validate();
 

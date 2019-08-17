@@ -1,6 +1,7 @@
 package br.com.developen.sig.database;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -64,6 +65,9 @@ public class ModifiedAddressVO {
     @ColumnInfo(name="longitude")
     private Double longitude;
 
+    @NonNull
+    @ColumnInfo(name="active")
+    private Boolean active;
 
     public Integer getIdentifier() {
 
@@ -218,6 +222,18 @@ public class ModifiedAddressVO {
     public void setLongitude(Double longitude) {
 
         this.longitude = longitude;
+
+    }
+
+    public Boolean getActive() {
+
+        return active;
+
+    }
+
+    public void setActive(Boolean active) {
+
+        this.active = active;
 
     }
 

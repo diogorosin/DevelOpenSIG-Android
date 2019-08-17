@@ -78,5 +78,7 @@
     <string name="error_invalid_cpf">CPF informado é inválido</string>
     <string name="error_invalid_birthdate">Data de nascimento informada é inválida</string>
     <string name="action_delete">Excluir</string>
+    <string name="cep">CEP</string>
+    <string name="error_postal_code">CEP deve conter oito dígitos</string>
 
 </resources>

@@ -39,6 +39,8 @@ public class ModifiedAddressModel {
 
     private Double longitude;
 
+    private Boolean active;
+
 
     public Integer getIdentifier() {
 
@@ -193,6 +195,18 @@ public class ModifiedAddressModel {
     public void setLongitude(Double longitude) {
 
         this.longitude = longitude;
+
+    }
+
+    public Boolean getActive() {
+
+        return active;
+
+    }
+
+    public void setActive(Boolean active) {
+
+        this.active = active;
 
     }
 

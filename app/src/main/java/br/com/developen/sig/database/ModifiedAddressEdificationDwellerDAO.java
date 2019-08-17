@@ -52,6 +52,7 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " MA.postalCode AS 'modifiedAddressEdification_modifiedAddress_postalCode', " +
             " MA.latitude AS 'modifiedAddressEdification_modifiedAddress_latitude', " +
             " MA.longitude AS 'modifiedAddressEdification_modifiedAddress_longitude', " +
+            " MA.active AS 'modifiedAddressEdification_modifiedAddress_active', " +
             " ModifiedAddressCity.identifier AS 'modifiedAddressEdification_modifiedAddress_city_identifier', " +
             " ModifiedAddressCity.denomination AS 'modifiedAddressEdification_modifiedAddress_city_denomination', " +
             " ModifiedAddressCityState.identifier AS 'modifiedAddressEdification_modifiedAddress_city_state_identifier', " +
@@ -125,6 +126,7 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " MA.postalCode AS 'modifiedAddressEdification_modifiedAddress_postalCode', " +
             " MA.latitude AS 'modifiedAddressEdification_modifiedAddress_latitude', " +
             " MA.longitude AS 'modifiedAddressEdification_modifiedAddress_longitude', " +
+            " MAE.active AS 'modifiedAddressEdification_active', " +
             " ModifiedAddressCity.identifier AS 'modifiedAddressEdification_modifiedAddress_city_identifier', " +
             " ModifiedAddressCity.denomination AS 'modifiedAddressEdification_modifiedAddress_city_denomination', " +
             " ModifiedAddressCityState.identifier AS 'modifiedAddressEdification_modifiedAddress_city_state_identifier', " +

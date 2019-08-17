@@ -97,7 +97,7 @@ public class ModifiedAddressEdificationRepository extends AndroidViewModel {
     }
 
 
-    public void save(Integer typeOfModifiedAddressEdification, String reference){
+    public void validate(Integer typeOfModifiedAddressEdification, String reference){
 
 
         ModifiedAddressEdificationModel model = modifiedAddressEdification.getValue();

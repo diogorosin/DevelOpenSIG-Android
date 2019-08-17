@@ -30,7 +30,7 @@ import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerOrganizati
 import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
 import br.com.developen.sig.task.UpdateActiveOfModifiedAddressEdificationDwellerAsyncTask;
 import br.com.developen.sig.util.Messaging;
-import br.com.developen.sig.widget.Editable;
+import br.com.developen.sig.widget.ValidableFragment;
 
 public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
         implements  UpdateActiveOfModifiedAddressEdificationDwellerAsyncTask.Listener{
@@ -163,9 +163,9 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
                 Fragment f = getSupportFragmentManager().findFragmentByTag(EDIT_FRAGMENT);
 
-                if (f instanceof Editable)
+                if (f instanceof ValidableFragment)
 
-                    ((Editable) f).save();
+                    ((ValidableFragment) f).validate();
 
                 return true;
 

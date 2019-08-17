@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -13,11 +14,12 @@ import br.com.developen.sig.database.CityVO;
 import br.com.developen.sig.database.ModifiedAddressVO;
 import br.com.developen.sig.exception.CannotInitializeDatabaseException;
 import br.com.developen.sig.exception.InternalException;
+import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.Constants;
 import br.com.developen.sig.util.DB;
 import br.com.developen.sig.util.Messaging;
 
-public class UpdateAddressLocationAsynTask<A extends Activity & UpdateAddressLocationAsynTask.Listener >
+public class UpdateAddressLocationAsyncTask<A extends Activity & UpdateAddressLocationAsyncTask.Listener >
         extends AsyncTask<Object, Void, Object> {
 
 
@@ -26,7 +28,7 @@ public class UpdateAddressLocationAsynTask<A extends Activity & UpdateAddressLoc
     private SharedPreferences preferences;
 
 
-    public UpdateAddressLocationAsynTask(A activity) {
+    public UpdateAddressLocationAsyncTask(A activity) {
 
         this.activity = new WeakReference<>(activity);
 
@@ -44,40 +46,39 @@ public class UpdateAddressLocationAsynTask<A extends Activity & UpdateAddressLoc
 
         Double longitude = (Double) params[2];
 
-        String thoroughfare = "";
+        String thoroughfare = null;
 
-        String number = "";
+        String number = null;
 
-        String district = "";
+        String district = null;
 
-        String postalCode = "";
+        String postalCode = null;
 
-        String country = "";
+        String country = null;
 
-        String state = "";
+        String state = null;
 
-        String city = "";
+        String city = null;
 
-        DB database = null;
+
+        boolean hasAddressInfo = false;
+
 
         A activity = this.activity.get();
 
-        if (activity != null)
+        if (activity == null)
 
-            database = DB.getInstance(activity.getBaseContext());
+            return false;
 
-        if (database==null)
-
-            return new CannotInitializeDatabaseException();
-
+        //BUSCA O ENDERECO DA LOCALIZACAO
         try {
 
             Geocoder geocoder = new Geocoder(activity.getBaseContext());
 
             List<Address> addresses = geocoder.
-                    getFromLocation(latitude, longitude,1);
+                    getFromLocation(latitude, longitude, 1);
 
-            if(addresses != null && addresses.size() > 0 ){
+            if (addresses != null && addresses.size() > 0) {
 
                 Address address = addresses.get(0);
 
@@ -89,23 +90,26 @@ public class UpdateAddressLocationAsynTask<A extends Activity & UpdateAddressLoc
 
                 postalCode = address.getPostalCode();
 
-                city = address.getLocality();
+                city = address.getSubAdminArea();
 
                 state = address.getAdminArea();
 
                 country = address.getCountryName();
 
-                /*Log.d("DIOGO", String.format("%s, %s, %s, %s, %s, %s, %s, %s",
-                        address,
-                        thoroughfare,
-                        district,
-                        number,
-                        postalCode,
-                        state,
-                        city,
-                        country));*/
+                hasAddressInfo = true;
 
             }
+
+        } catch (IOException ignored){}
+
+
+        DB database = DB.getInstance(App.getInstance());
+
+        if (database==null)
+
+            return new CannotInitializeDatabaseException();
+
+        try {
 
             database.beginTransaction();
 
@@ -117,26 +121,23 @@ public class UpdateAddressLocationAsynTask<A extends Activity & UpdateAddressLoc
 
             modifiedAddressVO.setLongitude(longitude);
 
-            modifiedAddressVO.setDenomination(thoroughfare);
+            if (hasAddressInfo) {
 
-            modifiedAddressVO.setPostalCode(Integer.valueOf(postalCode.replace("-", "")));
+                modifiedAddressVO.setDenomination(thoroughfare);
 
-            if (city!=null && !city.isEmpty()){
+                modifiedAddressVO.setNumber(number);
 
-                CityVO cityVO = database.cityDAO().
-                        findByCityStateCountry(city, state, country);
+                modifiedAddressVO.setDistrict(district);
 
-                if (cityVO != null) {
+                modifiedAddressVO.setPostalCode(postalCode == null ? null : Integer.valueOf(postalCode.replaceAll("\\D+", "")));
 
-                    modifiedAddressVO.setDenomination(thoroughfare);
+                if (city != null && !city.isEmpty()) {
 
-                    modifiedAddressVO.setNumber(number);
+                    CityVO cityVO = database.cityDAO().findByCityStateCountry(city, state, country);
 
-                    modifiedAddressVO.setDistrict(district);
+                    if (cityVO != null)
 
-                    modifiedAddressVO.setCity(cityVO.getIdentifier());
-
-                    //Log.d("DIOGO", "Cidade: " + cityVO.getIdentifier().toString());
+                        modifiedAddressVO.setCity(cityVO.getIdentifier());
 
                 }
 

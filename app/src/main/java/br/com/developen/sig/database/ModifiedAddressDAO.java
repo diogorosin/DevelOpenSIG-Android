@@ -28,7 +28,7 @@ public interface ModifiedAddressDAO {
     @Delete
     void delete(ModifiedAddressVO modifiedAddressVO);
 
-    @Query("SELECT " +
+    /*@Query("SELECT " +
             " MA.identifier AS 'identifier', " +
             " MA.syncedAt AS 'syncedAt', " +
             " MA.modifiedAt AS 'modifiedAt', " +
@@ -54,6 +54,65 @@ public interface ModifiedAddressDAO {
             "LEFT OUTER JOIN State S ON S.identifier = C.state " +
             "LEFT OUTER JOIN Country Co ON Co.identifier = S.country " +
             "WHERE MA.identifier = :identifier")
-    LiveData<ModifiedAddressModel> getModifiedAddressByIdentifier(Integer identifier);
+    LiveData<ModifiedAddressModel> getModifiedAddressByIdentifier(Integer identifier); */
+
+    @Query("SELECT " +
+            "MA.denomination AS 'denomination' " +
+            "FROM ModifiedAddress MA " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<String> getDenominationOfModifiedAddress(Integer identifier);
+
+    @Query("SELECT " +
+            "MA.number AS 'number' " +
+            "FROM ModifiedAddress MA " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<String> getNumberOfModifiedAddress(Integer identifier);
+
+    @Query("SELECT " +
+            "MA.reference AS 'reference' " +
+            "FROM ModifiedAddress MA " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<String> getReferenceOfModifiedAddress(Integer identifier);
+
+    @Query("SELECT " +
+            "MA.district AS 'district' " +
+            "FROM ModifiedAddress MA " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<String> getDistrictOfModifiedAddress(Integer identifier);
+
+    @Query("SELECT " +
+            "MA.postalCode AS 'postalCode' " +
+            "FROM ModifiedAddress MA " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<Integer> getPostalCodeOfModifiedAddress(Integer identifier);
+
+    @Query("SELECT " +
+            " C.identifier AS 'identifier', " +
+            " C.denomination AS 'denomination', " +
+            " S.identifier AS 'state_identifier', " +
+            " S.denomination AS 'state_denomination', " +
+            " S.acronym AS 'state_acronym', " +
+            " Co.identifier AS 'state_country_identifier', " +
+            " Co.denomination AS 'state_country_denomination', " +
+            " Co.acronym AS 'state_country_acronym' " +
+            "FROM ModifiedAddress MA " +
+            "INNER JOIN City C ON C.identifier = MA.city " +
+            "INNER JOIN State S ON S.identifier = C.state " +
+            "INNER JOIN Country Co ON Co.identifier = S.country " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<CityModel> getCityOfModifiedAddress(Integer identifier);
+
+    @Query("SELECT " +
+            "MA.latitude AS 'latitude', " +
+            "MA.longitude AS 'longitude' " +
+            "FROM ModifiedAddress MA " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<LatLngModel> getLatLngOfModifiedAddress(Integer identifier);
+
+    @Query("SELECT " +
+            "MA.active AS 'active' " +
+            "FROM ModifiedAddress MA " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<Boolean> getActiveOfModifiedAddress(Integer identifier);
 
 }

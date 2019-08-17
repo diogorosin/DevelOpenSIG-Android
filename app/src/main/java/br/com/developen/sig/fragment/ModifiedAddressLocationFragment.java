@@ -151,28 +151,24 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
             }
         });
 
-        getGoogleMap().setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            public void onMapClick(LatLng latLng) {
+        getGoogleMap().setOnMapClickListener(latLng -> {
 
-                if (getLocationListener() != null)
+            if (getLocationListener() != null)
 
-                    getLocationListener().onLocationChanged(latLng);
+                getLocationListener().onLocationChanged(latLng);
 
-            }
         });
 
         modifiedAddressRepository = ViewModelProviders.of(getActivity()).get(ModifiedAddressRepository.class);
 
-        modifiedAddressRepository.getModifiedAddress(
-                getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER)).
-                observe(getActivity(), modifiedAddressModel -> {
+        modifiedAddressRepository.getLatLng(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER)).observe(this, latLngModel -> {
 
-                    if (modifiedAddressModel!=null)
+            if (latLngModel != null)
 
-                        moveToLocation(new LatLng(modifiedAddressModel.getLatitude(),
-                                modifiedAddressModel.getLongitude()));
+                moveToLocation(new LatLng(latLngModel.getLatitude(),
+                        latLngModel.getLongitude()));
 
-                });
+        });
 
     }
 

@@ -43,6 +43,7 @@ public interface ModifiedAddressEdificationDAO {
             " MA.postalCode AS 'modifiedAddress_postalCode', " +
             " MA.latitude AS 'modifiedAddress_latitude', " +
             " MA.longitude AS 'modifiedAddress_longitude', " +
+            " MA.active AS 'modifiedAddress_active', " +
             " ModifiedAddressCity.identifier AS 'modifiedAddress_city_identifier', " +
             " ModifiedAddressCity.denomination AS 'modifiedAddress_city_denomination', " +
             " ModifiedAddressCityState.identifier AS 'modifiedAddress_city_state_identifier', " +
@@ -56,7 +57,7 @@ public interface ModifiedAddressEdificationDAO {
             " ModifiedAddressEdificationType.denomination AS 'type_denomination', " +
             " MAE.reference AS 'reference', " +
             " MAE.active AS 'active', " +
-            "(SELECT COUNT(*) FROM ModifiedAddressEdificationDweller MAED2 WHERE MAED2.modifiedAddress = MA.identifier AND MAED2.edification = MAE.edification) AS 'dwellersCount' " +
+            "(SELECT COUNT(*) FROM ModifiedAddressEdificationDweller MAED2 WHERE MAED2.modifiedAddress = MA.identifier AND MAED2.edification = MAE.edification AND MAED2.active = 1) AS 'dwellersCount' " +
             "FROM ModifiedAddressEdification MAE " +
             "INNER JOIN ModifiedAddress MA ON MA.identifier = MAE.modifiedAddress " +
             "LEFT OUTER JOIN Type ModifiedAddressEdificationType ON MAE.type = ModifiedAddressEdificationType.identifier " +

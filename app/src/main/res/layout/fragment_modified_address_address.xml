@@ -1,5 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -33,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/thoroughfare"
                     android:imeOptions="actionNext"
-                    android:inputType="textPostalAddress"
+                    android:inputType="textPostalAddress|textCapWords"
                     android:maxLines="1"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -63,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/district"
                     android:imeOptions="actionNext"
-                    android:inputType="textPostalAddress"
+                    android:inputType="textPostalAddress|textCapWords"
                     android:maxLines="1"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -78,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/complement"
                     android:imeOptions="actionNext"
-                    android:inputType="textPostalAddress"
+                    android:inputType="textPostalAddress|textCapWords"
                     android:maxLines="1"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -87,43 +89,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <mk.webfactory.dz.maskededittext.MaskedEditText
+                    android:id="@+id/fragment_modified_address_address_postal_code_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/cep"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:minWidth="200dp"
+                    android:maxLines="1"
+                    app:maskededittext_enforceMaskLength="true"
+                    app:maskededittext_mask="#####-###"
+                    app:maskededittext_maskCharacter="#"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
                     android:id="@+id/fragment_modified_address_address_city_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/city"
                     android:imeOptions="actionNext"
-                    android:inputType="textPostalAddress"
-                    android:maxLines="1"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/fragment_modified_address_address_state_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/state"
-                    android:imeOptions="actionNext"
-                    android:inputType="textPostalAddress"
-                    android:maxLines="1"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/fragment_modified_address_address_country_edittext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/country"
-                    android:imeOptions="actionNext"
-                    android:inputType="textPostalAddress"
+                    android:inputType="textPostalAddress|textCapWords"
                     android:maxLines="1"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -133,3 +124,4 @@
     </ScrollView>
 
 </LinearLayout>
+

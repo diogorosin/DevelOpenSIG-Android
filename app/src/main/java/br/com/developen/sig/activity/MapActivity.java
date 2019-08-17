@@ -15,8 +15,6 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
@@ -50,7 +48,7 @@ import br.com.developen.sig.database.AddressEdificationDwellerModel;
 import br.com.developen.sig.database.AddressModel;
 import br.com.developen.sig.database.SubjectModel;
 import br.com.developen.sig.repository.AddressRepository;
-import br.com.developen.sig.task.CreateAddressAsynTask;
+import br.com.developen.sig.task.CreateAddressAsyncTask;
 import br.com.developen.sig.task.FindAddressesBySubjectNameOrDenominationAsyncTask;
 import br.com.developen.sig.util.Constants;
 import br.com.developen.sig.util.IconUtils;
@@ -64,7 +62,7 @@ public class MapActivity
         extends FragmentActivity
         implements OnMapReadyCallback,
         GoogleMap.OnMyLocationChangeListener,
-        CreateAddressAsynTask.Listener,
+        CreateAddressAsyncTask.Listener,
         NavigationView.OnNavigationItemSelectedListener,
         FindAddressesBySubjectNameOrDenominationAsyncTask.Listener,
         ClusterManager.OnClusterClickListener<AddressClusterItem>,
@@ -250,7 +248,7 @@ public class MapActivity
 
             if (getLastKnowLocation() != null)
 
-                new CreateAddressAsynTask<>(MapActivity.this).execute(
+                new CreateAddressAsyncTask<>(MapActivity.this).execute(
                         getLastKnowLocation().getLatitude(), getLastKnowLocation().getLongitude());
 
         });

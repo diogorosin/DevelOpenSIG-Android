@@ -20,12 +20,12 @@ import java.util.List;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
-import br.com.developen.sig.widget.Editable;
+import br.com.developen.sig.widget.ValidableFragment;
 import br.com.developen.sig.widget.validator.IndividualName;
 
 public class ModifiedAddressEdificationDwellerOrganizationFragment
         extends Fragment
-        implements Validator.ValidationListener, Editable {
+        implements Validator.ValidationListener, ValidableFragment {
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -162,7 +162,7 @@ public class ModifiedAddressEdificationDwellerOrganizationFragment
     }
 
 
-    public void save() {
+    public void validate() {
 
         validator.validate();
 
