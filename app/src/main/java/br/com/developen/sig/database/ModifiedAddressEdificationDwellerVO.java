@@ -75,12 +75,12 @@ public class ModifiedAddressEdificationDwellerVO {
     private String gender;
 
     @NonNull
-    @TypeConverters({TimestampConverter.class})
+    @TypeConverters({DateConverter.class})
     @ColumnInfo(name="from")
     private Date from;
 
     @ColumnInfo(name="to")
-    @TypeConverters({TimestampConverter.class})
+    @TypeConverters({DateConverter.class})
     private Date to;
 
     @NonNull

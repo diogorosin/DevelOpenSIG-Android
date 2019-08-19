@@ -45,22 +45,20 @@ public class ModifiedAddressAddressFragment
     @NotEmpty(trim = true, messageResId = R.string.error_field_required)
     private TextInputEditText thoroughfareEditText;
 
-    @Order(1)
-    @NotEmpty(trim = true, messageResId = R.string.error_field_required)
     private TextInputEditText numberEditText;
 
-    @Order(2)
+    @Order(1)
     @NotEmpty(trim = true, messageResId = R.string.error_field_required)
     private TextInputEditText districtEditText;
 
     private TextInputEditText complementEditText;
 
-    @Order(3)
+    @Order(2)
     @Length(trim = true, min = 9, messageResId = R.string.error_postal_code)
     @NotEmpty(trim = true, messageResId = R.string.error_field_required)
     private MaskedEditText postalCodeEditText;
 
-    @Order(4)
+    @Order(3)
     @NotEmpty(trim = true, messageResId = R.string.error_field_required)
     private AutoCompleteTextView cityEditText;
 

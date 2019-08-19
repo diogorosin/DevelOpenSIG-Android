@@ -93,6 +93,8 @@ public class MapActivity
 
     private MenuItem menuItemSatellite;
 
+    private MenuItem menuItemEditions;
+
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -117,6 +119,8 @@ public class MapActivity
         menuItemSatellite = navigationView.getMenu().findItem(R.id.menu_map_type_satellite);
 
         menuItemTerrain = navigationView.getMenu().findItem(R.id.menu_map_type_terrain);
+
+        menuItemEditions = navigationView.getMenu().findItem(R.id.menu_map_edit);
 
 
         DrawerLayout drawerLayout = findViewById(R.id.activity_map_drawer);
@@ -327,6 +331,16 @@ public class MapActivity
                 menuItemTerrain.setChecked(false);
 
                 getGoogleMap().setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+
+                drawer.closeDrawers();
+
+                break;
+
+            case R.id.menu_map_edit:
+
+                Intent editIntent = new Intent(MapActivity.this, ModifiedActivity.class);
+
+                startActivity(editIntent);
 
                 drawer.closeDrawers();
 

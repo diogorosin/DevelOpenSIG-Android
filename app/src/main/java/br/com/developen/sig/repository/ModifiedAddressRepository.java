@@ -4,6 +4,9 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.paging.DataSource;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import java.util.Map;
 
@@ -11,6 +14,7 @@ import br.com.developen.sig.database.CityModel;
 import br.com.developen.sig.database.CityVO;
 import br.com.developen.sig.database.LatLngModel;
 import br.com.developen.sig.database.ModifiedAddressDAO;
+import br.com.developen.sig.database.ModifiedAddressModel;
 import br.com.developen.sig.database.ModifiedAddressVO;
 import br.com.developen.sig.exception.CityNotFoundException;
 import br.com.developen.sig.util.App;
@@ -35,6 +39,9 @@ public class ModifiedAddressRepository extends AndroidViewModel {
 
 
     private ModifiedAddressDAO dao;
+
+
+    private LiveData<PagedList<ModifiedAddressModel>> modifiedAddressesThatWasNotSynced;
 
     private LiveData<String> denomination;
 
@@ -66,6 +73,26 @@ public class ModifiedAddressRepository extends AndroidViewModel {
             dao = DB.getInstance(getApplication()).modifiedAddressDAO();
 
         return dao;
+
+    }
+
+    public LiveData<PagedList<ModifiedAddressModel>> getModifiedAddressesThatWasNotSynced(){
+
+        if (modifiedAddressesThatWasNotSynced==null){
+
+            DataSource.Factory<Integer, ModifiedAddressModel> factory = DB.getInstance(
+                    getApplication()).
+                    modifiedAddressDAO().
+                    getModifiedAddressesThatWasNotSynced();
+
+            LivePagedListBuilder<Integer, ModifiedAddressModel> listBuilder =
+                    new LivePagedListBuilder<>(factory, 50);
+
+            modifiedAddressesThatWasNotSynced = listBuilder.build();
+
+        }
+
+        return modifiedAddressesThatWasNotSynced;
 
     }
 

@@ -225,4 +225,36 @@ public class ModifiedAddressModel {
 
     }
 
+    public boolean hasSameContents(Object o) {
+
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ModifiedAddressModel that = (ModifiedAddressModel) o;
+        if (identifier != null ? !identifier.equals(that.identifier) : that.identifier != null)
+            return false;
+        if (syncedAt != null ? !syncedAt.equals(that.syncedAt) : that.syncedAt != null)
+            return false;
+        if (modifiedAt != null ? !modifiedAt.equals(that.modifiedAt) : that.modifiedAt != null)
+            return false;
+        if (modifiedBy != null ? !modifiedBy.equals(that.modifiedBy) : that.modifiedBy != null)
+            return false;
+        if (address != null ? !address.equals(that.address) : that.address != null) return false;
+        if (denomination != null ? !denomination.equals(that.denomination) : that.denomination != null)
+            return false;
+        if (number != null ? !number.equals(that.number) : that.number != null) return false;
+        if (reference != null ? !reference.equals(that.reference) : that.reference != null)
+            return false;
+        if (district != null ? !district.equals(that.district) : that.district != null)
+            return false;
+        if (postalCode != null ? !postalCode.equals(that.postalCode) : that.postalCode != null)
+            return false;
+        if (city != null ? !city.equals(that.city) : that.city != null) return false;
+        if (latitude != null ? !latitude.equals(that.latitude) : that.latitude != null)
+            return false;
+        if (longitude != null ? !longitude.equals(that.longitude) : that.longitude != null)
+            return false;
+        return active != null ? active.equals(that.active) : that.active == null;
+
+    }
+
 }

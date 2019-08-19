@@ -44,10 +44,10 @@ public class ModifiedAddressEdificationDwellerModel {
 
     private String gender;
 
-    @TypeConverters({TimestampConverter.class})
+    @TypeConverters({DateConverter.class})
     private Date from;
 
-    @TypeConverters({TimestampConverter.class})
+    @TypeConverters({DateConverter.class})
     private Date to;
 
     private Boolean active;

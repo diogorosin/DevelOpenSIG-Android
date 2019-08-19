@@ -22,16 +22,15 @@ import java.util.Objects;
         indices = {@Index("identifier")})
 public class ModifiedAddressVO {
 
-
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name="identifier")
     private Integer identifier;
 
-    @TypeConverters({DateConverter.class})
+    @TypeConverters({TimestampConverter.class})
     @ColumnInfo(name="syncedAt")
     private Date syncedAt;
 
-    @TypeConverters({DateConverter.class})
+    @TypeConverters({TimestampConverter.class})
     @ColumnInfo(name="modifiedAt")
     private Date modifiedAt;
 

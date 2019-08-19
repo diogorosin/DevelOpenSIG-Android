@@ -2,7 +2,9 @@ package br.com.developen.sig.database;
 
 
 import androidx.room.Embedded;
+import androidx.room.TypeConverters;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class ModifiedAddressEdificationModel {
@@ -17,6 +19,12 @@ public class ModifiedAddressEdificationModel {
     private TypeModel type;
 
     private String reference;
+
+    @TypeConverters({DateConverter.class})
+    private Date from;
+
+    @TypeConverters({DateConverter.class})
+    private Date to;
 
     private Boolean active;
 
@@ -80,6 +88,30 @@ public class ModifiedAddressEdificationModel {
     public void setActive(Boolean active) {
 
         this.active = active;
+
+    }
+
+    public Date getFrom() {
+
+        return from;
+
+    }
+
+    public void setFrom(Date from) {
+
+        this.from = from;
+
+    }
+
+    public Date getTo() {
+
+        return to;
+
+    }
+
+    public void setTo(Date to) {
+
+        this.to = to;
 
     }
 

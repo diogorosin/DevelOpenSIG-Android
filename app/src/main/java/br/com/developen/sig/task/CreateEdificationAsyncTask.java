@@ -3,6 +3,7 @@ package br.com.developen.sig.task;
 import android.os.AsyncTask;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 
 import br.com.developen.sig.database.ModifiedAddressEdificationVO;
 import br.com.developen.sig.exception.CannotInitializeDatabaseException;
@@ -46,12 +47,13 @@ public class CreateEdificationAsyncTask<L extends CreateEdificationAsyncTask.Lis
 
             modifiedAddressEdificationVO.setEdification(database.addressEdificationDAO().retrieveLastEdificationIdOfModifiedAddress(modifiedAddress)+1);
 
-            modifiedAddressEdificationVO.setActive(false);
-
             modifiedAddressEdificationVO.setType(1);
 
             modifiedAddressEdificationVO.setReference(null);
 
+            modifiedAddressEdificationVO.setFrom(new Date());
+
+            modifiedAddressEdificationVO.setActive(false);
 
             database.modifiedAddressEdificationDAO().create(modifiedAddressEdificationVO);
 

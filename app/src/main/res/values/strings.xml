@@ -34,6 +34,7 @@
     <string name="country">País</string>
     <string name="type">Tipo</string>
     <string name="settings">Configurações</string>
+    <string name="edit">Edição</string>
 
     <!-- AccountActivity -->
     <string name="configuration_welcome_step_title">Bem-vindo!</string>
@@ -80,5 +81,13 @@
     <string name="action_delete">Excluir</string>
     <string name="cep">CEP</string>
     <string name="error_postal_code">CEP deve conter oito dígitos</string>
+    <string name="address">Endereço</string>
+    <string name="modified_address_list">Edição</string>
+    <string name="confirm">Confirme</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="success_modified_address_deleted">Edição(ções) excluida(s) com sucesso.</string>
+    <string name="error">Erro</string>
+
 
 </resources>

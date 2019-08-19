@@ -1,6 +1,7 @@
 package br.com.developen.sig.database;
 
 import androidx.lifecycle.LiveData;
+import androidx.paging.DataSource;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -28,7 +29,7 @@ public interface ModifiedAddressDAO {
     @Delete
     void delete(ModifiedAddressVO modifiedAddressVO);
 
-    /*@Query("SELECT " +
+    @Query("SELECT " +
             " MA.identifier AS 'identifier', " +
             " MA.syncedAt AS 'syncedAt', " +
             " MA.modifiedAt AS 'modifiedAt', " +
@@ -53,8 +54,9 @@ public interface ModifiedAddressDAO {
             "LEFT OUTER JOIN City C ON C.identifier = MA.city " +
             "LEFT OUTER JOIN State S ON S.identifier = C.state " +
             "LEFT OUTER JOIN Country Co ON Co.identifier = S.country " +
-            "WHERE MA.identifier = :identifier")
-    LiveData<ModifiedAddressModel> getModifiedAddressByIdentifier(Integer identifier); */
+            "WHERE MA.syncedAt IS NULL AND MA.active = 1 " +
+            "ORDER BY MA.modifiedAt DESC")
+    DataSource.Factory<Integer, ModifiedAddressModel> getModifiedAddressesThatWasNotSynced();
 
     @Query("SELECT " +
             "MA.denomination AS 'denomination' " +

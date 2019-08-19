@@ -44,12 +44,6 @@
         <item name="android:textColor">@color/colorWhite</item>
     </style>
 
-    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorAccent">@color/colorWhite</item>
-        <item name="android:textColorPrimary">@color/colorGreyDark</item>
-        <item name="android:background">@color/colorBlackDark</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

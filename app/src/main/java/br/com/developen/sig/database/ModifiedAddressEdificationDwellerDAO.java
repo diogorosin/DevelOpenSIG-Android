@@ -65,6 +65,8 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " ModifiedAddressEdificationType.identifier AS 'modifiedAddressEdification_type_identifier', " +
             " ModifiedAddressEdificationType.denomination AS 'modifiedAddressEdification_type_denomination', " +
             " MAE.reference AS 'modifiedAddressEdification_reference', " +
+            " MAE.'from' AS 'modifiedAddressEdification_from', " +
+            " MAE.'to' AS 'modifiedAddressEdification_to', " +
             " MAE.active AS 'modifiedAddressEdification_active', " +
             " MAED.dweller AS 'dweller', " +
             " MAED.subject AS 'subject', " +
@@ -139,6 +141,8 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " ModifiedAddressEdificationType.identifier AS 'modifiedAddressEdification_type_identifier', " +
             " ModifiedAddressEdificationType.denomination AS 'modifiedAddressEdification_type_denomination', " +
             " MAE.reference AS 'modifiedAddressEdification_reference', " +
+            " MAE.'from' AS 'modifiedAddressEdification_from', " +
+            " MAE.'to' AS 'modifiedAddressEdification_to', " +
             " MAE.active AS 'modifiedAddressEdification_active', " +
             " MAED.dweller AS 'dweller', " +
             " MAED.subject AS 'subject', " +

@@ -56,6 +56,8 @@ public interface ModifiedAddressEdificationDAO {
             " ModifiedAddressEdificationType.identifier AS 'type_identifier', " +
             " ModifiedAddressEdificationType.denomination AS 'type_denomination', " +
             " MAE.reference AS 'reference', " +
+            " MAE.'from' AS 'from', " +
+            " MAE.'to' AS 'to', " +
             " MAE.active AS 'active', " +
             "(SELECT COUNT(*) FROM ModifiedAddressEdificationDweller MAED2 WHERE MAED2.modifiedAddress = MA.identifier AND MAED2.edification = MAE.edification AND MAED2.active = 1) AS 'dwellersCount' " +
             "FROM ModifiedAddressEdification MAE " +
@@ -67,43 +69,6 @@ public interface ModifiedAddressEdificationDAO {
             "WHERE MA.identifier = :modifiedAddress AND MAE.active = 1 " +
             "ORDER BY MAE.reference, MAE.type")
     LiveData<List<ModifiedAddressEdificationModel>> getEdificationsOfModifiedAddress(Integer modifiedAddress);
-
-    /*
-    @Query("SELECT " +
-            " MA.identifier AS 'modifiedAddress_identifier', " +
-            " MA.syncedAt AS 'modifiedAddress_syncedAt', " +
-            " MA.modifiedAt AS 'modifiedAddress_modifiedAt', " +
-            " MA.modifiedBy AS 'modifiedAddress_modifiedBy', " +
-            " MA.address AS 'modifiedAddress_address', " +
-            " MA.denomination AS 'modifiedAddress_denomination', " +
-            " MA.number AS 'modifiedAddress_number', " +
-            " MA.reference AS 'modifiedAddress_reference', " +
-            " MA.district AS 'modifiedAddress_district', " +
-            " MA.postalCode AS 'modifiedAddress_postalCode', " +
-            " MA.latitude AS 'modifiedAddress_latitude', " +
-            " MA.longitude AS 'modifiedAddress_longitude', " +
-            " ModifiedAddressCity.identifier AS 'modifiedAddress_city_identifier', " +
-            " ModifiedAddressCity.denomination AS 'modifiedAddress_city_denomination', " +
-            " ModifiedAddressCityState.identifier AS 'modifiedAddress_city_state_identifier', " +
-            " ModifiedAddressCityState.denomination AS 'modifiedAddress_city_state_denomination', " +
-            " ModifiedAddressCityState.acronym AS 'modifiedAddress_city_state_acronym', " +
-            " ModifiedAddressCityStateCountry.identifier AS 'modifiedAddress_city_state_country_identifier', " +
-            " ModifiedAddressCityStateCountry.denomination AS 'modifiedAddress_city_state_country_denomination', " +
-            " ModifiedAddressCityStateCountry.acronym AS 'modifiedAddress_city_state_country_acronym', " +
-            " MAE.edification AS 'edification', " +
-            " ModifiedAddressEdificationType.identifier AS 'type_identifier', " +
-            " ModifiedAddressEdificationType.denomination AS 'type_denomination', " +
-            " MAE.reference AS 'reference', " +
-            " MAE.active AS 'active' " +
-            "FROM ModifiedAddressEdification MAE " +
-            "INNER JOIN ModifiedAddress MA ON MA.identifier = MAE.modifiedAddress " +
-            "LEFT OUTER JOIN Type ModifiedAddressEdificationType ON MAE.type = ModifiedAddressEdificationType.identifier " +
-            "LEFT OUTER JOIN City ModifiedAddressCity ON ModifiedAddressCity.identifier = MA.city " +
-            "LEFT OUTER JOIN State ModifiedAddressCityState ON ModifiedAddressCityState.identifier = ModifiedAddressCity.state " +
-            "LEFT OUTER JOIN Country ModifiedAddressCityStateCountry ON ModifiedAddressCityStateCountry.identifier = ModifiedAddressCityState.country " +
-            "WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification")
-    LiveData<ModifiedAddressEdificationModel> getModifiedAddressEdification(Integer modifiedAddress, Integer edification);
-    */
 
     @Query("SELECT " +
             " MAE.active AS 'active' " +
