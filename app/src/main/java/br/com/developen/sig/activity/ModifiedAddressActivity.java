@@ -23,8 +23,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.Map;
-
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
 import br.com.developen.sig.fragment.ModifiedAddressAddressFragment;

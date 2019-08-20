@@ -12,10 +12,10 @@ public class ModifiedAddressModel {
 
     private Integer identifier;
 
-    @TypeConverters({DateConverter.class})
+    @TypeConverters({TimestampConverter.class})
     private Date syncedAt;
 
-    @TypeConverters({DateConverter.class})
+    @TypeConverters({TimestampConverter.class})
     private Date modifiedAt;
 
     private Integer modifiedBy;

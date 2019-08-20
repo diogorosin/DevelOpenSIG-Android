@@ -1,5 +1,8 @@
 package br.com.developen.sig.fragment;
 
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import br.com.developen.sig.R;
 import br.com.developen.sig.repository.ModifiedAddressRepository;
 
@@ -35,6 +42,8 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
     private MapView mapView;
 
     private Marker marker;
+
+    private boolean recreateSnapshot = false;
 
 
     public static ModifiedAddressLocationFragment newInstance(LocationListener locationListener, Integer modifiedAddressIdentifier) {
@@ -144,18 +153,27 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
             public void onMarkerDrag(Marker marker) {}
             public void onMarkerDragEnd(Marker marker) {
 
-                if (getLocationListener() != null)
+                if (getLocationListener() != null) {
+
+                    recreateSnapshot = true;
 
                     getLocationListener().onLocationChanged(marker.getPosition());
 
+                }
+
             }
+
         });
 
         getGoogleMap().setOnMapClickListener(latLng -> {
 
-            if (getLocationListener() != null)
+            if (getLocationListener() != null) {
+
+                recreateSnapshot = true;
 
                 getLocationListener().onLocationChanged(latLng);
+
+            }
 
         });
 
@@ -210,9 +228,63 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
                 .bearing(0)
                 .build();
 
-        getGoogleMap().animateCamera(
-                CameraUpdateFactory.
-                        newCameraPosition(cameraPosition));
+        getGoogleMap().animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), new GoogleMap.CancelableCallback() {
+
+                    public void onFinish() {
+
+                        if (recreateSnapshot) {
+
+                            GoogleMap.SnapshotReadyCallback callback = snapshot -> {
+
+                                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+
+                                File directory = cw.getDir("images", Context.MODE_PRIVATE);
+
+                                String fileName = String.format("map_%s.jpg", String.valueOf(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER)));
+
+                                File path = new File(directory, fileName);
+
+                                FileOutputStream fos = null;
+
+                                try {
+
+                                    fos = new FileOutputStream(path);
+
+                                    Bitmap cropped = Bitmap.createBitmap(snapshot, snapshot.getWidth() / 2 - 100, snapshot.getHeight() / 2 - 100, 200, 200);
+
+                                    cropped.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+
+                                } catch (Exception e) {
+
+                                    e.printStackTrace();
+
+                                } finally {
+
+                                    try {
+
+                                        fos.close();
+
+                                    } catch (IOException e) {
+
+                                        e.printStackTrace();
+
+                                    }
+
+                                }
+
+                            };
+
+                            getGoogleMap().snapshot(callback);
+
+                        }
+
+                        recreateSnapshot = false;
+
+                    }
+
+                    public void onCancel() {}
+
+                });
 
     }
 

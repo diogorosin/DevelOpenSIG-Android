@@ -1,15 +1,24 @@
 package br.com.developen.sig.widget;
 
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressModel;
@@ -17,7 +26,7 @@ import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.StringUtils;
 
 
-public class ModifiedRecyclerViewAdapter extends PagedListAdapter<ModifiedAddressModel,  ModifiedRecyclerViewAdapter.ModifiedAddressViewHolder> {
+public class ModifiedRecyclerViewAdapter extends PagedListAdapter<ModifiedAddressModel, ModifiedRecyclerViewAdapter.ModifiedAddressViewHolder> {
 
 
     private SparseBooleanArray selectedItems;
@@ -45,13 +54,54 @@ public class ModifiedRecyclerViewAdapter extends PagedListAdapter<ModifiedAddres
 
         holder.modifiedAddressModel = getItem(position);
 
-        holder.addressTextView.setText(holder.modifiedAddressModel.getDenomination());
+        holder.denominationTextView.setText(holder.modifiedAddressModel.getDenomination() + (holder.modifiedAddressModel.getNumber() == null ? "" : ", Nº " + holder.modifiedAddressModel.getNumber()));
 
-        holder.modifiedAtTextView.setText(StringUtils.formatDate(holder.modifiedAddressModel.getModifiedAt()));
+        holder.districtTextView.setText(holder.modifiedAddressModel.getDistrict());
+
+        holder.cityTextView.setText(holder.modifiedAddressModel.getCity().toString());
+
+        holder.modifiedAtTextView.setText(StringUtils.formatShortDateTime(holder.modifiedAddressModel.getModifiedAt()));
 
         holder.itemView.setBackgroundColor(selectedItems.get(position) ?
                 ContextCompat.getColor(App.getContext(), R.color.colorBlackMedium) :
                 Color.TRANSPARENT);
+
+        /*
+        @SuppressLint("DefaultLocale")
+        String url = String.format(
+                "http://maps.google.com/maps/api/staticmap?center=%s,%s&zoom=16&size=%dx%d&sensor=false&key=%s",
+                String.valueOf(holder.modifiedAddressModel.getLatitude()),
+                String.valueOf(holder.modifiedAddressModel.getLongitude()),
+                150,
+                150,
+                App.getContext().getResources().getString(R.string.google_maps_key));
+
+        ImageRequest request = new ImageRequest(url,
+                bitmap -> holder.snapshotImageView.setImageBitmap(bitmap), 0, 0, null,
+                error -> holder.snapshotImageView.setImageResource(R.drawable.icon_marker_24));
+
+        VolleySingleton.getInstance(App.getContext()).addToRequestQueue(request);
+        */
+
+        ContextWrapper cw = new ContextWrapper(App.getContext());
+
+        File directory = cw.getDir("images", Context.MODE_PRIVATE);
+
+        String fileName = String.format("map_%s.jpg", String.valueOf(holder.modifiedAddressModel.getIdentifier()));
+
+        File path = new File(directory, fileName);
+
+        try {
+
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(path));
+
+            holder.snapshotImageView.setImageBitmap(b);
+
+        } catch (FileNotFoundException e) {
+
+            e.printStackTrace();
+
+        }
 
     }
 
@@ -60,7 +110,13 @@ public class ModifiedRecyclerViewAdapter extends PagedListAdapter<ModifiedAddres
 
         public ModifiedAddressModel modifiedAddressModel;
 
-        TextView addressTextView;
+        ImageView snapshotImageView;
+
+        TextView denominationTextView;
+
+        TextView districtTextView;
+
+        TextView cityTextView;
 
         TextView modifiedAtTextView;
 
@@ -68,7 +124,13 @@ public class ModifiedRecyclerViewAdapter extends PagedListAdapter<ModifiedAddres
 
             super(view);
 
-            addressTextView = view.findViewById(R.id.activity_modified_item_address_textview);
+            snapshotImageView = view.findViewById(R.id.activity_modified_item_snapshot_imageview);
+
+            denominationTextView = view.findViewById(R.id.activity_modified_item_denomination_textview);
+
+            districtTextView = view.findViewById(R.id.activity_modified_item_district_textview);
+
+            cityTextView = view.findViewById(R.id.activity_modified_item_city_textview);
 
             modifiedAtTextView = view.findViewById(R.id.activity_modified_item_modified_at_textview);
 

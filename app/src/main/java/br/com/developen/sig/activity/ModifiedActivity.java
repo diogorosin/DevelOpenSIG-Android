@@ -18,8 +18,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +25,6 @@ import java.util.Objects;
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressModel;
 import br.com.developen.sig.repository.ModifiedAddressRepository;
-import br.com.developen.sig.task.UpdateActiveOfModifiedAddressAsyncTask;
 import br.com.developen.sig.task.UpdateActiveOfModifiedAddressesAsyncTask;
 import br.com.developen.sig.util.Messaging;
 import br.com.developen.sig.widget.ModifiedRecyclerViewAdapter;

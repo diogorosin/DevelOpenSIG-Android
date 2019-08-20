@@ -55,7 +55,7 @@ public interface ModifiedAddressDAO {
             "LEFT OUTER JOIN State S ON S.identifier = C.state " +
             "LEFT OUTER JOIN Country Co ON Co.identifier = S.country " +
             "WHERE MA.syncedAt IS NULL AND MA.active = 1 " +
-            "ORDER BY MA.modifiedAt DESC")
+            "ORDER BY datetime(MA.modifiedAt) DESC")
     DataSource.Factory<Integer, ModifiedAddressModel> getModifiedAddressesThatWasNotSynced();
 
     @Query("SELECT " +

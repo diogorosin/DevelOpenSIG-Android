@@ -8,6 +8,7 @@ import androidx.paging.DataSource;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
+import java.util.Date;
 import java.util.Map;
 
 import br.com.developen.sig.database.CityModel;
@@ -190,6 +191,8 @@ public class ModifiedAddressRepository extends AndroidViewModel {
         modifiedAddressVO.setReference((String) values.get(REFERENCE_PROPERTY));
 
         modifiedAddressVO.setPostalCode((Integer) values.get(POSTAL_CODE_PROPERTY));
+
+        modifiedAddressVO.setModifiedAt(new Date());
 
         modifiedAddressVO.setActive(true);
 

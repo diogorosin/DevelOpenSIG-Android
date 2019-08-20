@@ -33,13 +33,4 @@
         tools:showIn="@layout/activity_modified"
         tools:listener=".activity.ModifiedActivity"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/activity_modified_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:src="@drawable/icon_add_24"
-        app:backgroundTint="@color/colorGreyDark"
-        android:layout_margin="20dp"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
