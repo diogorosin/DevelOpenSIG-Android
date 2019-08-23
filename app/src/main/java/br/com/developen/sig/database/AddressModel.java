@@ -1,7 +1,11 @@
 package br.com.developen.sig.database;
 
 
+import androidx.annotation.NonNull;
 import androidx.room.Embedded;
+import androidx.room.TypeConverters;
+
+import java.util.Date;
 
 public class AddressModel {
 
@@ -23,6 +27,11 @@ public class AddressModel {
     private Double latitude;
 
     private Double longitude;
+
+    private Integer verifiedBy;
+
+    @TypeConverters({TimestampConverter.class})
+    private Date verifiedAt;
 
     public Integer getIdentifier() {
 
@@ -129,6 +138,30 @@ public class AddressModel {
     public void setLongitude(Double longitude) {
 
         this.longitude = longitude;
+
+    }
+
+    public Integer getVerifiedBy() {
+
+        return verifiedBy;
+
+    }
+
+    public void setVerifiedBy(Integer verifiedBy) {
+
+        this.verifiedBy = verifiedBy;
+
+    }
+
+    public Date getVerifiedAt() {
+
+        return verifiedAt;
+
+    }
+
+    public void setVerifiedAt(Date verifiedAt) {
+
+        this.verifiedAt = verifiedAt;
 
     }
 

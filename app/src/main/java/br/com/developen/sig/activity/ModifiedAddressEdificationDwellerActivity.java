@@ -69,8 +69,7 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
         spinner.setAdapter(new MyAdapter(
                 toolbar.getContext(),
                 new String[]{
-                        "Pessoa Física",
-                        "Pessoa Jurídica"
+                        "Pessoa Física" /* , "Pessoa Jurídica" */
                 }));
 
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {

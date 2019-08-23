@@ -47,7 +47,9 @@ public interface AddressDAO {
             " CityState.acronym AS 'city_state_acronym', " +
             " CityStateCountry.identifier AS 'city_state_country_identifier', " +
             " CityStateCountry.denomination AS 'city_state_country_denomination', " +
-            " CityStateCountry.acronym AS 'city_state_country_acronym' " +
+            " CityStateCountry.acronym AS 'city_state_country_acronym', " +
+            " A.verifiedBy AS 'verifiedBy', " +
+            " A.verifiedAt AS 'verifiedAt' " +
             "FROM Address A " +
             "INNER JOIN City City ON City.identifier = A.city " +
             "INNER JOIN State CityState ON CityState.identifier = City.state " +

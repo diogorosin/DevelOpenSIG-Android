@@ -2,12 +2,15 @@ package br.com.developen.sig.bean;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AddressBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+public class ModifiedAddressBean implements Serializable {
 
 	private Integer identifier;
+
+	private Integer address;
 
 	private String denomination;
 
@@ -20,31 +23,45 @@ public class AddressBean implements Serializable {
 	private Integer postalCode;
 
 	private Integer city;
-	
+
 	private Double latitude;
 
 	private Double longitude;
 
-	private Integer verifiedBy;
+	private Integer modifiedBy;
 
-	private Date verifiedAt;
+	private Date modifiedAt;
+
+	private Map<Integer, ModifiedAddressEdificationBean> edifications;
 
 	public Integer getIdentifier() {
-
+		
 		return identifier;
-
+		
 	}
 
 	public void setIdentifier(Integer identifier) {
-
+		
 		this.identifier = identifier;
+		
+	}
+
+	public Integer getAddress() {
+
+		return address;
+
+	}
+
+	public void setAddress(Integer address) {
+
+		this.address = address;
 
 	}
 
 	public String getDenomination() {
-
+		
 		return denomination;
-
+		
 	}
 
 	public void setDenomination(String denomination) {
@@ -90,9 +107,9 @@ public class AddressBean implements Serializable {
 	}
 
 	public Integer getPostalCode() {
-		
+
 		return postalCode;
-		
+
 	}
 
 	public void setPostalCode(Integer postalCode) {
@@ -132,59 +149,63 @@ public class AddressBean implements Serializable {
 	}
 
 	public void setLongitude(Double longitude) {
-		
+
 		this.longitude = longitude;
+
+	}
+
+	public Integer getModifiedBy() {
+		
+		return modifiedBy;
 		
 	}
 
-	public Integer getVerifiedBy() {
+	public void setModifiedBy(Integer modifiedBy) {
 
-		return verifiedBy;
-
-	}
-
-	public void setVerifiedBy(Integer verifiedBy) {
-
-		this.verifiedBy = verifiedBy;
+		this.modifiedBy = modifiedBy;
 
 	}
 
-	public Date getVerifiedAt() {
+	public Date getModifiedAt() {
 
-		return verifiedAt;
+		return modifiedAt;
 
 	}
 
-	public void setVerifiedAt(Date verifiedAt) {
+	public void setModifiedAt(Date modifiedAt) {
 
-		this.verifiedAt = verifiedAt;
+		this.modifiedAt = modifiedAt;
+
+	}
+
+	public Map<Integer, ModifiedAddressEdificationBean> getEdifications() {
+
+		if (edifications==null)
+
+			edifications = new HashMap<Integer, ModifiedAddressEdificationBean>();
+
+		return edifications;
+
+	}
+
+	public void setEdifications(HashMap<Integer, ModifiedAddressEdificationBean> edifications) {
+
+		this.edifications = edifications;
+
+	}
+
+	public boolean equals(Object o) {
+
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ModifiedAddressBean that = (ModifiedAddressBean) o;
+		return identifier.equals(that.identifier);
 
 	}
 
 	public int hashCode() {
-		
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
-		return result;
-		
-	}
 
-	public boolean equals(Object obj) {
-		
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AddressBean other = (AddressBean) obj;
-		if (identifier == null) {
-			if (other.identifier != null)
-				return false;
-		} else if (!identifier.equals(other.identifier))
-			return false;
-		return true;
+		return identifier.hashCode();
 
 	}
 

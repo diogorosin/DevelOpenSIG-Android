@@ -620,7 +620,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         showProgress(true);
 
-        StringRequest request = new StringRequest(Request.Method.GET, Constants.SERVER_BASE_URL + "dataset/initial",
+        StringRequest request = new StringRequest(Request.Method.GET, Constants.SERVER_BASE_URL + "download/dataset",
 
                 response -> {
 

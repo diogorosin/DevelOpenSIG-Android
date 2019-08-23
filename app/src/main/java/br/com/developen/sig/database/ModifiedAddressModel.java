@@ -15,11 +15,6 @@ public class ModifiedAddressModel {
     @TypeConverters({TimestampConverter.class})
     private Date syncedAt;
 
-    @TypeConverters({TimestampConverter.class})
-    private Date modifiedAt;
-
-    private Integer modifiedBy;
-
     private Integer address;
 
     private String denomination;
@@ -40,6 +35,11 @@ public class ModifiedAddressModel {
     private Double longitude;
 
     private Boolean active;
+
+    @TypeConverters({TimestampConverter.class})
+    private Date modifiedAt;
+
+    private Integer modifiedBy;
 
 
     public Integer getIdentifier() {

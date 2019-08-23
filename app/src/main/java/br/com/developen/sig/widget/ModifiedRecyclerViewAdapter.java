@@ -66,23 +66,6 @@ public class ModifiedRecyclerViewAdapter extends PagedListAdapter<ModifiedAddres
                 ContextCompat.getColor(App.getContext(), R.color.colorBlackMedium) :
                 Color.TRANSPARENT);
 
-        /*
-        @SuppressLint("DefaultLocale")
-        String url = String.format(
-                "http://maps.google.com/maps/api/staticmap?center=%s,%s&zoom=16&size=%dx%d&sensor=false&key=%s",
-                String.valueOf(holder.modifiedAddressModel.getLatitude()),
-                String.valueOf(holder.modifiedAddressModel.getLongitude()),
-                150,
-                150,
-                App.getContext().getResources().getString(R.string.google_maps_key));
-
-        ImageRequest request = new ImageRequest(url,
-                bitmap -> holder.snapshotImageView.setImageBitmap(bitmap), 0, 0, null,
-                error -> holder.snapshotImageView.setImageResource(R.drawable.icon_marker_24));
-
-        VolleySingleton.getInstance(App.getContext()).addToRequestQueue(request);
-        */
-
         ContextWrapper cw = new ContextWrapper(App.getContext());
 
         File directory = cw.getDir("images", Context.MODE_PRIVATE);

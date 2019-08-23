@@ -39,6 +39,8 @@ public interface AddressEdificationDwellerDAO {
             " A.postalCode AS 'addressEdification_address_postalCode', " +
             " A.latitude AS 'addressEdification_address_latitude', " +
             " A.longitude AS 'addressEdification_address_longitude', " +
+            " A.verifiedBy AS 'addressEdification_address_verifiedBy', " +
+            " A.verifiedAt AS 'addressEdification_address_verifiedAt', " +
             " AddressCity.identifier AS 'addressEdification_address_city_identifier', " +
             " AddressCity.denomination AS 'addressEdification_address_city_denomination', " +
             " AddressCityState.identifier AS 'addressEdification_address_city_state_identifier', " +
@@ -51,10 +53,14 @@ public interface AddressEdificationDwellerDAO {
             " AddressEdificationType.identifier AS 'addressEdification_type_identifier', " +
             " AddressEdificationType.denomination AS 'addressEdification_type_denomination', " +
             " AE.reference AS 'addressEdification_reference', " +
+            " AE.'from' AS 'addressEdification_from', " +
+            " AE.'to' AS 'addressEdification_to', " +
             " AED.dweller AS 'dweller', " +
             " SV.identifier AS 'subject_identifier', " +
             " SV.nameOrDenomination AS 'subject_nameOrDenomination', " +
-            " SV.type AS 'subject_type' " +
+            " SV.type AS 'subject_type', " +
+            " AED.'from' AS 'from', " +
+            " AED.'to' AS 'to' " +
             "FROM AddressEdificationDweller AED " +
             "INNER JOIN AddressEdification AE ON AE.address = AED.address AND AE.edification = AED.edification " +
             "INNER JOIN Address A ON A.identifier = AE.address " +

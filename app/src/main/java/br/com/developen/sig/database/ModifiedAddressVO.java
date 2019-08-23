@@ -30,13 +30,6 @@ public class ModifiedAddressVO {
     @ColumnInfo(name="syncedAt")
     private Date syncedAt;
 
-    @TypeConverters({TimestampConverter.class})
-    @ColumnInfo(name="modifiedAt")
-    private Date modifiedAt;
-
-    @ColumnInfo(name="modifiedBy")
-    private Integer modifiedBy;
-
     @ColumnInfo(name="address")
     private Integer address;
 
@@ -64,6 +57,13 @@ public class ModifiedAddressVO {
     @ColumnInfo(name="longitude")
     private Double longitude;
 
+    @ColumnInfo(name="modifiedBy")
+    private Integer modifiedBy;
+
+    @TypeConverters({TimestampConverter.class})
+    @ColumnInfo(name="modifiedAt")
+    private Date modifiedAt;
+
     @NonNull
     @ColumnInfo(name="active")
     private Boolean active;
@@ -89,30 +89,6 @@ public class ModifiedAddressVO {
     public void setSyncedAt(Date syncedAt) {
 
         this.syncedAt = syncedAt;
-
-    }
-
-    public Date getModifiedAt() {
-
-        return modifiedAt;
-
-    }
-
-    public void setModifiedAt(Date modifiedAt) {
-
-        this.modifiedAt = modifiedAt;
-
-    }
-
-    public Integer getModifiedBy() {
-
-        return modifiedBy;
-
-    }
-
-    public void setModifiedBy(Integer modifiedBy) {
-
-        this.modifiedBy = modifiedBy;
 
     }
 
@@ -221,6 +197,30 @@ public class ModifiedAddressVO {
     public void setLongitude(Double longitude) {
 
         this.longitude = longitude;
+
+    }
+
+    public Date getModifiedAt() {
+
+        return modifiedAt;
+
+    }
+
+    public void setModifiedAt(Date modifiedAt) {
+
+        this.modifiedAt = modifiedAt;
+
+    }
+
+    public Integer getModifiedBy() {
+
+        return modifiedBy;
+
+    }
+
+    public void setModifiedBy(Integer modifiedBy) {
+
+        this.modifiedBy = modifiedBy;
 
     }
 

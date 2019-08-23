@@ -7,6 +7,9 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import java.util.Date;
 
 @Entity(tableName = "Address",
         foreignKeys = {
@@ -48,6 +51,15 @@ public class AddressVO {
     @NonNull
     @ColumnInfo(name="longitude")
     private Double longitude;
+
+    @NonNull
+    @ColumnInfo(name="verifiedBy")
+    private Integer verifiedBy;
+
+    @NonNull
+    @ColumnInfo(name="verifiedAt")
+    @TypeConverters({TimestampConverter.class})
+    private Date verifiedAt;
 
     public Integer getIdentifier() {
 
@@ -157,6 +169,31 @@ public class AddressVO {
     public void setLongitude(@NonNull Double longitude) {
 
         this.longitude = longitude;
+
+    }
+
+
+    public Integer getVerifiedBy() {
+
+        return verifiedBy;
+
+    }
+
+    public void setVerifiedBy(Integer verifiedBy) {
+
+        this.verifiedBy = verifiedBy;
+
+    }
+
+    public Date getVerifiedAt() {
+
+        return verifiedAt;
+
+    }
+
+    public void setVerifiedAt(Date verifiedAt) {
+
+        this.verifiedAt = verifiedAt;
 
     }
 

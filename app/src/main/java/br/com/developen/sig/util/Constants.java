@@ -28,8 +28,4 @@ public class Constants {
 
     public static final String TOKEN_IDENTIFIER_PROPERTY = "TOKEN_IDENTIFIER_PROPERTY";
 
-
-
-    public static final int MODIFIED_ADDRESS_DENOMINATION_FIELD = 1;
-
 }

@@ -42,8 +42,6 @@ public interface ModifiedAddressEdificationDwellerDAO {
     @Query("SELECT " +
             " MA.identifier AS 'modifiedAddressEdification_modifiedAddress_identifier', " +
             " MA.syncedAt AS 'modifiedAddressEdification_modifiedAddress_syncedAt', " +
-            " MA.modifiedAt AS 'modifiedAddressEdification_modifiedAddress_modifiedAt', " +
-            " MA.modifiedBy AS 'modifiedAddressEdification_modifiedAddress_modifiedBy', " +
             " MA.address AS 'modifiedAddressEdification_modifiedAddress_address', " +
             " MA.denomination AS 'modifiedAddressEdification_modifiedAddress_denomination', " +
             " MA.number AS 'modifiedAddressEdification_modifiedAddress_number', " +
@@ -52,6 +50,8 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " MA.postalCode AS 'modifiedAddressEdification_modifiedAddress_postalCode', " +
             " MA.latitude AS 'modifiedAddressEdification_modifiedAddress_latitude', " +
             " MA.longitude AS 'modifiedAddressEdification_modifiedAddress_longitude', " +
+            " MA.modifiedAt AS 'modifiedAddressEdification_modifiedAddress_modifiedAt', " +
+            " MA.modifiedBy AS 'modifiedAddressEdification_modifiedAddress_modifiedBy', " +
             " MA.active AS 'modifiedAddressEdification_modifiedAddress_active', " +
             " ModifiedAddressCity.identifier AS 'modifiedAddressEdification_modifiedAddress_city_identifier', " +
             " ModifiedAddressCity.denomination AS 'modifiedAddressEdification_modifiedAddress_city_denomination', " +
@@ -91,7 +91,7 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " BirthPlaceState.identifier AS 'birthPlace_state_identifier', " +
             " BirthPlaceState.denomination AS 'birthPlace_state_denomination', " +
             " BirthPlaceState.acronym AS 'birthPlace_state_acronym', " +
-            " BirthPlaceStateCountry.identifier AS 'birthPlace_state__country_identifier', " +
+            " BirthPlaceStateCountry.identifier AS 'birthPlace_state_country_identifier', " +
             " BirthPlaceStateCountry.denomination AS 'birthPlace_state_country_denomination', " +
             " BirthPlaceStateCountry.acronym AS 'birthPlace_state_country_acronym', " +
             " MAED.birthDate AS 'birthDate', " +
@@ -118,8 +118,6 @@ public interface ModifiedAddressEdificationDwellerDAO {
     @Query("SELECT " +
             " MA.identifier AS 'modifiedAddressEdification_modifiedAddress_identifier', " +
             " MA.syncedAt AS 'modifiedAddressEdification_modifiedAddress_syncedAt', " +
-            " MA.modifiedAt AS 'modifiedAddressEdification_modifiedAddress_modifiedAt', " +
-            " MA.modifiedBy AS 'modifiedAddressEdification_modifiedAddress_modifiedBy', " +
             " MA.address AS 'modifiedAddressEdification_modifiedAddress_address', " +
             " MA.denomination AS 'modifiedAddressEdification_modifiedAddress_denomination', " +
             " MA.number AS 'modifiedAddressEdification_modifiedAddress_number', " +
@@ -128,6 +126,8 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " MA.postalCode AS 'modifiedAddressEdification_modifiedAddress_postalCode', " +
             " MA.latitude AS 'modifiedAddressEdification_modifiedAddress_latitude', " +
             " MA.longitude AS 'modifiedAddressEdification_modifiedAddress_longitude', " +
+            " MA.modifiedAt AS 'modifiedAddressEdification_modifiedAddress_modifiedAt', " +
+            " MA.modifiedBy AS 'modifiedAddressEdification_modifiedAddress_modifiedBy', " +
             " MAE.active AS 'modifiedAddressEdification_active', " +
             " ModifiedAddressCity.identifier AS 'modifiedAddressEdification_modifiedAddress_city_identifier', " +
             " ModifiedAddressCity.denomination AS 'modifiedAddressEdification_modifiedAddress_city_denomination', " +
@@ -167,7 +167,7 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " BirthPlaceState.identifier AS 'birthPlace_state_identifier', " +
             " BirthPlaceState.denomination AS 'birthPlace_state_denomination', " +
             " BirthPlaceState.acronym AS 'birthPlace_state_acronym', " +
-            " BirthPlaceStateCountry.identifier AS 'birthPlace_state__country_identifier', " +
+            " BirthPlaceStateCountry.identifier AS 'birthPlace_state_country_identifier', " +
             " BirthPlaceStateCountry.denomination AS 'birthPlace_state_country_denomination', " +
             " BirthPlaceStateCountry.acronym AS 'birthPlace_state_country_acronym', " +
             " MAED.birthDate AS 'birthDate', " +

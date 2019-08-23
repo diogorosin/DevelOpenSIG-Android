@@ -1,7 +1,10 @@
 package br.com.developen.sig.database;
 
+import androidx.annotation.NonNull;
 import androidx.room.Embedded;
+import androidx.room.TypeConverters;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class AddressEdificationDwellerModel {
@@ -13,6 +16,13 @@ public class AddressEdificationDwellerModel {
 
     @Embedded(prefix = "subject_")
     private SubjectModel subject;
+
+    @NonNull
+    @TypeConverters({TimestampConverter.class})
+    private Date from;
+
+    @TypeConverters({TimestampConverter.class})
+    private Date to;
 
     public AddressEdificationModel getAddressEdification() {
 
@@ -47,6 +57,30 @@ public class AddressEdificationDwellerModel {
     public void setSubject(SubjectModel subject) {
 
         this.subject = subject;
+
+    }
+
+    public Date getFrom() {
+
+        return from;
+
+    }
+
+    public void setFrom(Date from) {
+
+        this.from = from;
+
+    }
+
+    public Date getTo() {
+
+        return to;
+
+    }
+
+    public void setTo(Date to) {
+
+        this.to = to;
 
     }
 

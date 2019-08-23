@@ -42,6 +42,7 @@ public interface ModifiedAddressDAO {
             " MA.postalCode AS 'postalCode', " +
             " MA.latitude AS 'latitude', " +
             " MA.longitude AS 'longitude', " +
+            " MA.active AS 'active', " +
             " C.identifier AS 'city_identifier', " +
             " C.denomination AS 'city_denomination', " +
             " S.identifier AS 'city_state_identifier', " +

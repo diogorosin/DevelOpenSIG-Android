@@ -22,15 +22,8 @@ import java.util.Objects;
                         parentColumns = "identifier",
                         childColumns = "subject",
                         onDelete = ForeignKey.RESTRICT,
-                        onUpdate = ForeignKey.CASCADE),
-                @ForeignKey(entity = IndividualVO.class,
-                        parentColumns = "identifier",
-                        childColumns = "verifiedBy",
-                        onDelete = ForeignKey.RESTRICT,
                         onUpdate = ForeignKey.CASCADE)},
-        indices = {@Index({"address", "edification", "dweller"}),
-                @Index({"subject"}),
-                @Index({"verifiedBy"})})
+        indices = {@Index({"address", "edification", "dweller"}), @Index({"subject"})})
 public class AddressEdificationDwellerVO {
 
     @NonNull
@@ -57,15 +50,6 @@ public class AddressEdificationDwellerVO {
     @ColumnInfo(name="to")
     @TypeConverters({TimestampConverter.class})
     private Date to;
-
-    @NonNull
-    @ColumnInfo(name="verifiedBy")
-    private Integer verifiedBy;
-
-    @NonNull
-    @ColumnInfo(name="verifiedAt")
-    @TypeConverters({TimestampConverter.class})
-    private Date verifiedAt;
 
     public Integer getAddress() {
 
@@ -136,30 +120,6 @@ public class AddressEdificationDwellerVO {
     public void setTo(Date to) {
 
         this.to = to;
-
-    }
-
-    public Integer getVerifiedBy() {
-
-        return verifiedBy;
-
-    }
-
-    public void setVerifiedBy(Integer verifiedBy) {
-
-        this.verifiedBy = verifiedBy;
-
-    }
-
-    public Date getVerifiedAt() {
-
-        return verifiedAt;
-
-    }
-
-    public void setVerifiedAt(Date verifiedAt) {
-
-        this.verifiedAt = verifiedAt;
 
     }
 

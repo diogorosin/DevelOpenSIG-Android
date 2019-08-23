@@ -5,6 +5,9 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
+import androidx.room.TypeConverters;
+
+import java.util.Date;
 
 @Entity(tableName = "AddressEdification",
         primaryKeys = {"address", "edification"},
@@ -38,6 +41,15 @@ public class AddressEdificationVO {
 
     @ColumnInfo(name="reference")
     private String reference;
+
+    @NonNull
+    @TypeConverters({TimestampConverter.class})
+    @ColumnInfo(name="from")
+    private Date from;
+
+    @ColumnInfo(name="to")
+    @TypeConverters({TimestampConverter.class})
+    private Date to;
 
     public Integer getAddress() {
 
@@ -84,6 +96,30 @@ public class AddressEdificationVO {
     public void setReference(String reference) {
 
         this.reference = reference;
+
+    }
+
+    public Date getFrom() {
+
+        return from;
+
+    }
+
+    public void setFrom(Date from) {
+
+        this.from = from;
+
+    }
+
+    public Date getTo() {
+
+        return to;
+
+    }
+
+    public void setTo(Date to) {
+
+        this.to = to;
 
     }
 

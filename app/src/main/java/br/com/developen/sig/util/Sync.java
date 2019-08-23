@@ -316,6 +316,10 @@ public class Sync {
 
                     addressVO.setLongitude(addressBean.getLongitude());
 
+                    addressVO.setVerifiedAt(addressBean.getVerifiedAt());
+
+                    addressVO.setVerifiedBy(addressBean.getVerifiedBy());
+
                     if (addressDAO.exists(addressVO.getIdentifier()))
 
                         addressDAO.update(addressVO);
@@ -344,6 +348,10 @@ public class Sync {
                     addressEdificationVO.setType(addressEdificationBean.getType());
 
                     addressEdificationVO.setReference(addressEdificationBean.getReference());
+
+                    addressEdificationVO.setFrom(addressEdificationBean.getFrom());
+
+                    addressEdificationVO.setTo(addressEdificationBean.getTo());
 
                     if (addressEdificationDAO.exists(
                             addressEdificationVO.getAddress(),
@@ -379,10 +387,6 @@ public class Sync {
                     addressEdificationDwellerVO.setFrom(addressEdificationDwellerBean.getFrom());
 
                     addressEdificationDwellerVO.setTo(addressEdificationDwellerBean.getTo());
-
-                    addressEdificationDwellerVO.setVerifiedAt(addressEdificationDwellerBean.getVerifiedAt());
-
-                    addressEdificationDwellerVO.setVerifiedBy(addressEdificationDwellerBean.getVerifiedBy());
 
                     if (addressEdificationDwellerDAO.exists(
                             addressEdificationDwellerVO.getAddress(),
