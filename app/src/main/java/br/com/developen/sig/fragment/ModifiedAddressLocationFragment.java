@@ -33,7 +33,10 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
     private static final String ARG_MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
 
-    private ModifiedAddressRepository modifiedAddressRepository;
+    private static final int SNAPSHOT_WIDTH = 300;
+
+    private static final int SNAPSHOT_HEIGHT = 300;
+
 
     private LocationListener locationListener;
 
@@ -44,6 +47,47 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
     private Marker marker;
 
     private boolean recreateSnapshot = false;
+
+
+    GoogleMap.SnapshotReadyCallback snapshotCallback = snapshot -> {
+
+        ContextWrapper cw = new ContextWrapper(getActivity());
+
+        File directory = cw.getDir("images", Context.MODE_PRIVATE);
+
+        String fileName = String.format("map_%s.jpg", String.valueOf(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER)));
+
+        File path = new File(directory, fileName);
+
+        FileOutputStream fileOutputStream = null;
+
+        try {
+
+            fileOutputStream = new FileOutputStream(path);
+
+            Bitmap cropped = Bitmap.createBitmap(snapshot, snapshot.getWidth() / 2 - SNAPSHOT_WIDTH / 2, snapshot.getHeight() / 2 - SNAPSHOT_HEIGHT / 2, SNAPSHOT_WIDTH, SNAPSHOT_HEIGHT);
+
+            cropped.compress(Bitmap.CompressFormat.JPEG, 80, fileOutputStream);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        } finally {
+
+            try {
+
+                fileOutputStream.close();
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+
+            }
+
+        }
+
+    };
 
 
     public static ModifiedAddressLocationFragment newInstance(LocationListener locationListener, Integer modifiedAddressIdentifier) {
@@ -77,7 +121,7 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
         try {
 
-            MapsInitializer.initialize(getActivity().getApplicationContext());
+            MapsInitializer.initialize(getActivity());
 
         } catch (Exception e) {
 
@@ -157,7 +201,7 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
                     recreateSnapshot = true;
 
-                    getLocationListener().onLocationChanged(marker.getPosition());
+                    getLocationListener().onLocationChanged(marker.getPosition(), true);
 
                 }
 
@@ -171,13 +215,15 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
                 recreateSnapshot = true;
 
-                getLocationListener().onLocationChanged(latLng);
+                getLocationListener().onLocationChanged(latLng, true);
 
             }
 
         });
 
-        modifiedAddressRepository = ViewModelProviders.of(getActivity()).get(ModifiedAddressRepository.class);
+        getGoogleMap().setOnMapLoadedCallback(() -> getGoogleMap().snapshot(snapshotCallback));
+
+        ModifiedAddressRepository modifiedAddressRepository = ViewModelProviders.of(getActivity()).get(ModifiedAddressRepository.class);
 
         modifiedAddressRepository.getLatLng(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER)).observe(this, latLngModel -> {
 
@@ -232,51 +278,9 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
                     public void onFinish() {
 
-                        if (recreateSnapshot) {
+                        if (recreateSnapshot)
 
-                            GoogleMap.SnapshotReadyCallback callback = snapshot -> {
-
-                                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
-
-                                File directory = cw.getDir("images", Context.MODE_PRIVATE);
-
-                                String fileName = String.format("map_%s.jpg", String.valueOf(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER)));
-
-                                File path = new File(directory, fileName);
-
-                                FileOutputStream fos = null;
-
-                                try {
-
-                                    fos = new FileOutputStream(path);
-
-                                    Bitmap cropped = Bitmap.createBitmap(snapshot, snapshot.getWidth() / 2 - 100, snapshot.getHeight() / 2 - 100, 200, 200);
-
-                                    cropped.compress(Bitmap.CompressFormat.JPEG, 80, fos);
-
-                                } catch (Exception e) {
-
-                                    e.printStackTrace();
-
-                                } finally {
-
-                                    try {
-
-                                        fos.close();
-
-                                    } catch (IOException e) {
-
-                                        e.printStackTrace();
-
-                                    }
-
-                                }
-
-                            };
-
-                            getGoogleMap().snapshot(callback);
-
-                        }
+                            getGoogleMap().snapshot(snapshotCallback);
 
                         recreateSnapshot = false;
 
@@ -305,7 +309,7 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
     public interface LocationListener {
 
-        void onLocationChanged(LatLng latLng);
+        void onLocationChanged(LatLng latLng, Boolean updateAddressInfo);
 
     }
 

@@ -1,7 +1,5 @@
 package br.com.developen.sig.task;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -15,30 +13,29 @@ import br.com.developen.sig.database.ModifiedAddressVO;
 import br.com.developen.sig.exception.CannotInitializeDatabaseException;
 import br.com.developen.sig.exception.InternalException;
 import br.com.developen.sig.util.App;
-import br.com.developen.sig.util.Constants;
 import br.com.developen.sig.util.DB;
 import br.com.developen.sig.util.Messaging;
 
-public class UpdateAddressLocationAsyncTask<A extends Activity & UpdateAddressLocationAsyncTask.Listener >
+public class UpdateAddressLocationAsyncTask<L extends UpdateAddressLocationAsyncTask.Listener >
         extends AsyncTask<Object, Void, Object> {
 
 
-    private WeakReference<A> activity;
+    private WeakReference<L> listener;
 
-    private SharedPreferences preferences;
+    private boolean updateAddressInfo;
 
 
-    public UpdateAddressLocationAsyncTask(A activity) {
+    public UpdateAddressLocationAsyncTask(L listener, Boolean updateAddressInfo) {
 
-        this.activity = new WeakReference<>(activity);
+        this.listener = new WeakReference<>(listener);
 
-        this.preferences = this.activity.get().
-                getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, 0);
+        this.updateAddressInfo = updateAddressInfo;
 
     }
 
 
     protected Object doInBackground(Object... params) {
+
 
         Integer modifiedAddressIdentifier = (Integer) params[0];
 
@@ -64,44 +61,47 @@ public class UpdateAddressLocationAsyncTask<A extends Activity & UpdateAddressLo
         boolean hasAddressInfo = false;
 
 
-        A activity = this.activity.get();
+        L listener = this.listener.get();
 
-        if (activity == null)
+        if (listener == null)
 
             return false;
 
         //BUSCA O ENDERECO DA LOCALIZACAO
-        try {
+        if (updateAddressInfo) {
 
-            Geocoder geocoder = new Geocoder(activity.getBaseContext());
+            try {
 
-            List<Address> addresses = geocoder.
-                    getFromLocation(latitude, longitude, 1);
+                Geocoder geocoder = new Geocoder(App.getContext());
 
-            if (addresses != null && addresses.size() > 0) {
+                List<Address> addresses = geocoder.
+                        getFromLocation(latitude, longitude, 1);
 
-                Address address = addresses.get(0);
+                if (addresses != null && addresses.size() > 0) {
 
-                thoroughfare = address.getThoroughfare();
+                    Address address = addresses.get(0);
 
-                number = address.getFeatureName();
+                    thoroughfare = address.getThoroughfare();
 
-                district = address.getSubLocality();
+                    number = address.getFeatureName();
 
-                postalCode = address.getPostalCode();
+                    district = address.getSubLocality();
 
-                city = address.getSubAdminArea();
+                    postalCode = address.getPostalCode();
 
-                state = address.getAdminArea();
+                    city = address.getSubAdminArea();
 
-                country = address.getCountryName();
+                    state = address.getAdminArea();
 
-                hasAddressInfo = true;
+                    country = address.getCountryName();
 
-            }
+                    hasAddressInfo = true;
 
-        } catch (IOException ignored){}
+                }
 
+            } catch (IOException ignored){}
+
+        }
 
         DB database = DB.getInstance(App.getInstance());
 
@@ -166,7 +166,7 @@ public class UpdateAddressLocationAsyncTask<A extends Activity & UpdateAddressLo
 
     protected void onPostExecute(Object callResult) {
 
-        A listener = this.activity.get();
+        L listener = this.listener.get();
 
         if (listener != null) {
 

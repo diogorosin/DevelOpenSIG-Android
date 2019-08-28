@@ -8,6 +8,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.List;
+
 @Dao
 public interface ModifiedAddressDAO {
 
@@ -56,8 +58,35 @@ public interface ModifiedAddressDAO {
             "LEFT OUTER JOIN State S ON S.identifier = C.state " +
             "LEFT OUTER JOIN Country Co ON Co.identifier = S.country " +
             "WHERE MA.syncedAt IS NULL AND MA.active = 1 " +
-            "ORDER BY datetime(MA.modifiedAt) DESC")
+            "ORDER BY MA.identifier DESC")
     DataSource.Factory<Integer, ModifiedAddressModel> getModifiedAddressesThatWasNotSynced();
+
+    @Query("SELECT " +
+            " A.identifier AS 'identifier', " +
+            " A.denomination AS 'denomination', " +
+            " A.number AS 'number', " +
+            " A.reference AS 'reference', " +
+            " A.district AS 'district', " +
+            " A.postalCode AS 'postalCode', " +
+            " A.latitude AS 'latitude', " +
+            " A.longitude AS 'longitude', " +
+            " City.identifier AS 'city_identifier', " +
+            " City.denomination AS 'city_denomination', " +
+            " CityState.identifier AS 'city_state_identifier', " +
+            " CityState.denomination AS 'city_state_denomination', " +
+            " CityState.acronym AS 'city_state_acronym', " +
+            " CityStateCountry.identifier AS 'city_state_country_identifier', " +
+            " CityStateCountry.denomination AS 'city_state_country_denomination', " +
+            " CityStateCountry.acronym AS 'city_state_country_acronym', " +
+            " A.verifiedBy AS 'verifiedBy', " +
+            " A.verifiedAt AS 'verifiedAt' " +
+            "FROM ModifiedAddress MA " +
+            "INNER JOIN Address A ON A.identifier = MA.address " +
+            "INNER JOIN City City ON City.identifier = A.city " +
+            "INNER JOIN State CityState ON CityState.identifier = City.state " +
+            "INNER JOIN Country CityStateCountry ON CityStateCountry.identifier = CityState.country " +
+            "WHERE MA.identifier = :identifier")
+    LiveData<AddressModel> getAddressOfModifiedAddress(Integer identifier);
 
     @Query("SELECT " +
             "MA.denomination AS 'denomination' " +

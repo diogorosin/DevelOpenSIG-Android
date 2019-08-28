@@ -54,7 +54,15 @@ public class ModifiedRecyclerViewAdapter extends PagedListAdapter<ModifiedAddres
 
         holder.modifiedAddressModel = getItem(position);
 
-        holder.denominationTextView.setText(holder.modifiedAddressModel.getDenomination() + (holder.modifiedAddressModel.getNumber() == null ? "" : ", Nº " + holder.modifiedAddressModel.getNumber()));
+        String denomination = String.format("%s", holder.modifiedAddressModel.getDenomination());
+
+        String number = holder.modifiedAddressModel.getNumber();
+
+        if (number != null && !number.isEmpty())
+
+            denomination = denomination.concat(String.format(", Nº %s", number));
+
+        holder.denominationTextView.setText(denomination);
 
         holder.districtTextView.setText(holder.modifiedAddressModel.getDistrict());
 
@@ -63,7 +71,7 @@ public class ModifiedRecyclerViewAdapter extends PagedListAdapter<ModifiedAddres
         holder.modifiedAtTextView.setText(StringUtils.formatShortDateTime(holder.modifiedAddressModel.getModifiedAt()));
 
         holder.itemView.setBackgroundColor(selectedItems.get(position) ?
-                ContextCompat.getColor(App.getContext(), R.color.colorBlackMedium) :
+                ContextCompat.getColor(App.getContext(), R.color.colorGreyDark) :
                 Color.TRANSPARENT);
 
         ContextWrapper cw = new ContextWrapper(App.getContext());

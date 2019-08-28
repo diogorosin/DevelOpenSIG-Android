@@ -19,13 +19,13 @@
             </group>
         </menu>
     </item>
-    <item android:title="@string/address">
+    <item android:title="@string/markers">
         <menu>
             <group android:checkableBehavior="none">
                 <item
                     android:id="@+id/menu_map_edit"
                     android:icon="@drawable/icon_edit_24"
-                    android:title="@string/edit"
+                    android:title="@string/new_and_revised"
                     android:checkable="false"/>
             </group>
         </menu>

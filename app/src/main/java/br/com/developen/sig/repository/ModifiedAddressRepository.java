@@ -11,6 +11,7 @@ import androidx.paging.PagedList;
 import java.util.Date;
 import java.util.Map;
 
+import br.com.developen.sig.database.AddressModel;
 import br.com.developen.sig.database.CityModel;
 import br.com.developen.sig.database.CityVO;
 import br.com.developen.sig.database.LatLngModel;
@@ -43,6 +44,8 @@ public class ModifiedAddressRepository extends AndroidViewModel {
 
 
     private LiveData<PagedList<ModifiedAddressModel>> modifiedAddressesThatWasNotSynced;
+
+    private LiveData<AddressModel> address;
 
     private LiveData<String> denomination;
 
@@ -177,6 +180,15 @@ public class ModifiedAddressRepository extends AndroidViewModel {
 
     }
 
+    public LiveData<AddressModel> getAddress(Integer identifier) {
+
+        if (address==null)
+
+            address = getDao().getAddressOfModifiedAddress(identifier);
+
+        return address;
+
+    }
 
     public void save(Map<Integer, Object> values) throws CityNotFoundException {
 
@@ -229,6 +241,5 @@ public class ModifiedAddressRepository extends AndroidViewModel {
             getDao().update(modifiedAddressVO);
 
     }
-
 
 }

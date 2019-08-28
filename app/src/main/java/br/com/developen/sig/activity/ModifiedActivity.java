@@ -56,7 +56,7 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle(R.string.modified_address_list);
+        getSupportActionBar().setTitle(R.string.new_and_revised);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -90,11 +90,15 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
                             modifiedAddressModel.
                             getIdentifier();
 
-                    Intent addIntent = new Intent(ModifiedActivity.this, ModifiedAddressActivity.class);
+                    new Handler().post(() -> {
 
-                    addIntent.putExtra(ModifiedAddressActivity.MODIFIED_ADDRESS_IDENTIFIER, identifier);
+                        Intent addIntent = new Intent(ModifiedActivity.this, ModifiedAddressActivity.class);
 
-                    startActivity(addIntent);
+                        addIntent.putExtra(ModifiedAddressActivity.MODIFIED_ADDRESS_IDENTIFIER, identifier);
+
+                        startActivity(addIntent);
+
+                    });
 
                 }
 
@@ -170,7 +174,7 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setMessage("Deseja realmente excluir a(s) edição(ções) selecionada(s)?");
+        builder.setMessage("Deseja realmente excluir o(s) marcador(es) selecionado(s)?");
 
         builder.setCancelable(true);
 
@@ -210,7 +214,7 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
         progressDialog.setTitle("Aguarde");
 
-        progressDialog.setMessage("Excluindo edição(ções)...");
+        progressDialog.setMessage("Excluindo marcador(es)...");
 
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 

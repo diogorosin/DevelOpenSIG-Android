@@ -117,6 +117,9 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
                 });
 
+        modifiedAddressRepository.getAddress(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0)).
+                observe(this, address -> getSupportActionBar().setTitle(address == null ? R.string.new_marker : R.string.marker));
+
     }
 
 
@@ -193,7 +196,7 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                builder.setMessage("Deseja realmente excluir o endereço?").
+                builder.setMessage("Deseja realmente excluir o marcador?").
                         setTitle("Atenção").
                         setPositiveButton("Sim", dialogClickListener).
                         setNegativeButton("Não", dialogClickListener).
@@ -213,9 +216,9 @@ public class ModifiedAddressActivity extends AppCompatActivity
     public void onPointerCaptureChanged(boolean hasCapture) {}
 
 
-    public void onLocationChanged(LatLng latLng) {
+    public void onLocationChanged(LatLng latLng, Boolean updateAddressInfo) {
 
-        new UpdateAddressLocationAsyncTask<>(this).execute(
+        new UpdateAddressLocationAsyncTask<>(this, updateAddressInfo).execute(
                 getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER,0),
                 latLng.latitude,
                 latLng.longitude);

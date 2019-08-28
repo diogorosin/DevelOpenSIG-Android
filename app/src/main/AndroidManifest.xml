@@ -50,7 +50,7 @@
             android:name=".activity.ModifiedActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:label="@string/edit"
+                android:label="@string/markers"
                 android:value=".activity.MapActivity" />
         </activity>
         <activity

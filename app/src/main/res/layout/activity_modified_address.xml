@@ -23,7 +23,7 @@
             android:background="@color/colorGreenMedium"
             app:layout_scrollFlags="snap"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="@string/title_activity_address"/>
+            app:title="@string/marker"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/activity_modified_address_tabs"
