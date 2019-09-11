@@ -1,148 +1,141 @@
 package br.com.developen.sig.repository;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import br.com.developen.sig.database.ModifiedAddressEdificationDAO;
+import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
+import br.com.developen.sig.database.ModifiedAddressEdificationVO;
+import br.com.developen.sig.database.TypeModel;
 import br.com.developen.sig.util.DB;
 
-public class ModifiedAddressEdificationRepository extends AndroidViewModel {
+public class ModifiedAddressEdificationRepository {
 
 
-    private ModifiedAddressEdificationDAO dao;
+    public static final int MODIFIED_ADDRESS_PROPERTY = 0;
 
-    private LiveData<List<ModifiedAddressEdificationModel>> modifiedAddressEdifications;
+    public static final int EDIFICATION_PROPERTY = 1;
 
-    private LiveData<Boolean> activeOfModifiedAddressEdification;
+    public static final int TYPE_PROPERTY = 2;
 
-    private LiveData<Integer> typeOfModifiedAddressEdification;
-
-    private LiveData<String> referenceOfModifiedAddressEdification;
+    public static final int REFERENCE_PROPERTY = 3;
 
 
-    public ModifiedAddressEdificationRepository(Application application){
+    private static ModifiedAddressEdificationRepository instance;
 
-        super(application);
-
-    }
+    private final DB database;
 
 
-    private ModifiedAddressEdificationDAO getDao() {
+    private ModifiedAddressEdificationRepository(DB database) {
 
-        if (dao==null)
-
-            dao = DB.getInstance(getApplication()).modifiedAddressEdificationDAO();
-
-        return dao;
+        this.database = database;
 
     }
 
 
-    public LiveData<List<ModifiedAddressEdificationModel>> getEdificationsOfModifiedAddress(Integer modifiedAddress){
+    public static ModifiedAddressEdificationRepository getInstance(final DB database) {
 
-        if (modifiedAddressEdifications==null)
+        if (instance == null) {
 
-            modifiedAddressEdifications = getDao().getEdificationsOfModifiedAddress(modifiedAddress);
+            synchronized (ModifiedAddressEdificationRepository.class) {
 
-        return modifiedAddressEdifications;
+                if (instance == null) {
 
-    }
+                    instance = new ModifiedAddressEdificationRepository(database);
 
-    public LiveData<Boolean> getActiveOfModifiedAddressEdification(Integer modifiedAddress, Integer edification){
+                }
 
-        if (activeOfModifiedAddressEdification == null)
+            }
 
-            activeOfModifiedAddressEdification = getDao().getActiveOfModifiedAddressEdification(modifiedAddress, edification);
+        }
 
-        return activeOfModifiedAddressEdification;
-
-    }
-
-
-    public LiveData<Integer> getTypeOfModifiedAddressEdification(Integer modifiedAddress, Integer edification){
-
-        if (typeOfModifiedAddressEdification == null)
-
-            typeOfModifiedAddressEdification = getDao().getTypeOfModifiedAddressEdification(modifiedAddress, edification);
-
-        return typeOfModifiedAddressEdification;
+        return instance;
 
     }
 
 
-    public LiveData<String> getReferenceOfModifiedAddressEdification(Integer modifiedAddress, Integer edification){
+    public LiveData<List<ModifiedAddressEdificationDwellerModel>> getDwellersOfModifiedAddressEdification(int modifiedAddress, int edification) {
 
-        if (referenceOfModifiedAddressEdification == null)
-
-            referenceOfModifiedAddressEdification = getDao().getReferenceOfModifiedAddressEdification(modifiedAddress, edification);
-
-        return referenceOfModifiedAddressEdification;
+        return database.modifiedAddressEdificationDAO().getDwellersOfModifiedAddressEdification(modifiedAddress, edification);
 
     }
 
 
-/*    public LiveData<ModifiedAddressEdificationModel> getModifiedAddressEdification(Integer modifiedAddress, Integer edification){
+    public ModifiedAddressEdificationModel getModifiedAddressEdification(int modifiedAddress, int edification) {
 
-        if (modifiedAddressEdification==null)
-
-            modifiedAddressEdification = getDao().getModifiedAddressEdification(modifiedAddress, edification);
-
-        return modifiedAddressEdification;
+        return database.modifiedAddressEdificationDAO().getModifiedAddressEdification(modifiedAddress, edification);
 
     }
 
 
-    public void validate(Integer typeOfModifiedAddressEdification, String reference){
+    public void save(Map<Integer, Object> values) {
 
+        ModifiedAddressEdificationVO vo = database.modifiedAddressEdificationDAO().
+                retrieve(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
+                        (Integer) values.get(EDIFICATION_PROPERTY));
 
-        ModifiedAddressEdificationModel model = modifiedAddressEdification.getValue();
+        vo.setType(((TypeModel) values.get(TYPE_PROPERTY)).getIdentifier());
 
-        ModifiedAddressEdificationVO vo = new ModifiedAddressEdificationVO();
-
-        vo.setModifiedAddress(model.getModifiedAddress().getIdentifier());
-
-        vo.setEdification(model.getEdification());
-
-        vo.setType(typeOfModifiedAddressEdification);
-
-        vo.setReference(reference);
+        vo.setReference((String) values.get(REFERENCE_PROPERTY));
 
         vo.setActive(true);
 
-        if (getDao().exists(vo.getModifiedAddress(), vo.getEdification()))
+        database.getTransactionExecutor().execute(() -> {
 
-            getDao().update(vo);
+            if (database.modifiedAddressEdificationDAO().exists(
+                    (Integer) values.get(MODIFIED_ADDRESS_PROPERTY),
+                    (Integer) values.get(EDIFICATION_PROPERTY)))
 
+                database.modifiedAddressEdificationDAO().update(vo);
 
-    }
-
-    public Integer getType() {
-
-        return typeOfModifiedAddressEdification;
-
-    }
-
-    public void setType(Integer typeOfModifiedAddressEdification) {
-
-        this.typeOfModifiedAddressEdification = typeOfModifiedAddressEdification;
+        });
 
     }
 
-    public String getReference() {
 
-        return reference;
+    public void delete(Map<Integer, Object> values){
+
+        ModifiedAddressEdificationVO vo = database.modifiedAddressEdificationDAO().
+                retrieve(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
+                        (Integer) values.get(EDIFICATION_PROPERTY));
+
+        vo.setActive(false);
+
+        database.getTransactionExecutor().execute(() -> {
+
+            if (database.modifiedAddressEdificationDAO().exists(
+                    (Integer) values.get(MODIFIED_ADDRESS_PROPERTY),
+                    (Integer) values.get(EDIFICATION_PROPERTY)))
+
+                database.modifiedAddressEdificationDAO().update(vo);
+
+        });
 
     }
 
-    public void setReference(String reference) {
 
-        this.reference = reference;
+    public void demolish(Map<Integer, Object> values){
 
-    } */
+        ModifiedAddressEdificationVO vo = database.modifiedAddressEdificationDAO().
+                retrieve(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
+                        (Integer) values.get(EDIFICATION_PROPERTY));
+
+        vo.setTo(new Date());
+
+        database.getTransactionExecutor().execute(() -> {
+
+            if (database.modifiedAddressEdificationDAO().exists(
+                    (Integer) values.get(MODIFIED_ADDRESS_PROPERTY),
+                    (Integer) values.get(EDIFICATION_PROPERTY)))
+
+                database.modifiedAddressEdificationDAO().update(vo);
+
+        });
+
+    }
+
 
 }

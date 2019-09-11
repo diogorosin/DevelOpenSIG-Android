@@ -28,4 +28,8 @@ public class Constants {
 
     public static final String TOKEN_IDENTIFIER_PROPERTY = "TOKEN_IDENTIFIER_PROPERTY";
 
+    public static final String MALE_GENDER_DENOMINATION = "Masculino";
+
+    public static final String FEMALE_GENDER_DENOMINATION = "Feminino";
+
 }

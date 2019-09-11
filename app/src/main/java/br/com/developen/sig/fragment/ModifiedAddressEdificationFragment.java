@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
-import br.com.developen.sig.repository.ModifiedAddressEdificationRepository;
+import br.com.developen.sig.viewmodel.ModifiedAddressViewModel;
 import br.com.developen.sig.widget.ModifiedAddressEdificationRecyclerViewAdapter;
 
 public class ModifiedAddressEdificationFragment extends Fragment {
@@ -27,7 +28,7 @@ public class ModifiedAddressEdificationFragment extends Fragment {
     private static final String ARG_COLUMNS = "ARG_COLUMNS";
 
 
-    private ModifiedAddressEdificationRepository repository;
+    private ModifiedAddressViewModel modifiedAddressViewModel;
 
     private ModifiedAddressEdificationRecyclerViewAdapter recyclerViewAdapter;
 
@@ -42,7 +43,7 @@ public class ModifiedAddressEdificationFragment extends Fragment {
 
         args.putInt(ARG_MODIFIED_ADDRESS_IDENTIFIER, modifiedAddressIdentifier);
 
-        args.putInt(ARG_COLUMNS, 3);
+        args.putInt(ARG_COLUMNS, 1);
 
         fragment.setArguments(args);
 
@@ -69,11 +70,21 @@ public class ModifiedAddressEdificationFragment extends Fragment {
 
         recyclerViewAdapter = new ModifiedAddressEdificationRecyclerViewAdapter(new ArrayList<>(), fragmentListener);
 
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
+
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        repository = ViewModelProviders.of(this).get(ModifiedAddressEdificationRepository.class);
+        ModifiedAddressViewModel.Factory factory = new ModifiedAddressViewModel.Factory(
+                requireActivity().getApplication(),
+                getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER, 0));
 
-        repository.getEdificationsOfModifiedAddress(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER)).observe(ModifiedAddressEdificationFragment.this, modifiedAddressEdifications -> recyclerViewAdapter.setModifiedAddressEdifications(modifiedAddressEdifications));
+        modifiedAddressViewModel = ViewModelProviders.of(this, factory).get(ModifiedAddressViewModel.class);
+
+        modifiedAddressViewModel.
+                getEdificationsOfModifiedAddress().
+                observe(this, modifiedAddressEdifications -> recyclerViewAdapter.setModifiedAddressEdifications(modifiedAddressEdifications));
 
         return recyclerView;
 
@@ -100,7 +111,7 @@ public class ModifiedAddressEdificationFragment extends Fragment {
         else
 
             throw new RuntimeException(context.toString()
-                    + " must implement EdificationFragmentListener");
+                    + " must implement ModifiedAddressEdificationFragment");
 
     }
 

@@ -16,11 +16,7 @@ public class ModifiedAddressEdificationDwellerModel {
 
     private Integer subject;
 
-    private String nameOrDenomination;
-
-    private String type;
-
-    private String fancyName;
+    private String name;
 
     private String motherName;
 
@@ -42,7 +38,8 @@ public class ModifiedAddressEdificationDwellerModel {
     @TypeConverters({DateConverter.class})
     private Date birthDate;
 
-    private String gender;
+    @Embedded(prefix = "gender_")
+    private GenderModel gender;
 
     @TypeConverters({DateConverter.class})
     private Date from;
@@ -95,44 +92,16 @@ public class ModifiedAddressEdificationDwellerModel {
     }
 
 
-    public String getNameOrDenomination() {
+    public String getName() {
 
-        return nameOrDenomination;
-
-    }
-
-
-    public void setNameOrDenomination(String nameOrDenomination) {
-
-        this.nameOrDenomination = nameOrDenomination;
+        return name;
 
     }
 
 
-    public String getType() {
+    public void setName(String name) {
 
-        return type;
-
-    }
-
-
-    public void setType(String type) {
-
-        this.type = type;
-
-    }
-
-
-    public String getFancyName() {
-
-        return fancyName;
-
-    }
-
-
-    public void setFancyName(String fancyName) {
-
-        this.fancyName = fancyName;
+        this.name = name;
 
     }
 
@@ -249,14 +218,14 @@ public class ModifiedAddressEdificationDwellerModel {
     }
 
 
-    public String getGender() {
+    public GenderModel getGender() {
 
         return gender;
 
     }
 
 
-    public void setGender(String gender) {
+    public void setGender(GenderModel gender) {
 
         this.gender = gender;
 

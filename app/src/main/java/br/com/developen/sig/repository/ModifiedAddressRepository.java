@@ -1,28 +1,23 @@
 package br.com.developen.sig.repository;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.paging.DataSource;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
-import br.com.developen.sig.database.AddressModel;
 import br.com.developen.sig.database.CityModel;
-import br.com.developen.sig.database.CityVO;
 import br.com.developen.sig.database.LatLngModel;
-import br.com.developen.sig.database.ModifiedAddressDAO;
+import br.com.developen.sig.database.ModifiedAddressEdificationModel;
 import br.com.developen.sig.database.ModifiedAddressModel;
 import br.com.developen.sig.database.ModifiedAddressVO;
 import br.com.developen.sig.exception.CityNotFoundException;
-import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.DB;
+import br.com.developen.sig.util.StringUtils;
 
-public class ModifiedAddressRepository extends AndroidViewModel {
+public class ModifiedAddressRepository {
 
 
     public static final int IDENTIFIER_PROPERTY = 0;
@@ -39,178 +34,59 @@ public class ModifiedAddressRepository extends AndroidViewModel {
 
     public static final int CITY_PROPERTY = 6;
 
-
-    private ModifiedAddressDAO dao;
-
-
-    private LiveData<PagedList<ModifiedAddressModel>> modifiedAddressesThatWasNotSynced;
-
-    private LiveData<AddressModel> address;
-
-    private LiveData<String> denomination;
-
-    private LiveData<String> number;
-
-    private LiveData<String> reference;
-
-    private LiveData<String> district;
-
-    private LiveData<Integer> postalCode;
-
-    private LiveData<CityModel> city;
-
-    private LiveData<LatLngModel> latLng;
-
-    private LiveData<Boolean> active;
+    public static final int LATLON_PROPERTY = 7;
 
 
-    public ModifiedAddressRepository(Application application){
+    private static ModifiedAddressRepository instance;
 
-        super(application);
+    private final DB database;
+
+
+    private ModifiedAddressRepository(DB database) {
+
+        this.database = database;
 
     }
 
-    private ModifiedAddressDAO getDao() {
 
-        if (dao==null)
+    public static ModifiedAddressRepository getInstance(final DB database) {
 
-            dao = DB.getInstance(getApplication()).modifiedAddressDAO();
+        if (instance == null) {
 
-        return dao;
+            synchronized (ModifiedAddressRepository.class) {
 
-    }
+                if (instance == null) {
 
-    public LiveData<PagedList<ModifiedAddressModel>> getModifiedAddressesThatWasNotSynced(){
+                    instance = new ModifiedAddressRepository(database);
 
-        if (modifiedAddressesThatWasNotSynced==null){
+                }
 
-            DataSource.Factory<Integer, ModifiedAddressModel> factory = DB.getInstance(
-                    getApplication()).
-                    modifiedAddressDAO().
-                    getModifiedAddressesThatWasNotSynced();
-
-            LivePagedListBuilder<Integer, ModifiedAddressModel> listBuilder =
-                    new LivePagedListBuilder<>(factory, 50);
-
-            modifiedAddressesThatWasNotSynced = listBuilder.build();
+            }
 
         }
 
-        return modifiedAddressesThatWasNotSynced;
+        return instance;
 
     }
 
-    public LiveData<String> getDenomination(Integer identifier){
-
-        if (denomination==null)
-
-            denomination = getDao().getDenominationOfModifiedAddress(identifier);
-
-        return denomination;
-
-    }
-
-    public LiveData<String> getNumber(Integer identifier){
-
-        if (number==null)
-
-            number = getDao().getNumberOfModifiedAddress(identifier);
-
-        return number;
-
-    }
-
-    public LiveData<String> getReference(Integer identifier){
-
-        if (reference==null)
-
-            reference = getDao().getReferenceOfModifiedAddress(identifier);
-
-        return reference;
-
-    }
-
-    public LiveData<String> getDistrict(Integer identifier){
-
-        if (district==null)
-
-            district = getDao().getDistrictOfModifiedAddress(identifier);
-
-        return district;
-
-    }
-
-    public LiveData<Integer> getPostalCode(Integer identifier){
-
-        if (postalCode==null)
-
-            postalCode = getDao().getPostalCodeOfModifiedAddress(identifier);
-
-        return postalCode;
-
-    }
-
-    public LiveData<CityModel> getCity(Integer identifier){
-
-        if (city==null)
-
-            city = getDao().getCityOfModifiedAddress(identifier);
-
-        return city;
-
-    }
-
-    public LiveData<LatLngModel> getLatLng(Integer identifier){
-
-        if (latLng==null)
-
-            latLng = getDao().getLatLngOfModifiedAddress(identifier);
-
-        return latLng;
-
-    }
-
-    public LiveData<Boolean> getActive(Integer identifier){
-
-        if (active==null)
-
-            active = getDao().getActiveOfModifiedAddress(identifier);
-
-        return active;
-
-    }
-
-    public LiveData<AddressModel> getAddress(Integer identifier) {
-
-        if (address==null)
-
-            address = getDao().getAddressOfModifiedAddress(identifier);
-
-        return address;
-
-    }
 
     public void save(Map<Integer, Object> values) throws CityNotFoundException {
 
-        ModifiedAddressVO modifiedAddressVO = getDao().retrieve((Integer) values.get(IDENTIFIER_PROPERTY));
+        ModifiedAddressVO vo = database.modifiedAddressDAO().retrieve(((Integer) values.get(IDENTIFIER_PROPERTY)));
 
-        modifiedAddressVO.setDenomination((String) values.get(DENOMINATION_PROPERTY));
+        vo.setDenomination((String) values.get(DENOMINATION_PROPERTY));
 
-        modifiedAddressVO.setNumber((String) values.get(NUMBER_PROPERTY));
+        vo.setNumber((String) values.get(NUMBER_PROPERTY));
 
-        modifiedAddressVO.setDistrict((String) values.get(DISTRICT_PROPERTY));
+        vo.setReference((String) values.get(REFERENCE_PROPERTY));
 
-        modifiedAddressVO.setReference((String) values.get(REFERENCE_PROPERTY));
+        vo.setDistrict((String) values.get(DISTRICT_PROPERTY));
 
-        modifiedAddressVO.setPostalCode((Integer) values.get(POSTAL_CODE_PROPERTY));
-
-        modifiedAddressVO.setModifiedAt(new Date());
-
-        modifiedAddressVO.setActive(true);
+        vo.setPostalCode(StringUtils.parsePostalCode((String) values.get(POSTAL_CODE_PROPERTY)));
 
         if (values.get(CITY_PROPERTY) instanceof String){
 
-            modifiedAddressVO.setCity(null);
+            vo.setCity(null);
 
             String cityValue = (String) values.get(CITY_PROPERTY);
 
@@ -222,24 +98,77 @@ public class ModifiedAddressRepository extends AndroidViewModel {
 
                 String stateAcronym = parts[1].trim();
 
-                CityVO cityVO = DB.getInstance(App.getInstance()).cityDAO().findByCityStateAcronym(city, stateAcronym);
+                CityModel cityModel = database.cityDAO().findByCityStateAcronym(city, stateAcronym);
 
-                if (cityVO != null)
+                if (cityModel != null)
 
-                    modifiedAddressVO.setCity(cityVO.getIdentifier());
+                    vo.setCity(cityModel.getIdentifier());
 
             }
 
         }
 
-        if (modifiedAddressVO.getCity() == null)
+        if (vo.getCity() == null)
 
             throw new CityNotFoundException();
 
-        if (getDao().exists(modifiedAddressVO.getIdentifier()))
+        vo.setLatitude(((LatLngModel) values.get(LATLON_PROPERTY)).getLatitude());
 
-            getDao().update(modifiedAddressVO);
+        vo.setLongitude(((LatLngModel) values.get(LATLON_PROPERTY)).getLongitude());
+
+        vo.setActive(true);
+
+        database.getTransactionExecutor().execute(() -> {
+
+            if (database.modifiedAddressDAO().exists((Integer) values.get(IDENTIFIER_PROPERTY)))
+
+                database.modifiedAddressDAO().update(vo);
+
+        });
 
     }
+
+
+    public void delete(Map<Integer, Object> values){
+
+        ModifiedAddressVO vo = database.modifiedAddressDAO().retrieve(((Integer) values.get(IDENTIFIER_PROPERTY)));
+
+        vo.setActive(false);
+
+        database.getTransactionExecutor().execute(() -> {
+
+            if (database.modifiedAddressDAO().exists((Integer) values.get(IDENTIFIER_PROPERTY)))
+
+                database.modifiedAddressDAO().update(vo);
+
+        });
+
+    }
+
+
+    public ModifiedAddressModel getModifiedAddress(int modifiedAddress) {
+
+        return database.modifiedAddressDAO().getModifiedAddress(modifiedAddress);
+
+    }
+
+
+    public LiveData<List<ModifiedAddressEdificationModel>> getEdificationsOfModifiedAddress(int modifiedAddress) {
+
+        return database.modifiedAddressDAO().getEdificationsOfModifiedAddress(modifiedAddress);
+
+    }
+
+
+    public LiveData<PagedList<ModifiedAddressModel>> getModifiedAddressesThatWasNotSynced(){
+
+        DataSource.Factory<Integer, ModifiedAddressModel> factory = database.modifiedAddressDAO().getModifiedAddressesThatWasNotSynced();
+
+        LivePagedListBuilder<Integer, ModifiedAddressModel> listBuilder = new LivePagedListBuilder<>(factory, 50);
+
+        return listBuilder.build();
+
+    }
+
 
 }

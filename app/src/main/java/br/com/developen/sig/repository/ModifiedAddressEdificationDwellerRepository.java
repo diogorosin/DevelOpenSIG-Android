@@ -1,131 +1,129 @@
 package br.com.developen.sig.repository;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import br.com.developen.sig.database.CityVO;
-import br.com.developen.sig.database.ModifiedAddressEdificationDwellerDAO;
+import br.com.developen.sig.database.AgencyModel;
+import br.com.developen.sig.database.CityModel;
+import br.com.developen.sig.database.GenderModel;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerVO;
+import br.com.developen.sig.database.StateModel;
 import br.com.developen.sig.exception.CityNotFoundException;
-import br.com.developen.sig.util.App;
+import br.com.developen.sig.exception.DocumentNotFoundException;
 import br.com.developen.sig.util.DB;
 
-public class ModifiedAddressEdificationDwellerRepository extends AndroidViewModel {
+public class ModifiedAddressEdificationDwellerRepository {
 
 
-    private ModifiedAddressEdificationDwellerDAO dao;
+    public static final int MODIFIED_ADDRESS_PROPERTY = 0;
 
-    private LiveData<List<ModifiedAddressEdificationDwellerModel>> modifiedAddressEdificationDwellers;
+    public static final int EDIFICATION_PROPERTY = 1;
 
-    private LiveData<ModifiedAddressEdificationDwellerModel> modifiedAddressEdificationDweller;
+    public static final int DWELLER_PROPERTY = 2;
 
+    public static final int SUBJECT_PROPERTY = 4;
 
-    public ModifiedAddressEdificationDwellerRepository(Application application){
+    public static final int NAME_PROPERTY = 5;
 
-        super(application);
+    public static final int MOTHER_NAME_PROPERTY = 6;
 
-    }
+    public static final int FATHER_NAME_PROPERTY = 7;
 
+    public static final int CPF_PROPERTY = 8;
 
-    private ModifiedAddressEdificationDwellerDAO getDao() {
+    public static final int RG_NUMBER_PROPERTY = 9;
 
-        if (dao==null)
+    public static final int BIRTH_DATE_PROPERTY = 10;
 
-            dao = DB.getInstance(getApplication()).modifiedAddressEdificationDwellerDAO();
+    public static final int BIRTH_PLACE_PROPERTY = 11;
 
-        return dao;
+    public static final int RG_AGENCY_PROPERTY = 12;
 
-    }
+    public static final int RG_STATE_PROPERTY = 13;
 
-
-    public LiveData<List<ModifiedAddressEdificationDwellerModel>> getDwellersOfModifiedAddressEdification(Integer modifiedAddress, Integer edification){
-
-        if (modifiedAddressEdificationDwellers ==null)
-
-            modifiedAddressEdificationDwellers = getDao().getDwellersOfModifiedAddressEdification(modifiedAddress, edification);
-
-        return modifiedAddressEdificationDwellers;
-
-    }
+    public static final int GENDER_PROPERTY = 14;
 
 
-    public LiveData<ModifiedAddressEdificationDwellerModel> getModifiedAddressEdificationDweller(Integer modifiedAddress, Integer edification, Integer dweller){
+    private static ModifiedAddressEdificationDwellerRepository instance;
 
-        if (modifiedAddressEdificationDweller ==null)
+    private final DB database;
 
-            modifiedAddressEdificationDweller = getDao().getModifiedAddressEdificationDweller(modifiedAddress, edification, dweller);
 
-        return modifiedAddressEdificationDweller;
+    private ModifiedAddressEdificationDwellerRepository(DB database) {
+
+        this.database = database;
 
     }
 
 
-    public void saveAsIndividual(String name,
-                     String motherName,
-                     String fatherName,
-                     Long cpf,
-                     Long rgNumber,
-                     Integer rgAgency,
-                     Integer rgState,
-                     String birthPlace,
-                     Date birthDate,
-                     String gender) throws CityNotFoundException {
+    public static ModifiedAddressEdificationDwellerRepository getInstance(final DB database) {
+
+        if (instance == null) {
+
+            synchronized (ModifiedAddressEdificationDwellerRepository.class) {
+
+                if (instance == null) {
+
+                    instance = new ModifiedAddressEdificationDwellerRepository(database);
+
+                }
+
+            }
+
+        }
+
+        return instance;
+
+    }
 
 
-        ModifiedAddressEdificationDwellerModel model = modifiedAddressEdificationDweller.getValue();
+    public ModifiedAddressEdificationDwellerModel getModifiedAddressEdificationDweller(int modifiedAddress, int edification, int dweller) {
 
-        ModifiedAddressEdificationDwellerVO vo = new ModifiedAddressEdificationDwellerVO();
+        return database.modifiedAddressEdificationDwellerDAO().getModifiedAddressEdificationDweller(modifiedAddress, edification, dweller);
 
-
-        vo.setModifiedAddress(model.getModifiedAddressEdification().getModifiedAddress().getIdentifier());
-
-        vo.setEdification(model.getModifiedAddressEdification().getEdification());
-
-        vo.setDweller(model.getDweller());
-
-        vo.setSubject(model.getSubject());
-
-        vo.setFrom(model.getFrom());
-
-        vo.setActive(true);
+    }
 
 
-        vo.setType("F");
+    public void save(Map<Integer, Object> values) throws CityNotFoundException, DocumentNotFoundException {
 
-        vo.setNameOrDenomination(name);
+        ModifiedAddressEdificationDwellerVO vo = database.modifiedAddressEdificationDwellerDAO().
+                retrieve(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
+                        (Integer) values.get(EDIFICATION_PROPERTY),
+                        (Integer) values.get(DWELLER_PROPERTY));
 
-        vo.setMotherName(motherName);
+        vo.setName((String) values.get(NAME_PROPERTY));
 
-        vo.setFatherName(fatherName);
+        vo.setMotherName((String) values.get(MOTHER_NAME_PROPERTY));
 
-        vo.setCpf(cpf);
+        vo.setFatherName((String) values.get(FATHER_NAME_PROPERTY));
 
-        vo.setRgNumber(rgNumber);
+        vo.setSubject((Integer) values.get(SUBJECT_PROPERTY));
 
-        vo.setRgAgency(rgAgency);
+        if (values.get(BIRTH_PLACE_PROPERTY) instanceof String){
 
-        vo.setRgState(rgState);
+            vo.setBirthPlace(null);
 
+            String cityValue = (String) values.get(BIRTH_PLACE_PROPERTY);
 
-        String[] parts = birthPlace.split("-");
+            String[] parts = cityValue.split("-");
 
-        if (parts.length == 2){
+            if (parts.length == 2){
 
-            String city = parts[0].trim();
+                String city = parts[0].trim();
 
-            String stateAcronym = parts[1].trim();
+                String stateAcronym = parts[1].trim();
 
-            CityVO cityVO = DB.getInstance(App.getInstance()).cityDAO().findByCityStateAcronym(city, stateAcronym);
+                CityModel cityModel = database.cityDAO().findByCityStateAcronym(city, stateAcronym);
 
-            if (cityVO != null)
+                if (cityModel != null)
 
-                vo.setBirthPlace(cityVO.getIdentifier());
+                    vo.setBirthPlace(cityModel.getIdentifier());
+
+            }
 
         }
 
@@ -133,52 +131,57 @@ public class ModifiedAddressEdificationDwellerRepository extends AndroidViewMode
 
             throw new CityNotFoundException();
 
+        vo.setCpf((Long) values.get(CPF_PROPERTY));
 
-        vo.setBirthDate(birthDate);
+        vo.setBirthDate((Date) values.get(BIRTH_DATE_PROPERTY));
 
-        vo.setGender(gender);
+        vo.setRgNumber((Long) values.get(RG_NUMBER_PROPERTY));
 
+        vo.setRgAgency(((AgencyModel) values.get(RG_AGENCY_PROPERTY)).getIdentifier());
 
-        if (getDao().exists(vo.getModifiedAddress(), vo.getEdification(), vo.getDweller()))
+        vo.setRgState(((StateModel) values.get(RG_STATE_PROPERTY)).getIdentifier());
 
-            getDao().update(vo);
+        vo.setGender(((GenderModel) values.get(GENDER_PROPERTY)).getIdentifier());
 
+        vo.setActive(true);
+
+        if (vo.getCpf() == null && vo.getRgNumber() == null)
+
+            throw new DocumentNotFoundException();
+
+        database.getTransactionExecutor().execute(() -> {
+
+            if (database.modifiedAddressEdificationDwellerDAO().exists(
+                    (Integer) values.get(MODIFIED_ADDRESS_PROPERTY),
+                    (Integer) values.get(EDIFICATION_PROPERTY),
+                    (Integer) values.get(DWELLER_PROPERTY)))
+
+                database.modifiedAddressEdificationDwellerDAO().update(vo);
+
+        });
 
     }
 
 
-    public void saveAsOrganization(String denomination, String fancyName) {
+    public void delete(Map<Integer, Object> values){
 
+        ModifiedAddressEdificationDwellerVO vo = database.modifiedAddressEdificationDwellerDAO().
+                retrieve(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
+                        (Integer) values.get(EDIFICATION_PROPERTY),
+                        (Integer) values.get(DWELLER_PROPERTY));
 
-        ModifiedAddressEdificationDwellerModel model = modifiedAddressEdificationDweller.getValue();
+        vo.setActive(false);
 
-        ModifiedAddressEdificationDwellerVO vo = new ModifiedAddressEdificationDwellerVO();
+        database.getTransactionExecutor().execute(() -> {
 
+            if (database.modifiedAddressEdificationDwellerDAO().exists(
+                    (Integer) values.get(MODIFIED_ADDRESS_PROPERTY),
+                    (Integer) values.get(EDIFICATION_PROPERTY),
+                    (Integer) values.get(DWELLER_PROPERTY)))
 
-        vo.setModifiedAddress(model.getModifiedAddressEdification().getModifiedAddress().getIdentifier());
+                database.modifiedAddressEdificationDwellerDAO().update(vo);
 
-        vo.setEdification(model.getModifiedAddressEdification().getEdification());
-
-        vo.setDweller(model.getDweller());
-
-        vo.setSubject(model.getSubject());
-
-        vo.setFrom(model.getFrom());
-
-        vo.setActive(true);
-
-
-        vo.setType("J");
-
-        vo.setNameOrDenomination(denomination);
-
-        vo.setFancyName(fancyName);
-
-
-        if (getDao().exists(vo.getModifiedAddress(), vo.getEdification(), vo.getDweller()))
-
-            getDao().update(vo);
-
+        });
 
     }
 

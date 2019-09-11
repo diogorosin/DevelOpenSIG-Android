@@ -1,52 +1,51 @@
 package br.com.developen.sig.repository;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-
 import java.util.List;
 
-import br.com.developen.sig.database.StateDAO;
 import br.com.developen.sig.database.StateModel;
 import br.com.developen.sig.util.DB;
 
-public class StateRepository extends AndroidViewModel {
+public class StateRepository {
 
-    private StateDAO dao;
 
-    private LiveData<List<StateModel>> states;
+    private static StateRepository instance;
 
-    public StateRepository(Application application){
+    private final DB database;
 
-        super(application);
 
-    }
+    private StateRepository(DB database) {
 
-    public StateDAO getDao() {
-
-        if (dao==null)
-
-            dao = DB.getInstance(getApplication()).stateDAO();
-
-        return dao;
+        this.database = database;
 
     }
 
-    public void setDao(StateDAO dao) {
 
-        this.dao = dao;
+    public static StateRepository getInstance(final DB database) {
+
+        if (instance == null) {
+
+            synchronized (StateRepository.class) {
+
+                if (instance == null) {
+
+                    instance = new StateRepository(database);
+
+                }
+
+            }
+
+        }
+
+        return instance;
 
     }
 
-    public LiveData<List<StateModel>> getStates(){
 
-        if (states==null)
+    public List<StateModel> getStatesOfCountry(Integer country){
 
-            states = getDao().getStates();
-
-        return states;
+        return database.stateDAO().getStatesOfCountry(country);
 
     }
+
 
 }

@@ -5,6 +5,8 @@ import androidx.room.Embedded;
 
 import java.util.Objects;
 
+import br.com.developen.sig.util.StringUtils;
+
 public class CityModel {
 
     private Integer identifier;
@@ -66,7 +68,7 @@ public class CityModel {
 
     public String toString(){
 
-        return getDenomination() + " - " + getState().getAcronym();
+        return StringUtils.formatCityWithState(this);
 
     }
 

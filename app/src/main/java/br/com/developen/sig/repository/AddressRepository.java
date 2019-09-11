@@ -1,52 +1,61 @@
 package br.com.developen.sig.repository;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import br.com.developen.sig.database.AddressDAO;
 import br.com.developen.sig.database.AddressModel;
+import br.com.developen.sig.database.SubjectModel;
 import br.com.developen.sig.util.DB;
 
-public class AddressRepository extends AndroidViewModel {
+public class AddressRepository {
 
-    private AddressDAO dao;
 
-    private LiveData<List<AddressModel>> addresses;
+    private static AddressRepository instance;
 
-    public AddressRepository(Application application){
+    private final DB database;
 
-        super(application);
 
-    }
+    private AddressRepository(DB database) {
 
-    public AddressDAO getDao() {
-
-        if (dao==null)
-
-            dao = DB.getInstance(getApplication()).addressDAO();
-
-        return dao;
+        this.database = database;
 
     }
 
-    public void setDao(AddressDAO dao) {
 
-        this.dao = dao;
+    public static AddressRepository getInstance(final DB database) {
+
+        if (instance == null) {
+
+            synchronized (AddressRepository.class) {
+
+                if (instance == null) {
+
+                    instance = new AddressRepository(database);
+
+                }
+
+            }
+
+        }
+
+        return instance;
 
     }
+
 
     public LiveData<List<AddressModel>> getAddresses(){
 
-        if (addresses==null)
-
-            addresses = getDao().getAddresses();
-
-        return addresses;
+        return database.addressDAO().getAddresses();
 
     }
+
+
+    public List<SubjectModel> getSubjectsOfAddress(Integer address){
+
+        return database.addressDAO().getSubjectsOfAddress(address);
+
+    }
+
 
 }

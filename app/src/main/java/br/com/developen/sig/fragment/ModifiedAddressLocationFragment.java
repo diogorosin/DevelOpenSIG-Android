@@ -1,13 +1,21 @@
 package br.com.developen.sig.fragment;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.databinding.Observable;
+import androidx.databinding.ObservableField;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -24,9 +32,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import br.com.developen.sig.R;
-import br.com.developen.sig.repository.ModifiedAddressRepository;
+import br.com.developen.sig.activity.MapActivity;
+import br.com.developen.sig.database.CityModel;
+import br.com.developen.sig.database.LatLngModel;
+import br.com.developen.sig.util.App;
+import br.com.developen.sig.util.StringUtils;
+import br.com.developen.sig.viewmodel.ModifiedAddressViewModel;
 
 public class ModifiedAddressLocationFragment extends Fragment implements OnMapReadyCallback {
 
@@ -38,7 +52,7 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
     private static final int SNAPSHOT_HEIGHT = 300;
 
 
-    private LocationListener locationListener;
+    private ModifiedAddressViewModel modifiedAddressViewModel;
 
     private GoogleMap googleMap;
 
@@ -47,6 +61,8 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
     private Marker marker;
 
     private boolean recreateSnapshot = false;
+
+    private boolean updateAddress = false;
 
 
     GoogleMap.SnapshotReadyCallback snapshotCallback = snapshot -> {
@@ -90,15 +106,13 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
     };
 
 
-    public static ModifiedAddressLocationFragment newInstance(LocationListener locationListener, Integer modifiedAddressIdentifier) {
+    public static ModifiedAddressLocationFragment newInstance(Integer modifiedAddressIdentifier) {
 
         Bundle args = new Bundle();
 
-        ModifiedAddressLocationFragment fragment = new ModifiedAddressLocationFragment();
-
-        fragment.setLocationListener(locationListener);
-
         args.putInt(ARG_MODIFIED_ADDRESS_IDENTIFIER, modifiedAddressIdentifier);
+
+        ModifiedAddressLocationFragment fragment = new ModifiedAddressLocationFragment();
 
         fragment.setArguments(args);
 
@@ -121,7 +135,7 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
         try {
 
-            MapsInitializer.initialize(getActivity());
+            MapsInitializer.initialize(requireActivity());
 
         } catch (Exception e) {
 
@@ -192,18 +206,20 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
         getGoogleMap().getUiSettings().setMyLocationButtonEnabled(false);
 
+        if (getActivity() instanceof GoogleMap.OnMyLocationChangeListener)
+
+            getGoogleMap().setOnMyLocationChangeListener((GoogleMap.OnMyLocationChangeListener) getActivity());
+
         getGoogleMap().setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             public void onMarkerDragStart(Marker marker) {}
             public void onMarkerDrag(Marker marker) {}
             public void onMarkerDragEnd(Marker marker) {
 
-                if (getLocationListener() != null) {
+                recreateSnapshot = true;
 
-                    recreateSnapshot = true;
+                updateAddress = true;
 
-                    getLocationListener().onLocationChanged(marker.getPosition(), true);
-
-                }
+                setNewLocation(marker.getPosition());
 
             }
 
@@ -211,28 +227,50 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
         getGoogleMap().setOnMapClickListener(latLng -> {
 
-            if (getLocationListener() != null) {
+            recreateSnapshot = true;
 
-                recreateSnapshot = true;
+            updateAddress = true;
 
-                getLocationListener().onLocationChanged(latLng, true);
+            setNewLocation(latLng);
+
+        });
+
+        if (ContextCompat.checkSelfPermission(requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MapActivity.MY_LOCATION_PERMISSION_REQUEST);
+
+        } else
+
+            getGoogleMap().setMyLocationEnabled(true);
+
+        getGoogleMap().setOnMapLoadedCallback(() -> getGoogleMap().snapshot(snapshotCallback));
+
+        ModifiedAddressViewModel.Factory factory = new ModifiedAddressViewModel.Factory(
+                requireActivity().getApplication(), getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER));
+
+        modifiedAddressViewModel = ViewModelProviders.of(requireActivity(), factory).get(ModifiedAddressViewModel.class);
+
+        modifiedAddressViewModel.latLng.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                if (sender != null) {
+
+                    LatLngModel latLng = ((ObservableField<LatLngModel>) sender).get();
+
+                    moveToLocation(new LatLng(latLng.getLatitude(), latLng.getLongitude()));
+
+                }
 
             }
 
         });
 
-        getGoogleMap().setOnMapLoadedCallback(() -> getGoogleMap().snapshot(snapshotCallback));
-
-        ModifiedAddressRepository modifiedAddressRepository = ViewModelProviders.of(getActivity()).get(ModifiedAddressRepository.class);
-
-        modifiedAddressRepository.getLatLng(getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER)).observe(this, latLngModel -> {
-
-            if (latLngModel != null)
-
-                moveToLocation(new LatLng(latLngModel.getLatitude(),
-                        latLngModel.getLongitude()));
-
-        });
+        modifiedAddressViewModel.latLng.notifyChange();
 
     }
 
@@ -276,40 +314,86 @@ public class ModifiedAddressLocationFragment extends Fragment implements OnMapRe
 
         getGoogleMap().animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), new GoogleMap.CancelableCallback() {
 
-                    public void onFinish() {
+            public void onFinish() {
 
-                        if (recreateSnapshot)
+                if (recreateSnapshot)
 
-                            getGoogleMap().snapshot(snapshotCallback);
+                    getGoogleMap().snapshot(snapshotCallback);
 
-                        recreateSnapshot = false;
+                recreateSnapshot = false;
 
-                    }
+                if (updateAddress) {
 
-                    public void onCancel() {}
+                    Runnable updateAddressRunnable = () -> {
 
-                });
+                        try {
+
+                            Geocoder geocoder = new Geocoder(requireActivity().getBaseContext());
+
+                            List<Address> addresses = geocoder.
+                                    getFromLocation(latLng.latitude, latLng.longitude, 1);
+
+                            if (addresses != null && addresses.size() > 0) {
+
+                                Address address = addresses.get(0);
+
+                                modifiedAddressViewModel.denomination.set(address.getThoroughfare());
+
+                                modifiedAddressViewModel.number.set(address.getFeatureName());
+
+                                modifiedAddressViewModel.district.set(address.getSubLocality());
+
+                                modifiedAddressViewModel.postalCode.set(address.getPostalCode());
+
+                                CityModel cityModel = App.getInstance().
+                                        getCityRepository().
+                                        findByCityStateCountry(address.getSubAdminArea(),
+                                                address.getAdminArea(),
+                                                address.getCountryName());
+
+                                modifiedAddressViewModel.city.set(StringUtils.formatCityWithState(cityModel));
+
+                            }
+
+                        } catch (IOException ignored) {}
+
+                    };
+
+                    updateAddressRunnable.run();
+
+                }
+
+                updateAddress = false;
+
+            }
+
+            public void onCancel() {}
+
+        });
 
     }
 
 
-    public LocationListener getLocationListener() {
+    private void setNewLocation(LatLng latLng){
 
-        return locationListener;
+        LatLngModel latLngModel = new LatLngModel();
+
+        latLngModel.setLatitude(latLng.latitude);
+
+        latLngModel.setLongitude(latLng.longitude);
+
+        modifiedAddressViewModel.latLng.set(latLngModel);
 
     }
 
 
-    public void setLocationListener(LocationListener locationListener) {
+    public void moveMarkerToLocation(LatLng latLng){
 
-        this.locationListener = locationListener;
+        recreateSnapshot = true;
 
-    }
+        updateAddress = true;
 
-
-    public interface LocationListener {
-
-        void onLocationChanged(LatLng latLng, Boolean updateAddressInfo);
+        setNewLocation(latLng);
 
     }
 

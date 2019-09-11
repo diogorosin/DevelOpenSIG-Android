@@ -27,7 +27,6 @@ public class CreateEdificationAsyncTask<L extends CreateEdificationAsyncTask.Lis
 
     protected Object doInBackground(Object... parameters) {
 
-
         Integer modifiedAddress = (Integer) parameters[0];
 
         DB database = DB.getInstance(App.getInstance());
@@ -39,7 +38,6 @@ public class CreateEdificationAsyncTask<L extends CreateEdificationAsyncTask.Lis
         try {
 
             database.beginTransaction();
-
 
             ModifiedAddressEdificationVO modifiedAddressEdificationVO = new ModifiedAddressEdificationVO();
 
@@ -56,7 +54,6 @@ public class CreateEdificationAsyncTask<L extends CreateEdificationAsyncTask.Lis
             modifiedAddressEdificationVO.setActive(false);
 
             database.modifiedAddressEdificationDAO().create(modifiedAddressEdificationVO);
-
 
             database.setTransactionSuccessful();
 
@@ -75,7 +72,6 @@ public class CreateEdificationAsyncTask<L extends CreateEdificationAsyncTask.Lis
                 database.endTransaction();
 
         }
-
 
     }
 

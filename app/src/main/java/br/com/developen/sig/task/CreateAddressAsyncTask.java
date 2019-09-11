@@ -1,6 +1,5 @@
 package br.com.developen.sig.task;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,7 +10,7 @@ import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.List;
 
-import br.com.developen.sig.database.CityVO;
+import br.com.developen.sig.database.CityModel;
 import br.com.developen.sig.database.ModifiedAddressVO;
 import br.com.developen.sig.exception.CannotInitializeDatabaseException;
 import br.com.developen.sig.exception.InternalException;
@@ -19,22 +18,33 @@ import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.Constants;
 import br.com.developen.sig.util.DB;
 import br.com.developen.sig.util.Messaging;
+import br.com.developen.sig.util.StringUtils;
 
-public class CreateAddressAsyncTask<A extends Activity & CreateAddressAsyncTask.Listener >
-        extends AsyncTask<Double, Void, Object> {
+public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > extends AsyncTask<Double, Void, Object> {
 
 
-    private WeakReference<A> activity;
+    private WeakReference<L> listener;
 
     private SharedPreferences preferences;
 
 
-    public CreateAddressAsyncTask(A activity) {
+    public CreateAddressAsyncTask(L activity) {
 
-        this.activity = new WeakReference<>(activity);
+        this.listener = new WeakReference<>(activity);
 
-        this.preferences = this.activity.get().
+        this.preferences = App.
+                getInstance().
                 getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, 0);
+
+    }
+
+    protected void onPreExecute() {
+
+        L listener = this.listener.get();
+
+        if (listener != null)
+
+            listener.onCreateAddressPreExecute();
 
     }
 
@@ -63,15 +73,17 @@ public class CreateAddressAsyncTask<A extends Activity & CreateAddressAsyncTask.
 
         Date modifiedAt = new Date();
 
-        A activity = this.activity.get();
+        L listener = this.listener.get();
 
-        if (activity == null)
+        if (listener == null)
 
             return false;
 
+        listener.onCreateAddressProgressInitialize(1, 3);
+
         try {
 
-            Geocoder geocoder = new Geocoder(activity.getBaseContext());
+            Geocoder geocoder = new Geocoder(App.getContext());
 
             List<Address> addresses = geocoder.
                     getFromLocation(latitude, longitude,1);
@@ -96,7 +108,9 @@ public class CreateAddressAsyncTask<A extends Activity & CreateAddressAsyncTask.
 
             }
 
-        } catch (IOException e) {}
+            listener.onCreateAddressProgressUpdate(2);
+
+        } catch (IOException ignored) {}
 
         DB database = DB.getInstance(App.getInstance());
 
@@ -116,17 +130,16 @@ public class CreateAddressAsyncTask<A extends Activity & CreateAddressAsyncTask.
 
             modifiedAddressVO.setDistrict(district);
 
-            modifiedAddressVO.setPostalCode(postalCode == null ? null : Integer.valueOf(postalCode.replaceAll("\\D+","")));
+            modifiedAddressVO.setPostalCode(StringUtils.parsePostalCode(postalCode));
 
-            if (city != null && !city.isEmpty()){
+            CityModel cityModel = App.
+                    getInstance().
+                    getCityRepository().
+                    findByCityStateCountry(city, state, country);
 
-                CityVO cityVO = database.cityDAO().findByCityStateCountry(city, state, country);
+            if (cityModel != null)
 
-                if (cityVO != null)
-
-                    modifiedAddressVO.setCity(cityVO.getIdentifier());
-
-            }
+                modifiedAddressVO.setCity(cityModel.getIdentifier());
 
             modifiedAddressVO.setModifiedBy(modifiedBy);
 
@@ -143,6 +156,8 @@ public class CreateAddressAsyncTask<A extends Activity & CreateAddressAsyncTask.
                     create(modifiedAddressVO).intValue();
 
             database.setTransactionSuccessful();
+
+            listener.onCreateAddressProgressUpdate(3);
 
             return identifier;
 
@@ -163,7 +178,7 @@ public class CreateAddressAsyncTask<A extends Activity & CreateAddressAsyncTask.
 
     protected void onPostExecute(Object callResult) {
 
-        A listener = this.activity.get();
+        L listener = this.listener.get();
 
         if (listener != null) {
 
@@ -188,9 +203,17 @@ public class CreateAddressAsyncTask<A extends Activity & CreateAddressAsyncTask.
 
     public interface Listener {
 
+        void onCreateAddressPreExecute();
+
+        void onCreateAddressProgressInitialize(int progress, int max);
+
+        void onCreateAddressProgressUpdate(int status);
+
         void onCreateAddressSuccess(Integer identifier);
 
         void onCreateAddressFailure(Messaging messaging);
+
+        void onCreateAddressAddressCancelled();
 
     }
 

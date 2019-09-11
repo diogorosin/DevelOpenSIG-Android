@@ -5,6 +5,7 @@ package br.com.developen.sig.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,11 +13,13 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -47,12 +50,14 @@ import br.com.developen.sig.R;
 import br.com.developen.sig.database.AddressEdificationDwellerModel;
 import br.com.developen.sig.database.AddressModel;
 import br.com.developen.sig.database.SubjectModel;
-import br.com.developen.sig.repository.AddressRepository;
 import br.com.developen.sig.task.CreateAddressAsyncTask;
 import br.com.developen.sig.task.FindAddressesBySubjectNameOrDenominationAsyncTask;
+import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.Constants;
 import br.com.developen.sig.util.IconUtils;
 import br.com.developen.sig.util.Messaging;
+import br.com.developen.sig.util.StringUtils;
+import br.com.developen.sig.viewmodel.AddressViewModel;
 import br.com.developen.sig.widget.AddressClusterItem;
 import br.com.developen.sig.widget.AddressClusterRenderer;
 import br.com.developen.sig.widget.AddressEdificationDwellerSuggestions;
@@ -73,10 +78,12 @@ public class MapActivity
 
     public static final int MY_LOCATION_PERMISSION_REQUEST = 1;
 
-
     private ClusterManager<AddressClusterItem> clusterManager;
 
+
     private Location lastKnowLocation;
+
+    public static ProgressDialog progressDialog;
 
     private GoogleMap googleMap;
 
@@ -84,7 +91,7 @@ public class MapActivity
 
     private SharedPreferences preferences;
 
-    private AddressRepository addressRepository;
+    private AddressViewModel addressViewModel;
 
 
     private MenuItem menuItemNormal;
@@ -120,7 +127,7 @@ public class MapActivity
 
         menuItemTerrain = navigationView.getMenu().findItem(R.id.menu_map_type_terrain);
 
-        menuItemEditions = navigationView.getMenu().findItem(R.id.menu_map_edit);
+        menuItemEditions = navigationView.getMenu().findItem(R.id.menu_markers_edit);
 
 
         DrawerLayout drawerLayout = findViewById(R.id.activity_map_drawer);
@@ -216,19 +223,20 @@ public class MapActivity
 
                     }
 
-                    public void onCancel() {
-                    }
+                    public void onCancel() {}
 
                 });
 
                 searchView.clearSearchFocus();
 
-                searchView.setSearchText(((AddressEdificationDwellerSuggestions) searchSuggestion).getAddressEdificationDwellerModel().getSubject().getNameOrDenomination());
+                searchView.setSearchText(((AddressEdificationDwellerSuggestions) searchSuggestion).
+                        getAddressEdificationDwellerModel().
+                        getSubject().
+                        getNameOrDenomination());
 
             }
 
-            public void onSearchAction(String query) {
-            }
+            public void onSearchAction(String query) {}
 
         });
 
@@ -256,6 +264,8 @@ public class MapActivity
                         getLastKnowLocation().getLatitude(), getLastKnowLocation().getLongitude());
 
         });
+
+        progressDialog = new ProgressDialog(this);
 
     }
 
@@ -336,11 +346,17 @@ public class MapActivity
 
                 break;
 
-            case R.id.menu_map_edit:
+            case R.id.menu_markers_edit:
 
                 Intent editIntent = new Intent(MapActivity.this, ModifiedActivity.class);
 
                 startActivity(editIntent);
+
+                drawer.closeDrawers();
+
+                break;
+
+            case R.id.menu_settings:
 
                 drawer.closeDrawers();
 
@@ -437,7 +453,7 @@ public class MapActivity
 
             clusterManager = new ClusterManager<>(this, getGoogleMap());
 
-            clusterManager.setAlgorithm(new NonHierarchicalViewBasedAlgorithm<AddressClusterItem>(
+            clusterManager.setAlgorithm(new NonHierarchicalViewBasedAlgorithm<>(
                     metrics.widthPixels, metrics.heightPixels));
 
             clusterManager.setRenderer(new AddressClusterRenderer(
@@ -470,8 +486,7 @@ public class MapActivity
 
                                 String subjects = "";
 
-                                for (SubjectModel subjectModel: addressRepository.
-                                        getDao().getSubjectsOfAddress(addressClusterItem.getIdentifier()))
+                                for (SubjectModel subjectModel: App.getInstance().getAddressRepository().getSubjectsOfAddress(addressClusterItem.getIdentifier()))
 
                                     subjects += subjectModel.getNameOrDenomination() + '\n';
 
@@ -552,9 +567,9 @@ public class MapActivity
 
         getClusterManager().setOnClusterItemInfoWindowClickListener(this);
 
-        addressRepository = ViewModelProviders.of(this).get(AddressRepository.class);
+        addressViewModel = ViewModelProviders.of(this).get(AddressViewModel.class);
 
-        addressRepository.getAddresses().observe(MapActivity.this, addresses -> {
+        addressViewModel.getAddresses().observe(MapActivity.this, addresses -> {
 
             getClusterManager().clearItems();
 
@@ -574,7 +589,7 @@ public class MapActivity
 
                     addressClusterItem.setDistrict(address.getDistrict());
 
-                    addressClusterItem.setCity(address.getCity().toString());
+                    addressClusterItem.setCity(StringUtils.formatCityWithState(address.getCity()));
 
                     addressClusterItem.setPostalCode(address.getPostalCode());
 
@@ -623,6 +638,39 @@ public class MapActivity
     public void onClusterItemInfoWindowClick(AddressClusterItem addressClusterItem) {}
 
 
+    public void onCreateAddressPreExecute() {
+
+        progressDialog.setCancelable(false);
+
+        progressDialog.setTitle("Aguarde");
+
+        progressDialog.setMessage("Criando marcador...");
+
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        progressDialog.setIndeterminate(true);
+
+        progressDialog.show();
+
+    }
+
+
+    public void onCreateAddressProgressInitialize(int progress, int max) {
+
+        progressDialog.setProgress(progress);
+
+        progressDialog.setMax(max);
+
+    }
+
+
+    public void onCreateAddressProgressUpdate(int status) {
+
+        progressDialog.incrementProgressBy(status);
+
+    }
+
+
     public void onCreateAddressSuccess(Integer identifier) {
 
         Intent addIntent = new Intent(MapActivity.this, ModifiedAddressActivity.class);
@@ -634,7 +682,45 @@ public class MapActivity
     }
 
 
-    public void onCreateAddressFailure(Messaging messaging) {}
+    public void onCreateAddressFailure(Messaging messaging) {
+
+        showAlertDialog(messaging);
+
+    }
+
+
+    public void onCreateAddressAddressCancelled() {
+
+        progressDialog.hide();
+
+    }
+
+
+    private void showAlertDialog(Messaging messaging){
+
+        if (progressDialog.isShowing())
+
+            progressDialog.hide();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
+
+        builder.setMessage(TextUtils.join("\n", messaging.getMessages()));
+
+        builder.setCancelable(true);
+
+        builder.setTitle(R.string.error);
+
+        builder.setPositiveButton(android.R.string.ok,
+
+                (dialog, id) -> dialog.cancel());
+
+        AlertDialog alert = builder.create();
+
+        alert.setCanceledOnTouchOutside(false);
+
+        alert.show();
+
+    }
 
 
     public void onMyLocationChange(Location location) {

@@ -86,22 +86,16 @@ public final class UpdateActiveOfModifiedAddressesAsyncTask<L extends UpdateActi
 
                     l.onDeleteModifiedAddressProgressUpdate(1);
 
-                Thread.sleep(500);
+                Thread.sleep(200);
 
             }
 
             database.setTransactionSuccessful();
 
-            if (exceptions.isEmpty())
-
-                return 0;
-
-            else
-
-                return new TaskException(exceptions.toArray(new String[0]));
-
+            return 0;
 
         } catch(Exception exception) {
+
             return exception;
 
         } finally {

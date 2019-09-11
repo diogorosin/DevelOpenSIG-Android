@@ -24,9 +24,9 @@ import java.util.Objects;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressModel;
-import br.com.developen.sig.repository.ModifiedAddressRepository;
 import br.com.developen.sig.task.UpdateActiveOfModifiedAddressesAsyncTask;
 import br.com.developen.sig.util.Messaging;
+import br.com.developen.sig.viewmodel.ModifiedAddressViewModel;
 import br.com.developen.sig.widget.ModifiedRecyclerViewAdapter;
 import br.com.developen.sig.widget.ModifiedToolbarActionModeCallback;
 import br.com.developen.sig.widget.RecyclerClickListener;
@@ -42,8 +42,6 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
     private RecyclerView recyclerView;
 
     private ModifiedRecyclerViewAdapter modifiedRecyclerViewAdapter;
-
-    private ModifiedAddressRepository modifiedAddressRepository;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,9 +110,10 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
         }));
 
-        modifiedAddressRepository = ViewModelProviders.of(this).get(ModifiedAddressRepository.class);
 
-        modifiedAddressRepository.getModifiedAddressesThatWasNotSynced().observe(this, modifiedAddressesThatWasNotSynced -> {
+        ModifiedAddressViewModel modifiedAddressViewModel = ViewModelProviders.of(this).get(ModifiedAddressViewModel.class);
+
+        modifiedAddressViewModel.getModifiedAddressesThatWasNotSynced().observe(this, modifiedAddressesThatWasNotSynced -> {
 
             if (modifiedAddressesThatWasNotSynced != null)
 
@@ -154,7 +153,7 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
             int count = modifiedRecyclerViewAdapter.getSelectedItemsCount();
 
-            actionMode.setTitle(count + " ediç" + (count > 1 ? "ões" : "ão") + " selecionada" + (count > 1 ? "s" : ""));
+            actionMode.setTitle(count + " registro" + (count > 1 ? "s" : "") + " selecionado" + (count > 1 ? "s" : ""));
 
         }
 
@@ -174,7 +173,7 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setMessage("Deseja realmente excluir o(s) marcador(es) selecionado(s)?");
+        builder.setMessage("Deseja realmente excluir o(s) registro(s) selecionado(s)?");
 
         builder.setCancelable(true);
 
@@ -214,7 +213,7 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
         progressDialog.setTitle("Aguarde");
 
-        progressDialog.setMessage("Excluindo marcador(es)...");
+        progressDialog.setMessage("Excluindo registro(s)...");
 
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 

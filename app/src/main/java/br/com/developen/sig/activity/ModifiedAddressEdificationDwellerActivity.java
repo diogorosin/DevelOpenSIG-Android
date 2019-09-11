@@ -1,39 +1,29 @@
 package br.com.developen.sig.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources.Theme;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ThemedSpinnerAdapter;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.Observable;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.mlykotom.valifi.BR;
+import com.mlykotom.valifi.ValiFiValidable;
 
 import br.com.developen.sig.R;
+import br.com.developen.sig.exception.CityNotFoundException;
+import br.com.developen.sig.exception.DocumentNotFoundException;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerIndividualFragment;
-import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerOrganizationFragment;
-import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
-import br.com.developen.sig.task.UpdateActiveOfModifiedAddressEdificationDwellerAsyncTask;
-import br.com.developen.sig.util.Messaging;
-import br.com.developen.sig.widget.ValidableFragment;
+import br.com.developen.sig.viewmodel.ModifiedAddressEdificationDwellerViewModel;
 
-public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
-        implements  UpdateActiveOfModifiedAddressEdificationDwellerAsyncTask.Listener{
+public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity {
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -42,12 +32,12 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
     public static final String DWELLER_IDENTIFIER = "ARG_DWELLER_IDENTIFIER";
 
-    public static final String EDIT_FRAGMENT = "EDIT_FRAGMENT";
 
+    private ModifiedAddressEdificationDwellerViewModel modifiedAddressEdificationDwellerViewModel;
 
-    private ModifiedAddressEdificationDwellerRepository modifiedAddressEdificationDwellerRepository;
+    private boolean isActive = false;
 
-    private boolean active = false;
+    private boolean isValid = false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,39 +50,34 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Spinner spinner = findViewById(R.id.activity_modified_address_edification_dweller_spinner);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, ModifiedAddressEdificationDwellerIndividualFragment.newInstance(
+                        getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                        getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
+                        getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)))
+                .commit();
 
-        spinner.setAdapter(new MyAdapter(
-                toolbar.getContext(),
-                new String[]{
-                        "Pessoa Física" /* , "Pessoa Jurídica" */
-                }));
+        ModifiedAddressEdificationDwellerViewModel.Factory factory = new ModifiedAddressEdificationDwellerViewModel.Factory(
+                getApplication(),
+                getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
+                getIntent().getIntExtra(DWELLER_IDENTIFIER, 0));
 
-        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+        modifiedAddressEdificationDwellerViewModel = new ViewModelProvider(this, factory).get(ModifiedAddressEdificationDwellerViewModel.class);
 
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        modifiedAddressEdificationDwellerViewModel.form.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
 
-                switch (position){
+            public void onPropertyChanged(Observable sender, int propertyId) {
 
-                    case 0: getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, ModifiedAddressEdificationDwellerIndividualFragment.newInstance(
-                                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)), EDIT_FRAGMENT)
-                            .commit();
+                switch (propertyId){
 
-                        break;
+                    case BR.valid:
 
-                    case 1: getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, ModifiedAddressEdificationDwellerOrganizationFragment.newInstance(
-                                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)), EDIT_FRAGMENT)
-                            .commit();
+                        isValid = ((ValiFiValidable) sender).isValid();
+
+                        invalidateOptionsMenu();
 
                         break;
 
@@ -100,22 +85,22 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
             }
 
-            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        modifiedAddressEdificationDwellerViewModel.active.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                isActive = ((ObservableBoolean) sender).get();
+
+                invalidateOptionsMenu();
+
+            }
 
         });
 
-        modifiedAddressEdificationDwellerRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationDwellerRepository.class);
-
-        modifiedAddressEdificationDwellerRepository.getModifiedAddressEdificationDweller(
-                getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
-                getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)).observe(this, modifiedAddressEdificationDwellerModel -> {
-
-                    active = modifiedAddressEdificationDwellerModel.getActive();
-
-                    invalidateOptionsMenu();
-
-        });
+        //UPDATE VIEW
+        modifiedAddressEdificationDwellerViewModel.active.notifyChange();
 
     }
 
@@ -135,9 +120,13 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
         menuInflater.inflate(R.menu.menu_modified_address_edification_dweller, menu);
 
+        MenuItem saveItem = menu.findItem(R.id.menu_modified_address_edification_dweller_save);
+
+        saveItem.setEnabled(isValid);
+
         MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_edification_dweller_delete);
 
-        deleteItem.setVisible(active);
+        deleteItem.setVisible(isActive);
 
         return true;
 
@@ -158,13 +147,35 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
-                } catch (Exception e) {}
+                } catch (Exception ignored) {}
 
-                Fragment f = getSupportFragmentManager().findFragmentByTag(EDIT_FRAGMENT);
+                try {
 
-                if (f instanceof ValidableFragment)
+                    modifiedAddressEdificationDwellerViewModel.save();
 
-                    ((ValidableFragment) f).validate();
+                    finish();
+
+                } catch (CityNotFoundException e) {
+
+                    e.printStackTrace();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    builder.setTitle("Atenção").
+                            setMessage(e.getMessage()).
+                            setPositiveButton(R.string.button_ok, (dialog, which) -> dialog.dismiss()).
+                            show();
+
+                } catch (DocumentNotFoundException e) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    builder.setTitle("Atenção").
+                            setMessage(e.getMessage()).
+                            setPositiveButton(R.string.button_ok, (dialog, which) -> dialog.dismiss()).
+                            show();
+
+                }
 
                 return true;
 
@@ -186,10 +197,9 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
                         case DialogInterface.BUTTON_POSITIVE:
 
-                            new UpdateActiveOfModifiedAddressEdificationDwellerAsyncTask<>(this,
-                                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)).execute(false);
+                            modifiedAddressEdificationDwellerViewModel.delete();
+
+                            finish();
 
                             break;
 
@@ -219,63 +229,5 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
     }
 
-
-    public void onUpdateActiveOfModifiedAddressEdificationDwellerSuccess() {
-
-        finish();
-
-    }
-
-
-    public void onUpdateActiveOfModifiedAddressEdificationDwellerFailure(Messaging messaging) {}
-
-
-    private static class MyAdapter extends ArrayAdapter<String> implements ThemedSpinnerAdapter {
-
-        private final ThemedSpinnerAdapter.Helper mDropDownHelper;
-
-        public MyAdapter(Context context, String[] objects) {
-
-            super(context, android.R.layout.simple_list_item_1, objects);
-
-            mDropDownHelper = new ThemedSpinnerAdapter.Helper(context);
-
-        }
-
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-
-            View view;
-
-            if (convertView == null) {
-
-                LayoutInflater inflater = mDropDownHelper.getDropDownViewInflater();
-
-                view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-
-            } else {
-
-                view = convertView;
-
-            }
-
-            TextView textView = view.findViewById(android.R.id.text1);
-
-            textView.setText(getItem(position));
-
-            return view;
-
-        }
-
-        public Theme getDropDownViewTheme() {
-            return mDropDownHelper.getDropDownViewTheme();
-        }
-
-        public void setDropDownViewTheme(Theme theme) {
-
-            mDropDownHelper.setDropDownViewTheme(theme);
-
-        }
-
-    }
 
 }

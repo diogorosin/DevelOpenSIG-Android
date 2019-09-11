@@ -66,8 +66,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:src="@drawable/icon_add_24"
-        android:visibility="gone"
+        android:tint="@color/colorBlackHiDark"
+        android:src="@drawable/icon_gps_24"
         android:layout_margin="16dp"
         app:backgroundTint="@color/colorGreyDark"/>
 

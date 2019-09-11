@@ -36,15 +36,8 @@ public class ModifiedAddressEdificationDwellerVO {
     @ColumnInfo(name="subject")
     private Integer subject;
 
-    @ColumnInfo(name="nameOrDenomination")
-    private String nameOrDenomination;
-
-    @NonNull
-    @ColumnInfo(name="type")
-    private String type;
-
-    @ColumnInfo(name="fancyName")
-    private String fancyName;
+    @ColumnInfo(name="name")
+    private String name;
 
     @ColumnInfo(name="motherName")
     private String motherName;
@@ -144,44 +137,16 @@ public class ModifiedAddressEdificationDwellerVO {
     }
 
 
-    public String getNameOrDenomination() {
+    public String getName() {
 
-        return nameOrDenomination;
-
-    }
-
-
-    public void setNameOrDenomination(String nameOrDenomination) {
-
-        this.nameOrDenomination = nameOrDenomination;
+        return name;
 
     }
 
 
-    public String getType() {
+    public void setName(String name) {
 
-        return type;
-
-    }
-
-
-    public void setType(String type) {
-
-        this.type = type;
-
-    }
-
-
-    public String getFancyName() {
-
-        return fancyName;
-
-    }
-
-
-    public void setFancyName(String fancyName) {
-
-        this.fancyName = fancyName;
+        this.name = name;
 
     }
 

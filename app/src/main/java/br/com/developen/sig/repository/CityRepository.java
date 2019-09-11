@@ -1,51 +1,62 @@
 package br.com.developen.sig.repository;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-
 import java.util.List;
 
-import br.com.developen.sig.database.CityDAO;
 import br.com.developen.sig.database.CityModel;
 import br.com.developen.sig.util.DB;
 
-public class CityRepository extends AndroidViewModel {
+public class CityRepository {
 
-    private CityDAO dao;
 
-    private LiveData<List<CityModel>> cities;
+    private static CityRepository instance;
 
-    public CityRepository(Application application){
+    private final DB database;
 
-        super(application);
 
-    }
+    private CityRepository(DB database) {
 
-    public CityDAO getDao() {
-
-        if (dao==null)
-
-            dao = DB.getInstance(getApplication()).cityDAO();
-
-        return dao;
+        this.database = database;
 
     }
 
-    public void setDao(CityDAO dao) {
 
-        this.dao = dao;
+    public static CityRepository getInstance(final DB database) {
+
+        if (instance == null) {
+
+            synchronized (CityRepository.class) {
+
+                if (instance == null) {
+
+                    instance = new CityRepository(database);
+
+                }
+
+            }
+
+        }
+
+        return instance;
 
     }
 
-    public LiveData<List<CityModel>> getCities(){
 
-        if (cities==null)
+    public List<CityModel> getCities(){
 
-            cities = getDao().getCities();
+        return database.cityDAO().getCities();
 
-        return cities;
+    }
+
+
+    public CityModel findByCityStateAcronym(String city, String acronym){
+
+        return database.cityDAO().findByCityStateAcronym(city, acronym);
+
+    }
+
+    public CityModel findByCityStateCountry(String city, String state, String country){
+
+        return database.cityDAO().findByCityStateCountry(city, state, country);
 
     }
 

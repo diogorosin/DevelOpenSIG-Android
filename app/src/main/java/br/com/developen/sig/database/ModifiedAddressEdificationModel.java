@@ -28,6 +28,8 @@ public class ModifiedAddressEdificationModel {
 
     private Boolean active;
 
+    private String firstDwellerName;
+
     private Integer dwellersCount;
 
 
@@ -112,6 +114,18 @@ public class ModifiedAddressEdificationModel {
     public void setTo(Date to) {
 
         this.to = to;
+
+    }
+
+    public String getFirstDwellerName() {
+
+        return firstDwellerName;
+
+    }
+
+    public void setFirstDwellerName(String firstDwellerName) {
+
+        this.firstDwellerName = firstDwellerName;
 
     }
 

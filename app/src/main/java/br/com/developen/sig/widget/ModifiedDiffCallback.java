@@ -14,7 +14,7 @@ public class ModifiedDiffCallback extends DiffUtil.ItemCallback<ModifiedAddressM
 
     public boolean areContentsTheSame(@NonNull ModifiedAddressModel oldItem, @NonNull ModifiedAddressModel newItem) {
 
-        return oldItem.hasSameContents(newItem);
+        return oldItem.hasSameContent(newItem);
 
     }
 

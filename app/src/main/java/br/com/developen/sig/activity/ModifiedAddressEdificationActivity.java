@@ -13,10 +13,12 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.Observable;
+import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,15 +28,13 @@ import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationTypeFragment;
-import br.com.developen.sig.repository.ModifiedAddressEdificationRepository;
 import br.com.developen.sig.task.CreateDwellerAsyncTask;
-import br.com.developen.sig.task.UpdateActiveOfModifiedAddressEdificationAsyncTask;
 import br.com.developen.sig.util.Messaging;
+import br.com.developen.sig.viewmodel.ModifiedAddressEdificationViewModel;
 
-public class ModifiedAddressEdificationActivity extends AppCompatActivity
-        implements ModifiedAddressEdificationDwellerFragment.ModifiedAddressEdificationDwellerFragmentListener,
-        UpdateActiveOfModifiedAddressEdificationAsyncTask.Listener,
-        CreateDwellerAsyncTask.Listener{
+public class ModifiedAddressEdificationActivity
+        extends AppCompatActivity
+        implements ModifiedAddressEdificationDwellerFragment.ModifiedAddressEdificationDwellerFragmentListener, CreateDwellerAsyncTask.Listener{
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
@@ -42,15 +42,11 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
     public static final String EDIFICATION_IDENTIFIER = "ARG_EDIFICATION_IDENTIFIER";
 
 
-    private ModifiedAddressEdificationRepository modifiedAddressEdificationRepository;
-
-    private SectionsPagerAdapter sectionsPagerAdapter;
+    private ModifiedAddressEdificationViewModel modifiedAddressEdificationViewModel;
 
     private FloatingActionButton floatingActionButton;
 
-    private ViewPager viewPager;
-
-    private boolean active = false;
+    private boolean isActive = false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +61,9 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        viewPager = findViewById(R.id.activity_modified_address_edification_container);
+        ViewPager viewPager = findViewById(R.id.activity_modified_address_edification_container);
 
         viewPager.setAdapter(sectionsPagerAdapter);
 
@@ -96,23 +92,33 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
         floatingActionButton.setOnClickListener(v ->
 
-            new CreateDwellerAsyncTask(ModifiedAddressEdificationActivity.this).execute(
-                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0))
+                new CreateDwellerAsyncTask(ModifiedAddressEdificationActivity.this).execute(
+                        getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
+                        getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0))
 
         );
 
-        modifiedAddressEdificationRepository = ViewModelProviders.of(this).get(ModifiedAddressEdificationRepository.class);
-
-        modifiedAddressEdificationRepository.getActiveOfModifiedAddressEdification(
+        ModifiedAddressEdificationViewModel.Factory factory = new ModifiedAddressEdificationViewModel.Factory(
+                getApplication(),
                 getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0)).observe(this, isActive -> {
+                getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0));
 
-            active = isActive;
+        modifiedAddressEdificationViewModel = new ViewModelProvider(this, factory).get(ModifiedAddressEdificationViewModel.class);
 
-            invalidateOptionsMenu();
+        modifiedAddressEdificationViewModel.active.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                isActive = ((ObservableBoolean) sender).get();
+
+                invalidateOptionsMenu();
+
+            }
 
         });
+
+        //UPDATE VIEW
+        modifiedAddressEdificationViewModel.active.notifyChange();
 
     }
 
@@ -134,7 +140,7 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
         MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_edification_delete);
 
-        deleteItem.setVisible(active);
+        deleteItem.setVisible(isActive);
 
         return true;
 
@@ -157,10 +163,9 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
                 } catch (Exception e) { }
 
-                new UpdateActiveOfModifiedAddressEdificationAsyncTask<>(
-                        ModifiedAddressEdificationActivity.this,
-                        getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                        getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0)).execute(true);
+                modifiedAddressEdificationViewModel.save();
+
+                finish();
 
                 return true;
 
@@ -182,9 +187,9 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
                         case DialogInterface.BUTTON_POSITIVE:
 
-                            new UpdateActiveOfModifiedAddressEdificationAsyncTask<>(this,
-                                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
-                                    getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0)).execute(false);
+                            modifiedAddressEdificationViewModel.delete();
+
+                            finish();
 
                             break;
 
@@ -258,16 +263,6 @@ public class ModifiedAddressEdificationActivity extends AppCompatActivity
 
 
     public void onCreateDwellerFailure(Messaging messaging) {}
-
-
-    public void onUpdateActiveOfModifiedAddressEdificationSuccess() {
-
-        finish();
-
-    }
-
-
-    public void onUpdateActiveOfModifiedAddressEdificationFailure(Messaging messaging) {}
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

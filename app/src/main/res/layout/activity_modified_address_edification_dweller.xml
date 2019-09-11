@@ -22,17 +22,9 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
             android:background="@color/colorGreenMedium"
-            android:theme="@style/AppTheme.AppBarOverlay"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-
-            <Spinner
-                android:id="@+id/activity_modified_address_edification_dweller_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-        </androidx.appcompat.widget.Toolbar>
+            app:layout_scrollFlags="snap"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/title_activity_address_dweller"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

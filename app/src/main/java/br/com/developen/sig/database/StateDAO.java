@@ -30,7 +30,10 @@ public interface StateDAO {
     @Delete
     void delete(StateVO stateVO);
 
-    @Query("SELECT S.* from State S ORDER BY S.acronym")
-    LiveData<List<StateModel>> getStates();
+    @Query("SELECT S.* " +
+            "FROM State S " +
+            "WHERE S.country = :country " +
+            "ORDER BY S.acronym ")
+    List<StateModel> getStatesOfCountry(Integer country);
 
 }

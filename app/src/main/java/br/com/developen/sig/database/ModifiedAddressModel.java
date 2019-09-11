@@ -15,6 +15,9 @@ public class ModifiedAddressModel {
     @TypeConverters({TimestampConverter.class})
     private Date syncedAt;
 
+    @Embedded(prefix = "latLng_")
+    private LatLngModel latLng;
+
     private Integer address;
 
     private String denomination;
@@ -29,10 +32,6 @@ public class ModifiedAddressModel {
 
     @Embedded(prefix = "city_")
     private CityModel city;
-
-    private Double latitude;
-
-    private Double longitude;
 
     private Boolean active;
 
@@ -63,6 +62,18 @@ public class ModifiedAddressModel {
     public void setSyncedAt(Date syncedAt) {
 
         this.syncedAt = syncedAt;
+
+    }
+
+    public LatLngModel getLatLng() {
+
+        return latLng;
+
+    }
+
+    public void setLatLng(LatLngModel latLng) {
+
+        this.latLng = latLng;
 
     }
 
@@ -174,30 +185,6 @@ public class ModifiedAddressModel {
 
     }
 
-    public Double getLatitude() {
-
-        return latitude;
-
-    }
-
-    public void setLatitude(Double latitude) {
-
-        this.latitude = latitude;
-
-    }
-
-    public Double getLongitude() {
-
-        return longitude;
-
-    }
-
-    public void setLongitude(Double longitude) {
-
-        this.longitude = longitude;
-
-    }
-
     public Boolean getActive() {
 
         return active;
@@ -225,19 +212,19 @@ public class ModifiedAddressModel {
 
     }
 
-    public boolean hasSameContents(Object o) {
 
+
+    public boolean hasSameContent(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         ModifiedAddressModel that = (ModifiedAddressModel) o;
+
         if (identifier != null ? !identifier.equals(that.identifier) : that.identifier != null)
             return false;
         if (syncedAt != null ? !syncedAt.equals(that.syncedAt) : that.syncedAt != null)
             return false;
-        if (modifiedAt != null ? !modifiedAt.equals(that.modifiedAt) : that.modifiedAt != null)
-            return false;
-        if (modifiedBy != null ? !modifiedBy.equals(that.modifiedBy) : that.modifiedBy != null)
-            return false;
+        if (latLng != null ? !latLng.equals(that.latLng) : that.latLng != null) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
         if (denomination != null ? !denomination.equals(that.denomination) : that.denomination != null)
             return false;
@@ -249,12 +236,11 @@ public class ModifiedAddressModel {
         if (postalCode != null ? !postalCode.equals(that.postalCode) : that.postalCode != null)
             return false;
         if (city != null ? !city.equals(that.city) : that.city != null) return false;
-        if (latitude != null ? !latitude.equals(that.latitude) : that.latitude != null)
+        if (active != null ? !active.equals(that.active) : that.active != null) return false;
+        if (modifiedAt != null ? !modifiedAt.equals(that.modifiedAt) : that.modifiedAt != null)
             return false;
-        if (longitude != null ? !longitude.equals(that.longitude) : that.longitude != null)
-            return false;
-        return active != null ? active.equals(that.active) : that.active == null;
-
+        return modifiedBy != null ? modifiedBy.equals(that.modifiedBy) : that.modifiedBy == null;
     }
+
 
 }

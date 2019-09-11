@@ -1,7 +1,6 @@
 package br.com.developen.sig.database;
 
 
-import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.TypeConverters;
 

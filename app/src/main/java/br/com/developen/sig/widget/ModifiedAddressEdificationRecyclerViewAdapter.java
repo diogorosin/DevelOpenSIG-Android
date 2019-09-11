@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import br.com.developen.sig.fragment.ModifiedAddressEdificationFragment;
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
+import br.com.developen.sig.fragment.ModifiedAddressEdificationFragment;
 import br.com.developen.sig.util.StringUtils;
 
 public class ModifiedAddressEdificationRecyclerViewAdapter
@@ -99,17 +99,46 @@ public class ModifiedAddressEdificationRecyclerViewAdapter
     }
 
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public void onBindViewHolder(final ModifiedAddressEdificationViewHolder holder, int position) {
 
         holder.modifiedAddressEdificationModel = modifiedAddressEdifications.get(position);
 
-        holder.title.setText(modifiedAddressEdifications.get(position).getReference() == null || modifiedAddressEdifications.get(position).getReference().isEmpty()
-                ? " " : "Nº: " + modifiedAddressEdifications.get(position).getReference());
+        holder.type.setText(modifiedAddressEdifications.get(position).getType().getDenomination());
 
-        holder.dwellersCount.setText(StringUtils.formatQuantity(modifiedAddressEdifications.get(position).getDwellersCount()));
+        if (modifiedAddressEdifications.get(position).getReference() != null){
 
-        holder.dwellersCount.setVisibility(modifiedAddressEdifications.get(position).getDwellersCount() > 0 ? View.VISIBLE : View.GONE);
+            holder.reference.setText(modifiedAddressEdifications.get(position).getReference());
+
+            holder.reference.setVisibility(View.VISIBLE);
+
+        } else
+
+            holder.reference.setVisibility(View.GONE);
+
+        if (modifiedAddressEdifications.get(position).getDwellersCount() > 0){
+
+            String dweller = String.format("%s", modifiedAddressEdifications.get(position).getFirstDwellerName());
+
+            String count = "";
+
+            if (modifiedAddressEdifications.get(position).getDwellersCount() == 2)
+
+                count = " + 1 morador";
+
+            else if (modifiedAddressEdifications.get(position).getDwellersCount() > 2)
+
+                count = String.format(" + %d moradores", modifiedAddressEdifications.get(position).getDwellersCount() - 1);
+
+            holder.dweller.setText(dweller + count);
+
+        } else {
+
+            holder.dweller.setText("Sem moradores.");
+
+        }
+
+        holder.from.setText("desde " + StringUtils.formatDate(modifiedAddressEdifications.get(position).getFrom()));
 
         holder.itemView.setOnClickListener(v -> {
 
@@ -159,17 +188,25 @@ public class ModifiedAddressEdificationRecyclerViewAdapter
 
         public ModifiedAddressEdificationModel modifiedAddressEdificationModel;
 
-        public TextView dwellersCount;
+        public TextView type;
 
-        public TextView title;
+        public TextView reference;
+
+        public TextView dweller;
+
+        public TextView from;
 
         public ModifiedAddressEdificationViewHolder(View view) {
 
             super(view);
 
-            dwellersCount = view.findViewById(R.id.fragment_modified_address_edification_list_dwellers_count_textview);
+            type = view.findViewById(R.id.fragment_modified_address_edification_list_type_textview);
 
-            title = view.findViewById(R.id.fragment_modified_address_edification_list_title_textview);
+            reference = view.findViewById(R.id.fragment_modified_address_edification_list_reference_textview);
+
+            from = view.findViewById(R.id.fragment_modified_address_edification_list_from_textview);
+
+            dweller = view.findViewById(R.id.fragment_modified_address_edification_list_dweller_textview);
 
         }
 

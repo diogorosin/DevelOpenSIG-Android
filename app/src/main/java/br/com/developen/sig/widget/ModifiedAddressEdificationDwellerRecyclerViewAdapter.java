@@ -19,9 +19,9 @@ public class ModifiedAddressEdificationDwellerRecyclerViewAdapter
         extends RecyclerView.Adapter<ModifiedAddressEdificationDwellerRecyclerViewAdapter.ModifiedAddressEdificationDwellerViewHolder> {
 
 
-    public static final int INDIVIDUAL = 1;
+    public static final int FEMALE_GENDER = 1;
 
-    public static final int ORGANIZATION = 2;
+    public static final int MALE_GENDER = 2;
 
 
     private List<ModifiedAddressEdificationDwellerModel> modifiedAddressEdificationDwellers;
@@ -46,10 +46,10 @@ public class ModifiedAddressEdificationDwellerRecyclerViewAdapter
 
         switch (viewType){
 
-            case INDIVIDUAL: layout = R.layout.fragment_modified_address_edification_dweller_list_individual;
+            case FEMALE_GENDER: layout = R.layout.fragment_modified_address_edification_dweller_list_female;
                 break;
 
-            case ORGANIZATION: layout = R.layout.fragment_modified_address_edification_dweller_list_organization;
+            case MALE_GENDER: layout = R.layout.fragment_modified_address_edification_dweller_list_male;
                 break;
 
         }
@@ -63,11 +63,11 @@ public class ModifiedAddressEdificationDwellerRecyclerViewAdapter
 
     public int getItemViewType(int position) {
 
-        switch (modifiedAddressEdificationDwellers.get(position).getType()){
+        switch (modifiedAddressEdificationDwellers.get(position).getGender().getIdentifier()){
 
-            case "F": return INDIVIDUAL;
+            case "F": return FEMALE_GENDER;
 
-            case "J": return ORGANIZATION;
+            case "M": return MALE_GENDER;
 
             default:
 
@@ -83,9 +83,16 @@ public class ModifiedAddressEdificationDwellerRecyclerViewAdapter
 
         holder.modifiedAddressEdificationDwellerModel = modifiedAddressEdificationDwellers.get(position);
 
-        holder.nameOrDenomination.setText(modifiedAddressEdificationDwellers.get(position).getNameOrDenomination());
+        holder.name.setText(modifiedAddressEdificationDwellers.get(position).getName());
 
-        holder.from.setText("Desde " + StringUtils.formatDate(modifiedAddressEdificationDwellers.get(position).getFrom()));
+        holder.cpf.setText(StringUtils.formatCpfWithPrefix(modifiedAddressEdificationDwellers.get(position).getCpf()));
+
+        holder.rg.setText(StringUtils.formatRgWithPrefix(
+                modifiedAddressEdificationDwellers.get(position).getRgNumber(),
+                modifiedAddressEdificationDwellers.get(position).getRgAgency(),
+                modifiedAddressEdificationDwellers.get(position).getRgState()));
+
+        holder.from.setText("desde " + StringUtils.formatDate(modifiedAddressEdificationDwellers.get(position).getFrom()));
 
         holder.itemView.setOnClickListener(v -> {
 
@@ -135,7 +142,11 @@ public class ModifiedAddressEdificationDwellerRecyclerViewAdapter
 
         public ModifiedAddressEdificationDwellerModel modifiedAddressEdificationDwellerModel;
 
-        public TextView nameOrDenomination;
+        public TextView name;
+
+        public TextView cpf;
+
+        public TextView rg;
 
         public TextView from;
 
@@ -143,9 +154,13 @@ public class ModifiedAddressEdificationDwellerRecyclerViewAdapter
 
             super(view);
 
-            nameOrDenomination = view.findViewById(R.id.fragment_modified_address_edification_dweller_list_nameOrDenomination_textview);
+            name = view.findViewById(R.id.fragment_modified_address_edification_dweller_list_item_name_textview);
 
-            from = view.findViewById(R.id.fragment_modified_address_edification_dweller_list_from_textview);
+            cpf = view.findViewById(R.id.fragment_modified_address_edification_dweller_list_item_cpf_textview);
+
+            rg = view.findViewById(R.id.fragment_modified_address_edification_dweller_list_item_rg_textview);
+
+            from = view.findViewById(R.id.fragment_modified_address_edification_dweller_list_item_from_textview);
 
         }
 

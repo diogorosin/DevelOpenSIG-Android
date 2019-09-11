@@ -1,23 +1,244 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.ModifiedAddressEdificationDwellerActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintTop_creator="1" />
+    <data>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <import type="android.view.View"/>
+
+        <variable
+            name="modifiedAddressEdificationDwellerViewModel"
+            type="br.com.developen.sig.viewmodel.ModifiedAddressEdificationDwellerViewModel"/>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        tools:context=".activity.ModifiedAddressEdificationDwellerActivity">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:scrollbarStyle="outsideInset"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/fragment_modified_address_edification_dweller_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+                    app:error="@{modifiedAddressEdificationDwellerViewModel.name.error}">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fragment_modified_address_edification_dweller_name_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/name"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapWords|textPersonName"
+                        android:text="@={modifiedAddressEdificationDwellerViewModel.name.value}"
+                        android:maxLines="1"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+                    app:error="@{modifiedAddressEdificationDwellerViewModel.motherName.error}">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fragment_modified_address_edification_dweller_mothername_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/motherName"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapWords|textPersonName"
+                        android:text="@={modifiedAddressEdificationDwellerViewModel.motherName.value}"
+                        android:maxLines="1"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+                    app:error="@{modifiedAddressEdificationDwellerViewModel.fatherName.error}">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fragment_modified_address_edification_dweller_fathername_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/fatherName"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapWords|textPersonName"
+                        android:text="@={modifiedAddressEdificationDwellerViewModel.fatherName.value}"
+                        android:maxLines="1"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+                    app:error="@{modifiedAddressEdificationDwellerViewModel.cpf.error}">
+
+                    <mk.webfactory.dz.maskededittext.MaskedEditText
+                        android:id="@+id/fragment_modified_address_edification_dweller_cpf_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/cpf"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:minWidth="200dp"
+                        android:maxLines="1"
+                        android:text="@={modifiedAddressEdificationDwellerViewModel.cpf.value}"
+                        app:maskededittext_enforceMaskLength="true"
+                        app:maskededittext_mask="###.###.###-##"
+                        app:maskededittext_maskCharacter="#" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.45"
+                            app:errorEnabled="true"
+                            app:error="@{modifiedAddressEdificationDwellerViewModel.rgNumber.error}">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/fragment_modified_address_edification_dweller_rgnumber_edittext"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:hint="@string/rgNumber"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxLines="1"
+                                android:text="@={modifiedAddressEdificationDwellerViewModel.rgNumber.value}"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/fragment_modified_address_edification_dweller_rgagency_spinner"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.30"
+                            android:layout_marginBottom="18dp"
+                            android:imeOptions="actionNext"
+                            android:layout_gravity="start|bottom"
+                            android:spinnerMode="dropdown"
+                            bind:pmtOpt="@={modifiedAddressEdificationDwellerViewModel.rgAgency}"
+                            style="@style/Widget.AppCompat.Spinner.Underlined"/>
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/fragment_modified_address_edification_dweller_rgstate_spinner"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.25"
+                            android:layout_marginBottom="18dp"
+                            android:imeOptions="actionNext"
+                            android:layout_gravity="end|bottom"
+                            android:spinnerMode="dropdown"
+                            bind:pmtOpt="@={modifiedAddressEdificationDwellerViewModel.rgState}"
+                            style="@style/Widget.AppCompat.Spinner.Underlined"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:errorEnabled="true"
+                        app:error="@{modifiedAddressEdificationDwellerViewModel.birthPlace.error}">
+
+                        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                            android:id="@+id/fragment_modified_address_edification_dweller_birthplace_edittext"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/birthPlace"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:text="@={modifiedAddressEdificationDwellerViewModel.birthPlace.value}"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ProgressBar
+                        android:layout_width="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:visibility="@{modifiedAddressEdificationDwellerViewModel.birthPlace.inProgress ? View.VISIBLE : View.INVISIBLE}" />
+
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:errorEnabled="true"
+                    app:error="@{modifiedAddressEdificationDwellerViewModel.birthDate.error}">
+
+                    <mk.webfactory.dz.maskededittext.MaskedEditText
+                        android:id="@+id/fragment_modified_address_edification_dweller_birthdate_edittext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/birthDate"
+                        android:imeOptions="actionNext"
+                        android:inputType="date"
+                        android:minWidth="200dp"
+                        android:maxLines="1"
+                        android:text="@={modifiedAddressEdificationDwellerViewModel.birthDate.value}"
+                        app:maskededittext_enforceMaskLength="true"
+                        app:maskededittext_mask="##/##/####"
+                        app:maskededittext_maskCharacter="#"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/fragment_modified_address_edification_dweller_gender_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:imeOptions="actionNext"
+                    android:hint="@string/gender"
+                    android:textAlignment="textStart"
+                    android:spinnerMode="dropdown"
+                    bind:pmtOpt="@={modifiedAddressEdificationDwellerViewModel.gender}"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</layout>

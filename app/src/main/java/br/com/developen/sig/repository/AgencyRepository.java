@@ -1,52 +1,51 @@
 package br.com.developen.sig.repository;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-
 import java.util.List;
 
-import br.com.developen.sig.database.AgencyDAO;
 import br.com.developen.sig.database.AgencyModel;
 import br.com.developen.sig.util.DB;
 
-public class AgencyRepository extends AndroidViewModel {
+public class AgencyRepository {
 
-    private AgencyDAO dao;
 
-    private LiveData<List<AgencyModel>> agencies;
+    private static AgencyRepository instance;
 
-    public AgencyRepository(Application application){
+    private final DB database;
 
-        super(application);
 
-    }
+    private AgencyRepository(DB database) {
 
-    public AgencyDAO getDao() {
-
-        if (dao==null)
-
-            dao = DB.getInstance(getApplication()).agencyDAO();
-
-        return dao;
+        this.database = database;
 
     }
 
-    public void setDao(AgencyDAO dao) {
 
-        this.dao = dao;
+    public static AgencyRepository getInstance(final DB database) {
+
+        if (instance == null) {
+
+            synchronized (AgencyRepository.class) {
+
+                if (instance == null) {
+
+                    instance = new AgencyRepository(database);
+
+                }
+
+            }
+
+        }
+
+        return instance;
 
     }
 
-    public LiveData<List<AgencyModel>> getAgencies(){
 
-        if (agencies==null)
+    public List<AgencyModel> getAgencies(){
 
-            agencies = getDao().getAgencies();
-
-        return agencies;
+        return database.agencyDAO().getAgencies();
 
     }
+
 
 }

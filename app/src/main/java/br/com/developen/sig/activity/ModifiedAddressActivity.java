@@ -3,7 +3,9 @@ package br.com.developen.sig.activity;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,49 +15,50 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.Observable;
+import androidx.databinding.ObservableBoolean;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.mlykotom.valifi.BR;
+import com.mlykotom.valifi.ValiFiValidable;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
+import br.com.developen.sig.exception.CityNotFoundException;
 import br.com.developen.sig.fragment.ModifiedAddressAddressFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationFragment;
 import br.com.developen.sig.fragment.ModifiedAddressLocationFragment;
-import br.com.developen.sig.repository.ModifiedAddressRepository;
 import br.com.developen.sig.task.CreateEdificationAsyncTask;
-import br.com.developen.sig.task.UpdateActiveOfModifiedAddressAsyncTask;
-import br.com.developen.sig.task.UpdateAddressLocationAsyncTask;
 import br.com.developen.sig.util.Messaging;
-import br.com.developen.sig.widget.ValidableFragment;
+import br.com.developen.sig.viewmodel.ModifiedAddressViewModel;
 
-public class ModifiedAddressActivity extends AppCompatActivity
-        implements ModifiedAddressLocationFragment.LocationListener,
+public class ModifiedAddressActivity extends AppCompatActivity implements
         ModifiedAddressEdificationFragment.EdificationFragmentListener,
-        UpdateActiveOfModifiedAddressAsyncTask.Listener,
-        CreateEdificationAsyncTask.Listener,
-        ValidableFragment.Listener,
-        UpdateAddressLocationAsyncTask.Listener{
+        CreateEdificationAsyncTask.Listener, GoogleMap.OnMyLocationChangeListener {
 
 
     public static final String MODIFIED_ADDRESS_IDENTIFIER = "ARG_MODIFIED_ADDRESS_IDENTIFIER";
 
 
-    private ModifiedAddressRepository modifiedAddressRepository;
-
-    private SectionsPagerAdapter sectionsPagerAdapter;
+    private ModifiedAddressViewModel modifiedAddressViewModel;
 
     private FloatingActionButton floatingActionButton;
 
+    private Location lastKnowLocation;
+
     private ViewPager viewPager;
 
-    private boolean active = false;
+    private boolean isActive = false;
+
+    private boolean isValid = false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,7 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         viewPager = findViewById(R.id.activity_modified_address_container);
 
@@ -83,7 +86,9 @@ public class ModifiedAddressActivity extends AppCompatActivity
             @SuppressLint("RestrictedApi")
             public void onPageSelected(int position) {
 
-                floatingActionButton.setVisibility(position == 2 ? View.VISIBLE : View.GONE);
+                floatingActionButton.setVisibility(position == 0 || position == 2 ? View.VISIBLE : View.GONE);
+
+                floatingActionButton.setImageResource(position == 0 ? R.drawable.icon_gps_24 : R.drawable.icon_add_24);
 
             }
 
@@ -99,26 +104,94 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
         floatingActionButton = findViewById(R.id.activity_modified_address_fab);
 
-        floatingActionButton.setOnClickListener(v ->
+        floatingActionButton.setOnClickListener(v -> {
 
-                new CreateEdificationAsyncTask(ModifiedAddressActivity.this).
-                        execute(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0))
+            switch (viewPager.getCurrentItem()) {
 
-        );
+                case 0:
 
-        modifiedAddressRepository = ViewModelProviders.of(this).get(ModifiedAddressRepository.class);
+                    if (getLastKnowLocation() != null) {
 
-        modifiedAddressRepository.getActive(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0)).
-                observe(this, isActive -> {
+                        for (Fragment f: getSupportFragmentManager().getFragments())
 
-                    active = isActive;
+                            if (f instanceof ModifiedAddressLocationFragment) {
+
+                                LatLng latLng = new LatLng(getLastKnowLocation().getLatitude(),
+                                        getLastKnowLocation().getLongitude());
+
+                                ((ModifiedAddressLocationFragment) f).moveMarkerToLocation(latLng);
+
+                            }
+
+                    }
+
+                    break;
+
+                case 2:
+
+                    new CreateEdificationAsyncTask(ModifiedAddressActivity.this).
+                            execute(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0));
+
+                    break;
+
+            }
+
+        });
+
+        ModifiedAddressViewModel.Factory factory = new ModifiedAddressViewModel.Factory(
+                getApplication(),
+                getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0));
+
+        modifiedAddressViewModel = new ViewModelProvider(this, factory).get(ModifiedAddressViewModel.class);
+
+        modifiedAddressViewModel.form.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                if (propertyId == BR.valid) {
+
+                    isValid = ((ValiFiValidable) sender).isValid();
 
                     invalidateOptionsMenu();
 
-                });
+                }
 
-        modifiedAddressRepository.getAddress(getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0)).
-                observe(this, address -> getSupportActionBar().setTitle(address == null ? R.string.new_marker : R.string.marker));
+            }
+
+        });
+
+        //UPDATE VIEW
+        modifiedAddressViewModel.form.validate();
+
+        modifiedAddressViewModel.active.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                isActive = ((ObservableBoolean) sender).get();
+
+                invalidateOptionsMenu();
+
+            }
+
+        });
+
+        //UPDATE VIEW
+        modifiedAddressViewModel.active.notifyChange();
+
+    }
+
+
+    public void onStart(){
+
+        super.onStart();
+
+        new Handler().post(() -> {
+
+            if (MapActivity.progressDialog != null && MapActivity.progressDialog.isShowing())
+
+                MapActivity.progressDialog.hide();
+
+        });
 
     }
 
@@ -138,9 +211,13 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
         menuInflater.inflate(R.menu.menu_modified_address, menu);
 
+        MenuItem saveItem = menu.findItem(R.id.menu_modified_address_save);
+
+        saveItem.setEnabled(isValid);
+
         MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_delete);
 
-        deleteItem.setVisible(active);
+        deleteItem.setVisible(isActive);
 
         return true;
 
@@ -155,11 +232,36 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
             case R.id.menu_modified_address_save: {
 
-                for (Fragment f: getSupportFragmentManager().getFragments())
+                try {
 
-                    if (f instanceof ValidableFragment)
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-                        ((ValidableFragment) f).validate();
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                } catch (Exception ignored) {}
+
+                try {
+
+                    modifiedAddressViewModel.save();
+
+                    finish();
+
+                } catch (CityNotFoundException e) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    builder.setTitle("Atenção").
+                            setMessage(e.getMessage()).
+                            setPositiveButton(R.string.button_ok, (dialog, which) -> {
+
+                                dialog.dismiss();
+
+                                viewPager.setCurrentItem(1);
+
+                            }).
+                            show();
+
+                }
 
                 return true;
 
@@ -173,7 +275,7 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
-                } catch (Exception e) {}
+                } catch (Exception ignored) {}
 
                 DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
 
@@ -181,8 +283,9 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
                         case DialogInterface.BUTTON_POSITIVE:
 
-                            new UpdateActiveOfModifiedAddressAsyncTask<>(this,
-                                    getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0)).execute(false);
+                            modifiedAddressViewModel.delete();
+
+                            finish();
 
                             break;
 
@@ -214,22 +317,6 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
 
     public void onPointerCaptureChanged(boolean hasCapture) {}
-
-
-    public void onLocationChanged(LatLng latLng, Boolean updateAddressInfo) {
-
-        new UpdateAddressLocationAsyncTask<>(this, updateAddressInfo).execute(
-                getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER,0),
-                latLng.latitude,
-                latLng.longitude);
-
-    }
-
-
-    public void onUpdateAddressLocationSuccess() {}
-
-
-    public void onUpdateAddressLocationFailure(Messaging messaging) {}
 
 
     public void onEdificationClicked(ModifiedAddressEdificationModel modifiedAddressEdificationModel) {
@@ -268,14 +355,25 @@ public class ModifiedAddressActivity extends AppCompatActivity
     }
 
 
-    public void onUpdateActiveOfModifiedAddressSuccess() {
+    public void onMyLocationChange(Location location) {
 
-        finish();
+        setLastKnowLocation(location);
 
     }
 
 
-    public void onUpdateActiveOfModifiedAddressFailure(Messaging messaging) {}
+    public Location getLastKnowLocation() {
+
+        return lastKnowLocation;
+
+    }
+
+
+    public void setLastKnowLocation(Location lastKnowLocation) {
+
+        this.lastKnowLocation = lastKnowLocation;
+
+    }
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -302,8 +400,8 @@ public class ModifiedAddressActivity extends AppCompatActivity
 
                 case 0:
 
-                    f = ModifiedAddressLocationFragment.newInstance(ModifiedAddressActivity.this,
-                            getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0));
+                    f = ModifiedAddressLocationFragment.newInstance(getIntent().
+                            getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0));
 
                     break;
 
@@ -334,22 +432,5 @@ public class ModifiedAddressActivity extends AppCompatActivity
         }
 
     }
-
-
-    public void onValidationFailed(Fragment f) {
-
-        if (f instanceof ModifiedAddressAddressFragment)
-
-            viewPager.setCurrentItem(1, true);
-
-    }
-
-
-    public void onValidationSucceeded(Fragment f) {
-
-        finish();
-
-    }
-
 
 }

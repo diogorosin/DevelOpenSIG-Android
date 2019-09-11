@@ -46,8 +46,7 @@
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/AppTheme.Green" />
-        <activity
-            android:name=".activity.ModifiedActivity">
+        <activity android:name=".activity.ModifiedActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:label="@string/markers"
@@ -64,7 +63,8 @@
         <activity
             android:name=".activity.ModifiedAddressEdificationDwellerActivity"
             android:label="@string/title_activity_address_dweller"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
     </application>
 
 </manifest>

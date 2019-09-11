@@ -1,6 +1,5 @@
 package br.com.developen.sig.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -25,7 +24,7 @@ public interface TypeDAO {
     Integer count();
 
     @Query("SELECT * FROM Type T ORDER BY identifier")
-    LiveData<List<TypeModel>> getList();
+    List<TypeModel> getList();
 
     @Update
     void update(TypeVO typeVO);

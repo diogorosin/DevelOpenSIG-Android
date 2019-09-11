@@ -44,7 +44,6 @@ public class CreateDwellerAsyncTask<L extends CreateDwellerAsyncTask.Listener>
 
             database.beginTransaction();
 
-
             ModifiedAddressEdificationDwellerVO modifiedAddressEdificationDwellerVO = new ModifiedAddressEdificationDwellerVO();
 
             modifiedAddressEdificationDwellerVO.setModifiedAddress(modifiedAddress);
@@ -57,25 +56,21 @@ public class CreateDwellerAsyncTask<L extends CreateDwellerAsyncTask.Listener>
 
             modifiedAddressEdificationDwellerVO.setSubject(null);
 
-            modifiedAddressEdificationDwellerVO.setNameOrDenomination(null);
+//            modifiedAddressEdificationDwellerVO.setName("Diogo Buzin Rosin");
 
-            modifiedAddressEdificationDwellerVO.setFancyName(null);
+//            modifiedAddressEdificationDwellerVO.setMotherName("Odilete Buzin");
 
-            modifiedAddressEdificationDwellerVO.setMotherName(null);
+//            modifiedAddressEdificationDwellerVO.setFatherName("Ilonir Rosin");
 
-            modifiedAddressEdificationDwellerVO.setFatherName(null);
+            modifiedAddressEdificationDwellerVO.setGender("M");
 
-            modifiedAddressEdificationDwellerVO.setType("F");
+//            modifiedAddressEdificationDwellerVO.setBirthDate(new Date());
 
-            modifiedAddressEdificationDwellerVO.setGender(null);
+//            modifiedAddressEdificationDwellerVO.setBirthPlace(null);
 
-            modifiedAddressEdificationDwellerVO.setBirthDate(null);
+//            modifiedAddressEdificationDwellerVO.setCpf(5369609926L);
 
-            modifiedAddressEdificationDwellerVO.setBirthPlace(null);
-
-            modifiedAddressEdificationDwellerVO.setCpf(null);
-
-            modifiedAddressEdificationDwellerVO.setRgNumber(null);
+//            modifiedAddressEdificationDwellerVO.setRgNumber(3100191L);
 
             modifiedAddressEdificationDwellerVO.setRgAgency(1);
 

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
-import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
+import br.com.developen.sig.viewmodel.ModifiedAddressEdificationViewModel;
 import br.com.developen.sig.widget.ModifiedAddressEdificationDwellerRecyclerViewAdapter;
 
 public class ModifiedAddressEdificationDwellerFragment extends Fragment {
@@ -27,7 +27,7 @@ public class ModifiedAddressEdificationDwellerFragment extends Fragment {
     private static final String ARG_EDIFICATION_IDENTIFIER = "ARG_EDIFICATION_IDENTIFIER";
 
 
-    private ModifiedAddressEdificationDwellerRepository repository;
+    private ModifiedAddressEdificationViewModel modifiedAddressEdificationViewModel;
 
     private ModifiedAddressEdificationDwellerRecyclerViewAdapter recyclerViewAdapter;
 
@@ -67,12 +67,17 @@ public class ModifiedAddressEdificationDwellerFragment extends Fragment {
 
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        repository = ViewModelProviders.of(this).get(ModifiedAddressEdificationDwellerRepository.class);
+        ModifiedAddressEdificationViewModel.Factory factory = new ModifiedAddressEdificationViewModel.Factory(
+                requireActivity().getApplication(),
+                getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER, 0),
+                getArguments().getInt(ARG_EDIFICATION_IDENTIFIER, 0));
 
-        repository.getDwellersOfModifiedAddressEdification(
-                getArguments().getInt(ARG_MODIFIED_ADDRESS_IDENTIFIER),
-                getArguments().getInt(ARG_EDIFICATION_IDENTIFIER)).observe(ModifiedAddressEdificationDwellerFragment.this,
-                modifiedAddressEdifications -> recyclerViewAdapter.setModifiedAddressEdificationDwellers(modifiedAddressEdifications));
+        modifiedAddressEdificationViewModel = ViewModelProviders.of(requireActivity(), factory).get(ModifiedAddressEdificationViewModel.class);
+
+        modifiedAddressEdificationViewModel.
+                getDwellersOfModifiedAddressEdification().
+                observe(requireActivity(),
+                        modifiedAddressEdificationDwellers -> recyclerViewAdapter.setModifiedAddressEdificationDwellers(modifiedAddressEdificationDwellers));
 
         return recyclerView;
 
@@ -99,7 +104,7 @@ public class ModifiedAddressEdificationDwellerFragment extends Fragment {
         else
 
             throw new RuntimeException(context.toString()
-                    + " must implement ModifiedAddressEdificationDwellerFragmentListener");
+                    + " must implement ModifiedAddressEdificationDwellerListFragmentListener");
 
     }
 

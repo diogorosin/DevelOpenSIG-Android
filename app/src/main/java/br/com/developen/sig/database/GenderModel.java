@@ -1,23 +1,28 @@
 package br.com.developen.sig.database;
 
+public class GenderModel {
 
-import java.util.Objects;
-
-public class CountryModel  {
-
-    private Integer identifier;
+    private String identifier;
 
     private String denomination;
 
-    private String acronym;
+    public GenderModel(){}
 
-    public Integer getIdentifier() {
+    public GenderModel(String identifier, String denomination){
+
+        this.identifier = identifier;
+
+        this.denomination = denomination;
+
+    }
+
+    public String getIdentifier() {
 
         return identifier;
 
     }
 
-    public void setIdentifier(Integer identifier) {
+    public void setIdentifier(String identifier) {
 
         this.identifier = identifier;
 
@@ -35,29 +40,18 @@ public class CountryModel  {
 
     }
 
-    public String getAcronym() {
-
-        return acronym;
-
-    }
-
-    public void setAcronym(String acronym) {
-
-        this.acronym = acronym;
-
-    }
-
     public boolean equals(Object o) {
 
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CountryModel that = (CountryModel) o;
-        return Objects.equals(identifier, that.identifier);
+        GenderModel that = (GenderModel) o;
+        return identifier.equals(that.identifier);
+
     }
 
     public int hashCode() {
 
-        return Objects.hash(identifier);
+        return identifier.hashCode();
 
     }
 

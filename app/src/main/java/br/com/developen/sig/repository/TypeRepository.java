@@ -1,52 +1,52 @@
 package br.com.developen.sig.repository;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-
 import java.util.List;
 
-import br.com.developen.sig.database.TypeDAO;
+import br.com.developen.sig.database.StateModel;
 import br.com.developen.sig.database.TypeModel;
 import br.com.developen.sig.util.DB;
 
-public class TypeRepository extends AndroidViewModel {
+public class TypeRepository {
 
-    private TypeDAO dao;
 
-    private LiveData<List<TypeModel>> types;
+    private static TypeRepository instance;
 
-    public TypeRepository(Application application){
+    private final DB database;
 
-        super(application);
 
-    }
+    private TypeRepository(DB database) {
 
-    public TypeDAO getDao() {
-
-        if (dao==null)
-
-            dao = DB.getInstance(getApplication()).typeDAO();
-
-        return dao;
+        this.database = database;
 
     }
 
-    public void setDao(TypeDAO dao) {
 
-        this.dao = dao;
+    public static TypeRepository getInstance(final DB database) {
+
+        if (instance == null) {
+
+            synchronized (TypeRepository.class) {
+
+                if (instance == null) {
+
+                    instance = new TypeRepository(database);
+
+                }
+
+            }
+
+        }
+
+        return instance;
 
     }
 
-    public LiveData<List<TypeModel>> getTypes(){
 
-        if (types==null)
+    public List<TypeModel> getList(){
 
-            types = getDao().getList();
-
-        return types;
+        return database.typeDAO().getList();
 
     }
+
 
 }

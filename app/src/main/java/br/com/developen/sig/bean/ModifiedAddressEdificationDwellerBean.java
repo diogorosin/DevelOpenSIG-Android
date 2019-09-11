@@ -7,29 +7,25 @@ public class ModifiedAddressEdificationDwellerBean {
 
 	private Integer subject;
 
-    private String type;
+	private String name;
 
-    private String nameOrDenomination;
+	private String motherName;
 
-    private String fancyName;
+	private String fatherName;
 
-    private String motherName;
+	private Long cpf;
 
-    private String fatherName;
+	private Long rgNumber;
 
-    private Long cpf;
+	private Integer rgAgency;
 
-    private Long rgNumber;
+	private Integer rgState;
 
-    private Integer rgAgency;
+	private Integer birthPlace;
 
-    private Integer rgState;
+	private Date birthDate;
 
-    private Integer birthPlace;
-
-    private Date birthDate;
-
-    private String gender;
+	private String gender;
 
 	private Date from;
 
@@ -47,39 +43,15 @@ public class ModifiedAddressEdificationDwellerBean {
 
 	}
 
-	public String getNameOrDenomination() {
+	public String getName() {
 
-		return nameOrDenomination;
-
-	}
-
-	public void setNameOrDenomination(String nameOrDenomination) {
-
-		this.nameOrDenomination = nameOrDenomination;
+		return name;
 
 	}
 
-	public String getType() {
+	public void setName(String name) {
 
-		return type;
-
-	}
-
-	public void setType(String type) {
-
-		this.type = type;
-
-	}
-
-	public String getFancyName() {
-
-		return fancyName;
-
-	}
-
-	public void setFancyName(String fancyName) {
-
-		this.fancyName = fancyName;
+		this.name = name;
 
 	}
 
@@ -96,81 +68,81 @@ public class ModifiedAddressEdificationDwellerBean {
 	}
 
 	public String getFatherName() {
-		
+
 		return fatherName;
 
 	}
 
 	public void setFatherName(String fatherName) {
-		
+
 		this.fatherName = fatherName;
-		
+
 	}
 
 	public Long getCpf() {
-		
+
 		return cpf;
-		
+
 	}
 
 	public void setCpf(Long cpf) {
-		
+
 		this.cpf = cpf;
-		
+
 	}
 
 	public Long getRgNumber() {
-		
+
 		return rgNumber;
-		
+
 	}
 
 	public void setRgNumber(Long rgNumber) {
-		
+
 		this.rgNumber = rgNumber;
-		
+
 	}
 
 	public Integer getRgAgency() {
-		
+
 		return rgAgency;
-		
+
 	}
 
 	public void setRgAgency(Integer rgAgency) {
-		
+
 		this.rgAgency = rgAgency;
-		
+
 	}
 
 	public Integer getRgState() {
-		
+
 		return rgState;
-		
+
 	}
 
 	public void setRgState(Integer rgState) {
-		
+
 		this.rgState = rgState;
-		
+
 	}
 
 	public Integer getBirthPlace() {
-		
+
 		return birthPlace;
-		
+
 	}
 
 	public void setBirthPlace(Integer birthPlace) {
-		
+
 		this.birthPlace = birthPlace;
-		
+
 	}
 
 	public Date getBirthDate() {
-		
+
 		return birthDate;
-		
+
 	}
 
 	public void setBirthDate(Date birthDate) {
@@ -180,7 +152,7 @@ public class ModifiedAddressEdificationDwellerBean {
 	}
 
 	public String getGender() {
-		
+
 		return gender;
 
 	}
@@ -198,21 +170,21 @@ public class ModifiedAddressEdificationDwellerBean {
 	}
 
 	public void setFrom(Date from) {
-		
+
 		this.from = from;
-		
+
 	}
 
 	public Date getTo() {
-		
+
 		return to;
-		
+
 	}
 
 	public void setTo(Date to) {
-		
+
 		this.to = to;
-		
+
 	}
 
 }

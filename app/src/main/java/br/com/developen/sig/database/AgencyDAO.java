@@ -1,6 +1,5 @@
 package br.com.developen.sig.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -28,6 +27,6 @@ public interface AgencyDAO {
     void delete(AgencyVO agencyVO);
 
     @Query("SELECT A.* from Agency A ORDER BY A.acronym")
-    LiveData<List<AgencyModel>> getAgencies();
+    List<AgencyModel> getAgencies();
 
 }
