@@ -43,7 +43,7 @@ public class CreateEdificationAsyncTask<L extends CreateEdificationAsyncTask.Lis
 
             modifiedAddressEdificationVO.setModifiedAddress(modifiedAddress);
 
-            modifiedAddressEdificationVO.setEdification(database.addressEdificationDAO().retrieveLastEdificationIdOfModifiedAddress(modifiedAddress)+1);
+            modifiedAddressEdificationVO.setEdification(database.modifiedAddressEdificationDAO().retrieveLastEdificationIdOfModifiedAddress(modifiedAddress)+1);
 
             modifiedAddressEdificationVO.setType(1);
 

@@ -11,10 +11,10 @@ public class IconUtils {
 
         switch (type) {
 
-            case "I": result = R.drawable.icon_individual_24;
+            case "F": result = R.drawable.icon_female_60;
                 break;
 
-            case "O": result = R.drawable.icon_organization_24;
+            case "M": result = R.drawable.icon_male_60;
                 break;
 
         }

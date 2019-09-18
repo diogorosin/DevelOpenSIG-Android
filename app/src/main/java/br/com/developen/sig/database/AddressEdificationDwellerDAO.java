@@ -8,6 +8,8 @@ import androidx.room.Update;
 
 import java.util.List;
 
+import br.com.developen.sig.util.Constants;
+
 @Dao
 public interface AddressEdificationDwellerDAO {
 
@@ -56,9 +58,15 @@ public interface AddressEdificationDwellerDAO {
             " AE.'from' AS 'addressEdification_from', " +
             " AE.'to' AS 'addressEdification_to', " +
             " AED.dweller AS 'dweller', " +
-            " SV.identifier AS 'subject_identifier', " +
-            " SV.nameOrDenomination AS 'subject_nameOrDenomination', " +
-            " SV.type AS 'subject_type', " +
+            " I.identifier AS 'individual_identifier', " +
+            " I.active AS 'individual_active', " +
+            " I.name AS 'individual_name', " +
+            " I.motherName AS 'individual_motherName', " +
+            " I.fatherName AS 'individual_fatherName', " +
+            " I.cpf AS 'individual_cpf', " +
+            " I.birthDate AS 'individual_birthDate', " +
+            " I.gender AS 'individual_gender_identifier', " +
+            " CASE WHEN I.gender = 'M' THEN '" + Constants.MALE_GENDER_DENOMINATION + "' ELSE '" + Constants.FEMALE_GENDER_DENOMINATION + "' END AS 'individual_gender_denomination', " +
             " AED.'from' AS 'from', " +
             " AED.'to' AS 'to' " +
             "FROM AddressEdificationDweller AED " +
@@ -68,8 +76,9 @@ public interface AddressEdificationDwellerDAO {
             "INNER JOIN City AddressCity ON AddressCity.identifier = A.city " +
             "INNER JOIN State AddressCityState ON AddressCityState.identifier = AddressCity.state " +
             "INNER JOIN Country AddressCityStateCountry ON AddressCityStateCountry.identifier = AddressCityState.country " +
-            "INNER JOIN SubjectView SV ON SV.identifier = AED.subject " +
-            "WHERE SV.nameOrDenomination LIKE :nameOrDenomination AND AED.'to' IS NULL")
-    List<AddressEdificationDwellerModel> findBySubjectNameOrDenomination(String nameOrDenomination);
+            "INNER JOIN Individual I ON I.identifier = AED.individual " +
+            "WHERE I.name LIKE :name AND AED.'to' IS NULL")
+    List<AddressEdificationDwellerModel> findByIndividualName(String name);
+
 
 }

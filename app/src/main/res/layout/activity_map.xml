@@ -6,13 +6,28 @@
     android:id="@+id/activity_map_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:openDrawer="start">
 
-    <include
-        layout="@layout/activity_map_fragment"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/activity_map_fragment"/>
+
+        <include layout="@layout/activity_map_bottom_sheet"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/activity_map_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_add_24"
+            android:layout_margin="20dp"
+            android:tint="@color/colorBlackHiDark"
+            app:backgroundTint="@color/colorGreyDark"
+            app:layout_anchor="@+id/activity_map_bottom_sheet"
+            app:layout_anchorGravity="top|end"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/activity_main_navigator"

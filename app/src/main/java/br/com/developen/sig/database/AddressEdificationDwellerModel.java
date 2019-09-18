@@ -9,13 +9,14 @@ import java.util.Objects;
 
 public class AddressEdificationDwellerModel {
 
+
     @Embedded(prefix = "addressEdification_")
     private AddressEdificationModel addressEdification;
 
     private Integer dweller;
 
-    @Embedded(prefix = "subject_")
-    private SubjectModel subject;
+    @Embedded(prefix = "individual_")
+    private IndividualModel individual;
 
     @NonNull
     @TypeConverters({TimestampConverter.class})
@@ -24,11 +25,13 @@ public class AddressEdificationDwellerModel {
     @TypeConverters({TimestampConverter.class})
     private Date to;
 
+
     public AddressEdificationModel getAddressEdification() {
 
         return addressEdification;
 
     }
+
 
     public void setAddressEdification(AddressEdificationModel addressEdification) {
 
@@ -36,11 +39,13 @@ public class AddressEdificationDwellerModel {
 
     }
 
+
     public Integer getDweller() {
 
         return dweller;
 
     }
+
 
     public void setDweller(Integer dweller) {
 
@@ -48,17 +53,20 @@ public class AddressEdificationDwellerModel {
 
     }
 
-    public SubjectModel getSubject() {
 
-        return subject;
+    public IndividualModel getIndividual() {
+
+        return individual;
+
+    }
+
+
+    public void setIndividual(IndividualModel individual) {
+
+        this.individual = individual;
 
     }
 
-    public void setSubject(SubjectModel subject) {
-
-        this.subject = subject;
-
-    }
 
     public Date getFrom() {
 
@@ -66,11 +74,13 @@ public class AddressEdificationDwellerModel {
 
     }
 
+
     public void setFrom(Date from) {
 
         this.from = from;
 
     }
+
 
     public Date getTo() {
 
@@ -78,11 +88,13 @@ public class AddressEdificationDwellerModel {
 
     }
 
+
     public void setTo(Date to) {
 
         this.to = to;
 
     }
+
 
     public boolean equals(Object o) {
 
@@ -94,10 +106,12 @@ public class AddressEdificationDwellerModel {
 
     }
 
+
     public int hashCode() {
 
         return Objects.hash(addressEdification, dweller);
 
     }
+
 
 }

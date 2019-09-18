@@ -32,4 +32,6 @@ public class Constants {
 
     public static final String FEMALE_GENDER_DENOMINATION = "Feminino";
 
+    public static final String DEFAULT_ADDRESS = "DefaultAddress";
+
 }

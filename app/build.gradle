@@ -68,7 +68,6 @@ dependencies {
     //Validator
     implementation 'com.mlykotom:valifi:1.4.2'
 
-
 }
 
 configurations {

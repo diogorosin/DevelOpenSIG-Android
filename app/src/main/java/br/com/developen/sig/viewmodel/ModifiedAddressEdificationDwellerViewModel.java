@@ -162,7 +162,7 @@ public class ModifiedAddressEdificationDwellerViewModel extends AndroidViewModel
 
         values.put(ModifiedAddressEdificationDwellerRepository.FATHER_NAME_PROPERTY, this.fatherName.get());
 
-        values.put(ModifiedAddressEdificationDwellerRepository.SUBJECT_PROPERTY, null);
+        values.put(ModifiedAddressEdificationDwellerRepository.INDIVIDUAL_PROPERTY, null);
 
         values.put(ModifiedAddressEdificationDwellerRepository.CPF_PROPERTY, StringUtils.parseCpf(this.cpf.get()));
 

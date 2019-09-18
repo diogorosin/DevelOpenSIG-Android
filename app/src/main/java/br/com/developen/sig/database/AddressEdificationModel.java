@@ -1,6 +1,9 @@
 package br.com.developen.sig.database;
 
 import androidx.room.Embedded;
+import androidx.room.TypeConverters;
+
+import java.util.Date;
 
 public class AddressEdificationModel {
 
@@ -13,6 +16,12 @@ public class AddressEdificationModel {
     private TypeModel type;
 
     private String reference;
+
+    @TypeConverters({DateConverter.class})
+    private Date from;
+
+    @TypeConverters({DateConverter.class})
+    private Date to;
 
     public AddressModel getAddress() {
 
@@ -59,6 +68,30 @@ public class AddressEdificationModel {
     public void setReference(String reference) {
 
         this.reference = reference;
+
+    }
+
+    public Date getFrom() {
+
+        return from;
+
+    }
+
+    public void setFrom(Date from) {
+
+        this.from = from;
+
+    }
+
+    public Date getTo() {
+
+        return to;
+
+    }
+
+    public void setTo(Date to) {
+
+        this.to = to;
 
     }
 

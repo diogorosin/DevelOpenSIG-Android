@@ -17,8 +17,13 @@ import java.util.Objects;
                         parentColumns = {"modifiedAddress", "edification"},
                         childColumns = {"modifiedAddress", "edification"},
                         onDelete = ForeignKey.RESTRICT,
+                        onUpdate = ForeignKey.CASCADE),
+                @ForeignKey(entity = IndividualVO.class,
+                        parentColumns = "identifier",
+                        childColumns = "individual",
+                        onDelete = ForeignKey.RESTRICT,
                         onUpdate = ForeignKey.CASCADE)},
-        indices = {@Index(value={"modifiedAddress", "edification", "dweller"})})
+        indices = {@Index(value={"modifiedAddress", "edification", "dweller"}), @Index({"individual"})})
 public class ModifiedAddressEdificationDwellerVO {
 
     @NonNull
@@ -33,8 +38,8 @@ public class ModifiedAddressEdificationDwellerVO {
     @ColumnInfo(name="dweller")
     private Integer dweller;
 
-    @ColumnInfo(name="subject")
-    private Integer subject;
+    @ColumnInfo(name="individual")
+    private Integer individual;
 
     @ColumnInfo(name="name")
     private String name;
@@ -123,16 +128,16 @@ public class ModifiedAddressEdificationDwellerVO {
     }
 
 
-    public Integer getSubject() {
+    public Integer getIndividual() {
 
-        return subject;
+        return individual;
 
     }
 
 
-    public void setSubject(Integer subject) {
+    public void setIndividual(Integer individual) {
 
-        this.subject = subject;
+        this.individual = individual;
 
     }
 

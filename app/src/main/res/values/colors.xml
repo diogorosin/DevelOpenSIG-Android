@@ -17,6 +17,7 @@
 
     <color name="colorGreenLight">#b4e080</color>
     <color name="colorGreenMedium">#74ac31</color>
+    <color name="colorGreenHiMedium">#65962A</color>
     <color name="colorGreenDark">#517032</color>
 
     <color name="colorRedLight">#f76d82</color>

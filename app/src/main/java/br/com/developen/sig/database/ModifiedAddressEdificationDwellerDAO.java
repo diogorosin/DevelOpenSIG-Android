@@ -1,13 +1,10 @@
 package br.com.developen.sig.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
-
-import java.util.List;
 
 import br.com.developen.sig.util.Constants;
 
@@ -71,7 +68,7 @@ public interface ModifiedAddressEdificationDwellerDAO {
             " MAE.'to' AS 'modifiedAddressEdification_to', " +
             " MAE.active AS 'modifiedAddressEdification_active', " +
             " MAED.dweller AS 'dweller', " +
-            " MAED.subject AS 'subject', " +
+            " I.identifier AS 'individual_identifier', " +
             " MAED.name AS 'name', " +
             " MAED.motherName AS 'motherName', " +
             " MAED.fatherName AS 'fatherName', " +
@@ -103,6 +100,7 @@ public interface ModifiedAddressEdificationDwellerDAO {
             "FROM ModifiedAddressEdificationDweller MAED " +
             "INNER JOIN ModifiedAddressEdification MAE ON MAE.modifiedAddress = MAED.modifiedAddress AND MAE.edification = MAED.edification " +
             "INNER JOIN ModifiedAddress MA ON MA.identifier = MAE.modifiedAddress " +
+            "LEFT OUTER JOIN Individual I ON I.identifier = MAED.individual " +
             "LEFT OUTER JOIN Type ModifiedAddressEdificationType ON MAE.type = ModifiedAddressEdificationType.identifier " +
             "LEFT OUTER JOIN City ModifiedAddressCity ON ModifiedAddressCity.identifier = MA.city " +
             "LEFT OUTER JOIN State ModifiedAddressCityState ON ModifiedAddressCityState.identifier = ModifiedAddressCity.state " +

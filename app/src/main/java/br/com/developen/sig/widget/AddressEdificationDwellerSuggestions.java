@@ -40,7 +40,7 @@ public class AddressEdificationDwellerSuggestions implements SearchSuggestion {
 
     public String getBody() {
 
-        return addressEdificationDwellerModel.getSubject().getNameOrDenomination();
+        return addressEdificationDwellerModel.getIndividual().getName();
 
     }
 
@@ -54,7 +54,7 @@ public class AddressEdificationDwellerSuggestions implements SearchSuggestion {
 
     public void writeToParcel(Parcel dest, int flags) {
 
-        dest.writeString(addressEdificationDwellerModel.getSubject().getNameOrDenomination());
+        dest.writeString(addressEdificationDwellerModel.getIndividual().getName());
 
     }
 

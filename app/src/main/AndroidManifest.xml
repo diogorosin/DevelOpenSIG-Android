@@ -36,13 +36,22 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="www.developen.com.br" />
+                <data android:scheme="https"/>
+                <data android:scheme="http"/>
+                <data android:pathPattern=".*" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.ConfigurationActivity"
-            android:theme="@style/AppTheme.Green" />
+            android:theme="@style/AppTheme.Green"/>
         <activity
             android:name=".activity.MapActivity"
-            android:theme="@style/AppTheme.Main" />
+            android:theme="@style/AppTheme.Main"/>
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/AppTheme.Green" />

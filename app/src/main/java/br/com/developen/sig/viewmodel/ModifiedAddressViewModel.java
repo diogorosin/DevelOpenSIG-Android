@@ -198,35 +198,35 @@ public class ModifiedAddressViewModel extends AndroidViewModel {
 
     private static ValiFieldText getDenominationField(){
 
-        return new ValiFieldText().addNotEmptyValidator();
+        return new ValiFieldText().addNotEmptyValidator().addMaxLengthValidator(100);
 
     }
 
 
     private static ValiFieldText getNumberField(){
 
-        return new ValiFieldText();
+        return new ValiFieldText().addMaxLengthValidator(5);
 
     }
 
 
     private static ValiFieldText getReferenceField(){
 
-        return new ValiFieldText();
+        return new ValiFieldText().addMaxLengthValidator(50);
 
     }
 
 
     private static ValiFieldText getDistrictField(){
 
-        return new ValiFieldText().addNotEmptyValidator();
+        return new ValiFieldText().addNotEmptyValidator().addMaxLengthValidator(100);
 
     }
 
 
     private static ValiFieldText getPostalCodeField(){
 
-        return new ValiFieldText().addMinLengthValidator(9);
+        return new ValiFieldText().addExactLengthValidator(9);
 
     }
 

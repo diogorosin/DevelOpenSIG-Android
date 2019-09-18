@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import br.com.developen.sig.database.AddressEdificationModel;
 import br.com.developen.sig.database.AddressModel;
-import br.com.developen.sig.database.SubjectModel;
 import br.com.developen.sig.util.DB;
 
 public class AddressRepository {
@@ -51,9 +51,16 @@ public class AddressRepository {
     }
 
 
-    public List<SubjectModel> getSubjectsOfAddress(Integer address){
+    public AddressModel getAddress(Integer identifier){
 
-        return database.addressDAO().getSubjectsOfAddress(address);
+        return database.addressDAO().getAddress(identifier);
+
+    }
+
+
+    public List<AddressEdificationModel> getEdificationsOfAddress(Integer address){
+
+        return database.addressDAO().getEdificationsOfAddress(address);
 
     }
 

@@ -1,14 +1,12 @@
 package br.com.developen.sig.repository;
 
-import androidx.lifecycle.LiveData;
-
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import br.com.developen.sig.database.AgencyModel;
 import br.com.developen.sig.database.CityModel;
 import br.com.developen.sig.database.GenderModel;
+import br.com.developen.sig.database.IndividualVO;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerVO;
 import br.com.developen.sig.database.StateModel;
@@ -25,7 +23,7 @@ public class ModifiedAddressEdificationDwellerRepository {
 
     public static final int DWELLER_PROPERTY = 2;
 
-    public static final int SUBJECT_PROPERTY = 4;
+    public static final int INDIVIDUAL_PROPERTY = 4;
 
     public static final int NAME_PROPERTY = 5;
 
@@ -101,7 +99,23 @@ public class ModifiedAddressEdificationDwellerRepository {
 
         vo.setFatherName((String) values.get(FATHER_NAME_PROPERTY));
 
-        vo.setSubject((Integer) values.get(SUBJECT_PROPERTY));
+        if (values.get(INDIVIDUAL_PROPERTY) instanceof Integer) {
+
+            vo.setIndividual(null);
+
+            Integer individualValue = (Integer) values.get(INDIVIDUAL_PROPERTY);
+
+            if (individualValue != null){
+
+                IndividualVO individualVO = database.individualDAO().retrieve(individualValue);
+
+                if (individualVO != null)
+
+                    vo.setIndividual(individualVO.getIdentifier());
+
+            }
+
+        }
 
         if (values.get(BIRTH_PLACE_PROPERTY) instanceof String){
 

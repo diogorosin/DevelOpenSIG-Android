@@ -5,17 +5,19 @@ import java.util.Objects;
 
 public class AddressEdificationDwellerBean {
 
+
 	private Integer address;
 
 	private Integer edification;
 
 	private Integer dweller;
 
-	private Integer subject;
+	private Integer individual;
 
 	private Date from;
 
 	private Date to;
+
 
 	public Integer getAddress() {
 
@@ -23,11 +25,13 @@ public class AddressEdificationDwellerBean {
 
 	}
 
+
 	public void setAddress(Integer address) {
 		
 		this.address = address;
 		
 	}
+
 
 	public Integer getEdification() {
 		
@@ -35,11 +39,13 @@ public class AddressEdificationDwellerBean {
 		
 	}
 
+
 	public void setEdification(Integer edification) {
 		
 		this.edification = edification;
 		
 	}
+
 
     public Integer getDweller() {
 
@@ -47,23 +53,27 @@ public class AddressEdificationDwellerBean {
 
     }
 
+
     public void setDweller(Integer dweller) {
 
         this.dweller = dweller;
 
     }
 
-    public Integer getSubject() {
 
-		return subject;
+    public Integer getIndividual() {
+
+		return individual;
+
+	}
+
+
+	public void setIndividual(Integer individual) {
+
+		this.individual = individual;
 
 	}
 
-	public void setSubject(Integer subject) {
-
-		this.subject = subject;
-
-	}
 
 	public Date getFrom() {
 		
@@ -71,11 +81,13 @@ public class AddressEdificationDwellerBean {
 		
 	}
 
+
 	public void setFrom(Date from) {
 		
 		this.from = from;
 		
 	}
+
 
 	public Date getTo() {
 		
@@ -83,11 +95,13 @@ public class AddressEdificationDwellerBean {
 		
 	}
 
+
 	public void setTo(Date to) {
 		
 		this.to = to;
 		
 	}
+
 
     public boolean equals(Object o) {
 
@@ -100,10 +114,12 @@ public class AddressEdificationDwellerBean {
 
     }
 
+
     public int hashCode() {
 
         return Objects.hash(address, edification, dweller);
 
     }
+
 
 }

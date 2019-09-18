@@ -14,7 +14,8 @@ public class ModifiedAddressEdificationDwellerModel {
 
     private Integer dweller;
 
-    private Integer subject;
+    @Embedded(prefix = "individual_")
+    private IndividualModel individual;
 
     private String name;
 
@@ -78,16 +79,16 @@ public class ModifiedAddressEdificationDwellerModel {
     }
 
 
-    public Integer getSubject() {
+    public IndividualModel getIndividual() {
 
-        return subject;
+        return individual;
 
     }
 
 
-    public void setSubject(Integer subject) {
+    public void setIndividual(IndividualModel individual) {
 
-        this.subject = subject;
+        this.individual = individual;
 
     }
 

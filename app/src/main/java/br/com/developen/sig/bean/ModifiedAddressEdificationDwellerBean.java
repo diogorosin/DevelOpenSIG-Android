@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class ModifiedAddressEdificationDwellerBean {
 
-	private Integer subject;
+	private Integer individual;
 
 	private String name;
 
@@ -31,15 +31,15 @@ public class ModifiedAddressEdificationDwellerBean {
 
 	private Date to;
 
-	public Integer getSubject() {
+	public Integer getIndividual() {
 
-		return subject;
+		return individual;
 
 	}
 
-	public void setSubject(Integer subject) {
+	public void setIndividual(Integer individual) {
 
-		this.subject = subject;
+		this.individual = individual;
 
 	}
 

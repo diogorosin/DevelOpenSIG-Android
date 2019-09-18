@@ -146,6 +146,13 @@ public class ModifiedAddressRepository {
     }
 
 
+    public void synced(Integer... modifiedAddresses){
+
+        database.modifiedAddressDAO().synced(modifiedAddresses);
+
+    }
+
+
     public ModifiedAddressModel getModifiedAddress(int modifiedAddress) {
 
         return database.modifiedAddressDAO().getModifiedAddress(modifiedAddress);
@@ -160,6 +167,13 @@ public class ModifiedAddressRepository {
     }
 
 
+    public List<ModifiedAddressEdificationModel> getEdificationsOfModifiedAddressAsList(int modifiedAddress) {
+
+        return database.modifiedAddressDAO().getEdificationsOfModifiedAddressAsList(modifiedAddress);
+
+    }
+
+
     public LiveData<PagedList<ModifiedAddressModel>> getModifiedAddressesThatWasNotSynced(){
 
         DataSource.Factory<Integer, ModifiedAddressModel> factory = database.modifiedAddressDAO().getModifiedAddressesThatWasNotSynced();
@@ -167,6 +181,13 @@ public class ModifiedAddressRepository {
         LivePagedListBuilder<Integer, ModifiedAddressModel> listBuilder = new LivePagedListBuilder<>(factory, 50);
 
         return listBuilder.build();
+
+    }
+
+
+    public List<ModifiedAddressModel> getModifiedAddressesThatWasNotSyncedAsList(){
+
+        return database.modifiedAddressDAO().getModifiedAddressesThatWasNotSyncedAsList();
 
     }
 

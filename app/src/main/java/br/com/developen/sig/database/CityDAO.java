@@ -43,6 +43,7 @@ public interface CityDAO {
             "ORDER BY St.denomination, Ci.denomination")
     List<CityModel> getCities();
 
+
     @Query("SELECT Ci.identifier AS 'identifier', " +
             " Ci.denomination AS 'denomination', " +
             " St.identifier AS 'state_identifier', " +

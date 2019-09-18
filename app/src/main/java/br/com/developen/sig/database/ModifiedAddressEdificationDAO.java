@@ -14,25 +14,7 @@ import br.com.developen.sig.util.Constants;
 @Dao
 public interface ModifiedAddressEdificationDAO {
 
-    @Insert
-    Long create(ModifiedAddressEdificationVO modifiedAddressEdificationVO);
-
-    @Query("SELECT MAE.* FROM ModifiedAddressEdification MAE WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification")
-    ModifiedAddressEdificationVO retrieve(Integer modifiedAddress, Integer edification);
-
-    @Query("SELECT COUNT(*) > 0 FROM ModifiedAddressEdification MAE WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification")
-    Boolean exists(Integer modifiedAddress, Integer edification);
-
-    @Query("SELECT COUNT(*) FROM ModifiedAddressEdification MAE")
-    Integer count();
-
-    @Update
-    void update(ModifiedAddressEdificationVO modifiedAddressEdificationVO);
-
-    @Delete
-    void delete(ModifiedAddressEdificationVO modifiedAddressEdificationVO);
-
-    @Query("SELECT " +
+    String DWELLERS_OF_MODIFIED_ADDRESS_EDIFICATION = "SELECT " +
             " MA.identifier AS 'modifiedAddressEdification_modifiedAddress_identifier', " +
             " MA.syncedAt AS 'modifiedAddressEdification_modifiedAddress_syncedAt', " +
             " MA.address AS 'modifiedAddressEdification_modifiedAddress_address', " +
@@ -62,7 +44,7 @@ public interface ModifiedAddressEdificationDAO {
             " MAE.'to' AS 'modifiedAddressEdification_to', " +
             " MAE.active AS 'modifiedAddressEdification_active', " +
             " MAED.dweller AS 'dweller', " +
-            " MAED.subject AS 'subject', " +
+            " I.identifier AS 'individual_identifier', " +
             " MAED.name AS 'name', " +
             " MAED.motherName AS 'motherName', " +
             " MAED.fatherName AS 'fatherName', " +
@@ -95,6 +77,7 @@ public interface ModifiedAddressEdificationDAO {
             "FROM ModifiedAddressEdificationDweller MAED " +
             "INNER JOIN ModifiedAddressEdification MAE ON MAE.modifiedAddress = MAED.modifiedAddress AND MAE.edification = MAED.edification " +
             "INNER JOIN ModifiedAddress MA ON MA.identifier = MAE.modifiedAddress " +
+            "LEFT OUTER JOIN Individual I ON I.identifier = MAED.individual " +
             "LEFT OUTER JOIN Type ModifiedAddressEdificationType ON MAE.type = ModifiedAddressEdificationType.identifier " +
             "LEFT OUTER JOIN City ModifiedAddressCity ON ModifiedAddressCity.identifier = MA.city " +
             "LEFT OUTER JOIN State ModifiedAddressCityState ON ModifiedAddressCityState.identifier = ModifiedAddressCity.state " +
@@ -105,8 +88,36 @@ public interface ModifiedAddressEdificationDAO {
             "LEFT OUTER JOIN City BirthPlace ON BirthPlace.identifier = MAED.birthPlace " +
             "LEFT OUTER JOIN State BirthPlaceState ON BirthPlaceState.identifier = BirthPlace.state " +
             "LEFT OUTER JOIN Country BirthPlaceStateCountry ON BirthPlaceStateCountry.identifier = BirthPlaceState.country " +
-            "WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification AND MAED.active = 1")
+            "WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification AND MAED.active = 1";
+
+    @Insert
+    Long create(ModifiedAddressEdificationVO modifiedAddressEdificationVO);
+
+    @Query("SELECT MAE.* FROM ModifiedAddressEdification MAE WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification")
+    ModifiedAddressEdificationVO retrieve(Integer modifiedAddress, Integer edification);
+
+    @Query("SELECT COUNT(*) > 0 FROM ModifiedAddressEdification MAE WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification")
+    Boolean exists(Integer modifiedAddress, Integer edification);
+
+    @Query("SELECT COUNT(*) FROM ModifiedAddressEdification MAE")
+    Integer count();
+
+    @Update
+    void update(ModifiedAddressEdificationVO modifiedAddressEdificationVO);
+
+    @Delete
+    void delete(ModifiedAddressEdificationVO modifiedAddressEdificationVO);
+
+    @Query("SELECT IFNULL(MAX(MAE.edification), 0) " +
+            "FROM ModifiedAddressEdification MAE " +
+            "WHERE MAE.modifiedAddress = :modifiedAddress")
+    Integer retrieveLastEdificationIdOfModifiedAddress(Integer modifiedAddress);
+
+    @Query(DWELLERS_OF_MODIFIED_ADDRESS_EDIFICATION)
     LiveData<List<ModifiedAddressEdificationDwellerModel>> getDwellersOfModifiedAddressEdification(Integer modifiedAddress, Integer edification);
+
+    @Query(DWELLERS_OF_MODIFIED_ADDRESS_EDIFICATION)
+    List<ModifiedAddressEdificationDwellerModel> getDwellersOfModifiedAddressEdificationAsList(Integer modifiedAddress, Integer edification);
 
     @Query("SELECT " +
             " MA.identifier AS 'modifiedAddress_identifier', " +

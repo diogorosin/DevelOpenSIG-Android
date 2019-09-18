@@ -11,8 +11,8 @@ import br.com.developen.sig.exception.CannotLoadPlacesException;
 import br.com.developen.sig.util.DB;
 import br.com.developen.sig.util.Messaging;
 
-public class FindAddressesBySubjectNameOrDenominationAsyncTask<
-        A extends Activity & FindAddressesBySubjectNameOrDenominationAsyncTask.Listener,
+public class FindAddressesByIndividualNameAsyncTask<
+        A extends Activity & FindAddressesByIndividualNameAsyncTask.Listener,
         B extends String,
         C extends Void,
         D> extends AsyncTask<B, C, D> {
@@ -21,7 +21,7 @@ public class FindAddressesBySubjectNameOrDenominationAsyncTask<
     private WeakReference<A> activity;
 
 
-    public FindAddressesBySubjectNameOrDenominationAsyncTask(A activity) {
+    public FindAddressesByIndividualNameAsyncTask(A activity) {
 
         this.activity = new WeakReference<>(activity);
 
@@ -36,7 +36,7 @@ public class FindAddressesBySubjectNameOrDenominationAsyncTask<
 
             return database.
                     addressEdificationDwellerDAO().
-                    findBySubjectNameOrDenomination( "%" + parameters[0].toUpperCase() + "%");
+                    findByIndividualName( "%" + parameters[0].toUpperCase() + "%");
 
         } catch (Exception e) {
 

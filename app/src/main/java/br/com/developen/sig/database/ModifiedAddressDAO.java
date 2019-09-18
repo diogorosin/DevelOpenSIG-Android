@@ -13,25 +13,7 @@ import java.util.List;
 @Dao
 public interface ModifiedAddressDAO {
 
-    @Insert
-    Long create(ModifiedAddressVO modifiedlAddressVO);
-
-    @Query("SELECT MA.* FROM ModifiedAddress MA WHERE MA.identifier = :identifier")
-    ModifiedAddressVO retrieve(int identifier);
-
-    @Query("SELECT COUNT(*) > 0 FROM ModifiedAddress MA WHERE MA.identifier = :identifier")
-    Boolean exists(int identifier);
-
-    @Query("SELECT COUNT(*) FROM ModifiedAddress MA")
-    Integer count();
-
-    @Update
-    void update(ModifiedAddressVO modifiedAddressVO);
-
-    @Delete
-    void delete(ModifiedAddressVO modifiedAddressVO);
-
-    @Query("SELECT " +
+    String MODIFIED_ADDRESS_THAT_WHAS_NOT_SYNCED = "SELECT " +
             " MA.identifier AS 'identifier', " +
             " MA.syncedAt AS 'syncedAt', " +
             " MA.modifiedAt AS 'modifiedAt', " +
@@ -58,39 +40,9 @@ public interface ModifiedAddressDAO {
             "LEFT OUTER JOIN State S ON S.identifier = C.state " +
             "LEFT OUTER JOIN Country Co ON Co.identifier = S.country " +
             "WHERE MA.syncedAt IS NULL AND MA.active = 1 " +
-            "ORDER BY MA.identifier DESC")
-    DataSource.Factory<Integer, ModifiedAddressModel> getModifiedAddressesThatWasNotSynced();
+            "ORDER BY MA.identifier DESC";
 
-    @Query("SELECT " +
-            " MA.identifier AS 'identifier', " +
-            " MA.syncedAt AS 'syncedAt', " +
-            " MA.modifiedAt AS 'modifiedAt', " +
-            " MA.modifiedBy AS 'modifiedBy', " +
-            " MA.address AS 'address', " +
-            " MA.denomination AS 'denomination', " +
-            " MA.number AS 'number', " +
-            " MA.reference AS 'reference', " +
-            " MA.district AS 'district', " +
-            " MA.postalCode AS 'postalCode', " +
-            " MA.latitude AS 'latLng_latitude', " +
-            " MA.longitude AS 'latLng_longitude', " +
-            " MA.active AS 'active', " +
-            " C.identifier AS 'city_identifier', " +
-            " C.denomination AS 'city_denomination', " +
-            " S.identifier AS 'city_state_identifier', " +
-            " S.denomination AS 'city_state_denomination', " +
-            " S.acronym AS 'city_state_acronym', " +
-            " Co.identifier AS 'city_state_country_identifier', " +
-            " Co.denomination AS 'city_state_country_denomination', " +
-            " Co.acronym AS 'city_state_country_acronym' " +
-            "FROM ModifiedAddress MA " +
-            "LEFT OUTER JOIN City C ON C.identifier = MA.city " +
-            "LEFT OUTER JOIN State S ON S.identifier = C.state " +
-            "LEFT OUTER JOIN Country Co ON Co.identifier = S.country " +
-            "WHERE MA.identifier = :identifier")
-    ModifiedAddressModel getModifiedAddress(int identifier);
-
-    @Query("SELECT " +
+    String EDIFICATIONS_OF_MODIFIED_ADDRESS = "SELECT " +
             " MA.identifier AS 'modifiedAddress_identifier', " +
             " MA.syncedAt AS 'modifiedAddress_syncedAt', " +
             " MA.modifiedAt AS 'modifiedAddress_modifiedAt', " +
@@ -128,8 +80,71 @@ public interface ModifiedAddressDAO {
             "LEFT OUTER JOIN State ModifiedAddressCityState ON ModifiedAddressCityState.identifier = ModifiedAddressCity.state " +
             "LEFT OUTER JOIN Country ModifiedAddressCityStateCountry ON ModifiedAddressCityStateCountry.identifier = ModifiedAddressCityState.country " +
             "WHERE MA.identifier = :modifiedAddress AND MAE.active = 1 " +
-            "ORDER BY MAE.reference, MAE.type")
+            "ORDER BY MAE.reference, MAE.type";
+
+    @Insert
+    Long create(ModifiedAddressVO modifiedlAddressVO);
+
+    @Query("SELECT MA.* FROM ModifiedAddress MA WHERE MA.identifier = :identifier")
+    ModifiedAddressVO retrieve(int identifier);
+
+    @Query("SELECT COUNT(*) > 0 FROM ModifiedAddress MA WHERE MA.identifier = :identifier")
+    Boolean exists(int identifier);
+
+    @Query("UPDATE ModifiedAddress " +
+            "SET syncedAt = DATE('now') " +
+            "WHERE identifier IN (:identifier)")
+    void synced(Integer... identifier);
+
+    @Query("SELECT COUNT(*) FROM ModifiedAddress MA")
+    Integer count();
+
+    @Update
+    void update(ModifiedAddressVO modifiedAddressVO);
+
+    @Delete
+    void delete(ModifiedAddressVO modifiedAddressVO);
+
+    @Query(MODIFIED_ADDRESS_THAT_WHAS_NOT_SYNCED)
+    DataSource.Factory<Integer, ModifiedAddressModel> getModifiedAddressesThatWasNotSynced();
+
+    @Query(MODIFIED_ADDRESS_THAT_WHAS_NOT_SYNCED)
+    List<ModifiedAddressModel> getModifiedAddressesThatWasNotSyncedAsList();
+
+    @Query("SELECT " +
+            " MA.identifier AS 'identifier', " +
+            " MA.syncedAt AS 'syncedAt', " +
+            " MA.modifiedAt AS 'modifiedAt', " +
+            " MA.modifiedBy AS 'modifiedBy', " +
+            " MA.address AS 'address', " +
+            " MA.denomination AS 'denomination', " +
+            " MA.number AS 'number', " +
+            " MA.reference AS 'reference', " +
+            " MA.district AS 'district', " +
+            " MA.postalCode AS 'postalCode', " +
+            " MA.latitude AS 'latLng_latitude', " +
+            " MA.longitude AS 'latLng_longitude', " +
+            " MA.active AS 'active', " +
+            " C.identifier AS 'city_identifier', " +
+            " C.denomination AS 'city_denomination', " +
+            " S.identifier AS 'city_state_identifier', " +
+            " S.denomination AS 'city_state_denomination', " +
+            " S.acronym AS 'city_state_acronym', " +
+            " Co.identifier AS 'city_state_country_identifier', " +
+            " Co.denomination AS 'city_state_country_denomination', " +
+            " Co.acronym AS 'city_state_country_acronym' " +
+            "FROM ModifiedAddress MA " +
+            "LEFT OUTER JOIN City C ON C.identifier = MA.city " +
+            "LEFT OUTER JOIN State S ON S.identifier = C.state " +
+            "LEFT OUTER JOIN Country Co ON Co.identifier = S.country " +
+            "WHERE MA.identifier = :identifier")
+    ModifiedAddressModel getModifiedAddress(int identifier);
+
+    @Query(EDIFICATIONS_OF_MODIFIED_ADDRESS)
     LiveData<List<ModifiedAddressEdificationModel>> getEdificationsOfModifiedAddress(Integer modifiedAddress);
+
+    @Query(EDIFICATIONS_OF_MODIFIED_ADDRESS)
+    List<ModifiedAddressEdificationModel> getEdificationsOfModifiedAddressAsList(Integer modifiedAddress);
 
 
 }

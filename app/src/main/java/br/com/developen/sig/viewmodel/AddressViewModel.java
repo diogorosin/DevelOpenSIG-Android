@@ -2,6 +2,7 @@ package br.com.developen.sig.viewmodel;
 
 import android.app.Application;
 
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -12,6 +13,7 @@ import java.util.List;
 import br.com.developen.sig.database.AddressModel;
 import br.com.developen.sig.repository.AddressRepository;
 import br.com.developen.sig.util.App;
+import br.com.developen.sig.widget.AddressClusterItem;
 
 public class AddressViewModel extends AndroidViewModel {
 
@@ -23,6 +25,7 @@ public class AddressViewModel extends AndroidViewModel {
     private AddressRepository repository;
 
     //FIELDS THAT NEED VALIDATION
+    public final ObservableField<AddressClusterItem> selectedClusterItem = new ObservableField<>();
 
     //FIELDS THAT NOT NEED VALIDATION
 
@@ -48,6 +51,16 @@ public class AddressViewModel extends AndroidViewModel {
 
         }
 
+        public Factory(Application application) {
+
+            this.application = (App) application;
+
+            this.repository = this.application.getAddressRepository();
+
+            this.identifier = null;
+
+        }
+
         public <T extends ViewModel> T create(Class<T> modelClass) {
 
             return (T) new AddressViewModel(application, identifier, repository);
@@ -63,6 +76,8 @@ public class AddressViewModel extends AndroidViewModel {
 
         this.repository = App.getInstance().getAddressRepository();
 
+        this.selectedClusterItem.set(null);
+
     }
 
 
@@ -76,6 +91,8 @@ public class AddressViewModel extends AndroidViewModel {
         this.identifier = identifier;
 
         this.repository = repository;
+
+        this.selectedClusterItem.set(null);
 
     }
 

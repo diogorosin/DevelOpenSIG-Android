@@ -8,6 +8,7 @@ import com.mlykotom.valifi.ValiFi;
 import java.util.TimeZone;
 
 import br.com.developen.sig.R;
+import br.com.developen.sig.repository.AddressEdificationRepository;
 import br.com.developen.sig.repository.AddressRepository;
 import br.com.developen.sig.repository.CityRepository;
 import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
@@ -92,6 +93,13 @@ public class App extends Application {
     public AddressRepository getAddressRepository() {
 
         return AddressRepository.getInstance(DB.getInstance(this));
+
+    }
+
+
+    public AddressEdificationRepository getAddressEdificationRepository() {
+
+        return AddressEdificationRepository.getInstance(DB.getInstance(this));
 
     }
 

@@ -27,7 +27,7 @@ public class ModifiedToolbarActionModeCallback implements ActionMode.Callback {
 
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 
-        mode.getMenuInflater().inflate(R.menu.menu_modified, menu);
+        mode.getMenuInflater().inflate(R.menu.menu_modified_action_mode, menu);
 
         return true;
 

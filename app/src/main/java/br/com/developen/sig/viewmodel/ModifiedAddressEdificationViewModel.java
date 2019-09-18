@@ -149,7 +149,7 @@ public class ModifiedAddressEdificationViewModel extends AndroidViewModel {
 
     private static ValiFieldText getReferenceField(){
 
-        return new ValiFieldText();
+        return new ValiFieldText().addMaxLengthValidator(10);
 
     }
 

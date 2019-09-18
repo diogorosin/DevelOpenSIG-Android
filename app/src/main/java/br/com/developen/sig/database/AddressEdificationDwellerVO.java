@@ -18,12 +18,12 @@ import java.util.Objects;
                         childColumns = {"address", "edification"},
                         onDelete = ForeignKey.RESTRICT,
                         onUpdate = ForeignKey.CASCADE),
-                @ForeignKey(entity = SubjectVO.class,
+                @ForeignKey(entity = IndividualVO.class,
                         parentColumns = "identifier",
-                        childColumns = "subject",
+                        childColumns = "individual",
                         onDelete = ForeignKey.RESTRICT,
                         onUpdate = ForeignKey.CASCADE)},
-        indices = {@Index({"address", "edification", "dweller"}), @Index({"subject"})})
+        indices = {@Index({"address", "edification", "dweller"}), @Index({"individual"})})
 public class AddressEdificationDwellerVO {
 
     @NonNull
@@ -39,8 +39,8 @@ public class AddressEdificationDwellerVO {
     private Integer dweller;
 
     @NonNull
-    @ColumnInfo(name="subject")
-    private Integer subject;
+    @ColumnInfo(name="individual")
+    private Integer individual;
 
     @NonNull
     @TypeConverters({TimestampConverter.class})
@@ -87,15 +87,15 @@ public class AddressEdificationDwellerVO {
 
     }
 
-    public Integer getSubject() {
+    public Integer getIndividual() {
 
-        return subject;
+        return individual;
 
     }
 
-    public void setSubject(Integer subject) {
+    public void setIndividual(Integer individual) {
 
-        this.subject = subject;
+        this.individual = individual;
 
     }
 

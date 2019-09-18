@@ -182,7 +182,7 @@ public class ModifiedAddressBean implements Serializable {
 
 		if (edifications==null)
 
-			edifications = new HashMap<Integer, ModifiedAddressEdificationBean>();
+			edifications = new HashMap<>();
 
 		return edifications;
 

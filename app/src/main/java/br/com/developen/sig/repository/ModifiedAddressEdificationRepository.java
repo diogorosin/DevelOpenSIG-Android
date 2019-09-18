@@ -64,6 +64,13 @@ public class ModifiedAddressEdificationRepository {
     }
 
 
+    public List<ModifiedAddressEdificationDwellerModel> getDwellersOfModifiedAddressEdificationAsList(int modifiedAddress, int edification) {
+
+        return database.modifiedAddressEdificationDAO().getDwellersOfModifiedAddressEdificationAsList(modifiedAddress, edification);
+
+    }
+
+
     public ModifiedAddressEdificationModel getModifiedAddressEdification(int modifiedAddress, int edification) {
 
         return database.modifiedAddressEdificationDAO().getModifiedAddressEdification(modifiedAddress, edification);

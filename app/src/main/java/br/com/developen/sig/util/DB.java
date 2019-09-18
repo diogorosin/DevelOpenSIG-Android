@@ -31,7 +31,6 @@ import br.com.developen.sig.database.OrganizationVO;
 import br.com.developen.sig.database.StateDAO;
 import br.com.developen.sig.database.StateVO;
 import br.com.developen.sig.database.SubjectDAO;
-import br.com.developen.sig.database.SubjectModel;
 import br.com.developen.sig.database.SubjectVO;
 import br.com.developen.sig.database.TypeDAO;
 import br.com.developen.sig.database.TypeVO;
@@ -52,7 +51,7 @@ import br.com.developen.sig.database.TypeVO;
         ModifiedAddressVO.class,
         ModifiedAddressEdificationVO.class,
         ModifiedAddressEdificationDwellerVO.class},
-        version = 001, views = {SubjectModel.class}, exportSchema = false)
+        version = 001, exportSchema = false)
 public abstract class DB extends RoomDatabase {
 
     private static DB INSTANCE;

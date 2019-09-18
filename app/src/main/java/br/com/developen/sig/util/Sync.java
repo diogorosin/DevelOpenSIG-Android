@@ -382,7 +382,7 @@ public class Sync {
 
                     addressEdificationDwellerVO.setDweller(addressEdificationDwellerBean.getDweller());
 
-                    addressEdificationDwellerVO.setSubject(addressEdificationDwellerBean.getSubject());
+                    addressEdificationDwellerVO.setIndividual(addressEdificationDwellerBean.getIndividual());
 
                     addressEdificationDwellerVO.setFrom(addressEdificationDwellerBean.getFrom());
 
@@ -391,7 +391,7 @@ public class Sync {
                     if (addressEdificationDwellerDAO.exists(
                             addressEdificationDwellerVO.getAddress(),
                             addressEdificationDwellerVO.getEdification(),
-                            addressEdificationDwellerVO.getSubject()))
+                            addressEdificationDwellerVO.getDweller()))
 
                         addressEdificationDwellerDAO.update(addressEdificationDwellerVO);
 

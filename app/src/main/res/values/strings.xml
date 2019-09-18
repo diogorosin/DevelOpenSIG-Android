@@ -62,6 +62,7 @@
     <string name="error_user_not_active">O usuário não está ativo.</string>
     <string name="error_field_required">O preenchimento desse campo é obrigatório.</string>
     <string name="error_connection_failure">Não foi possível conectar ao servidor.</string>
+    <string name="error_address_not_found">Endereço não encontrado</string>
 
     <!-- Validations -->
     <string name="validation_error_min_length">Campo deve conter ao menos %d caractere(s).</string>
@@ -108,7 +109,7 @@
     <string name="confirm">Confirme</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
-    <string name="success_modified_address_deleted">Edição(ções) excluida(s) com sucesso.</string>
+    <string name="success_modified_address_deleted">Resgistro(s) excluido(s) com sucesso.</string>
     <string name="error">Erro</string>
     <string name="new_marker">Novo Marcador</string>
     <string name="title_activity_test">Sign in</string>
@@ -121,5 +122,15 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="refence">Referência</string>
+    <string name="upload_sucess">Registro(s) envido(s) com sucesso.</string>
+    <string name="navigate">Ir</string>
+    <string name="share">Compartilhar</string>
+    <string name="apartment">Apartamento</string>
+    <string name="commercial_room">Sala Comercial</string>
+    <string name="farm">Propriedade Rural</string>
+    <string name="house">Casa</string>
+    <string name="other">Outra edificação</string>
+    <string name="no_results">Não há edificações para serem exibidas.</string>
+
 
 </resources>

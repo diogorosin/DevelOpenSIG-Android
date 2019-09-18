@@ -54,7 +54,7 @@ public class CreateDwellerAsyncTask<L extends CreateDwellerAsyncTask.Listener>
                     database.modifiedAddressEdificationDwellerDAO().
                             retrieveLastDwellerIdOfModifiedAddressEdification(modifiedAddress, edification) + 1);
 
-            modifiedAddressEdificationDwellerVO.setSubject(null);
+            modifiedAddressEdificationDwellerVO.setIndividual(null);
 
 //            modifiedAddressEdificationDwellerVO.setName("Diogo Buzin Rosin");
 
