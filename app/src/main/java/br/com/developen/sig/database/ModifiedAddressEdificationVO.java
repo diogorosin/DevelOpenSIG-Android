@@ -44,7 +44,6 @@ public class ModifiedAddressEdificationVO {
     @ColumnInfo(name="reference")
     private String reference;
 
-    @NonNull
     @TypeConverters({DateConverter.class})
     @ColumnInfo(name="from")
     private Date from;

@@ -7,4 +7,5 @@
     android:gravity="start"
     android:textAlignment="textStart"
     android:textColor="@color/black"
+    android:duplicateParentState="true"
     android:padding="5dp"/>

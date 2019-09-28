@@ -158,4 +158,15 @@ public interface ModifiedAddressEdificationDAO {
             "WHERE MAE.modifiedAddress = :modifiedAddress AND MAE.edification = :edification")
     ModifiedAddressEdificationModel getModifiedAddressEdification(Integer modifiedAddress, Integer edification);
 
+    @Query("SELECT COUNT(*) = 0 " +
+            "FROM ModifiedAddressEdificationDweller MAED " +
+            "INNER JOIN ModifiedAddressEdification MAE ON MAE.modifiedAddress = MAED.modifiedAddress AND MAE.edification = MAED.edification " +
+            "WHERE " +
+            "MAE.modifiedAddress = :modifiedAddress AND " +
+            "MAE.edification = :edification AND " +
+            "MAED.active = 1 AND " +
+            "MAED.`to` IS NULL")
+    Boolean canBeDemolished(Integer modifiedAddress, Integer edification);
+
+
 }

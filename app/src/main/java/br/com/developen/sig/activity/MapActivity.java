@@ -38,6 +38,15 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -50,19 +59,29 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.NonHierarchicalViewBasedAlgorithm;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.developen.sig.R;
+import br.com.developen.sig.bean.DatasetBean;
+import br.com.developen.sig.bean.ExceptionBean;
 import br.com.developen.sig.database.AddressEdificationDwellerModel;
 import br.com.developen.sig.database.AddressEdificationModel;
 import br.com.developen.sig.database.AddressModel;
 import br.com.developen.sig.task.CreateAddressAsyncTask;
+import br.com.developen.sig.task.EditAddressAsyncTask;
 import br.com.developen.sig.task.FindAddressesByIndividualNameAsyncTask;
+import br.com.developen.sig.task.ImportAsyncTask;
 import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.Constants;
 import br.com.developen.sig.util.IconUtils;
@@ -79,11 +98,13 @@ import br.com.developen.sig.widget.AddressEdificationRecyclerViewAdapter;
 public class MapActivity
         extends FragmentActivity
         implements OnMapReadyCallback,
+        ImportAsyncTask.Listener,
         AddressEdificationRecyclerViewAdapter.EdificationClickListener,
         GoogleMap.OnMyLocationChangeListener,
         CreateAddressAsyncTask.Listener,
         NavigationView.OnNavigationItemSelectedListener,
         FindAddressesByIndividualNameAsyncTask.Listener,
+        EditAddressAsyncTask.Listener,
         ClusterManager.OnClusterClickListener<AddressClusterItem>,
         ClusterManager.OnClusterInfoWindowClickListener<AddressClusterItem>,
         ClusterManager.OnClusterItemClickListener<AddressClusterItem>,
@@ -95,9 +116,9 @@ public class MapActivity
     private ClusterManager<AddressClusterItem> clusterManager;
 
 
-    private Location lastKnowLocation;
-
     public static ProgressDialog progressDialog;
+
+    private Location lastKnowLocation;
 
     private GoogleMap googleMap;
 
@@ -141,6 +162,11 @@ public class MapActivity
     private Integer defaultAddress = -1;
 
     private Boolean reloadEdifications = false;
+
+
+    private RequestQueue requestQueue;
+
+    private Gson gson;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -351,10 +377,19 @@ public class MapActivity
 
         fab.setOnClickListener(view -> {
 
-            if (getLastKnowLocation() != null)
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN){
 
-                new CreateAddressAsyncTask<>(MapActivity.this).execute(
-                        getLastKnowLocation().getLatitude(), getLastKnowLocation().getLongitude());
+                if (getLastKnowLocation() != null)
+
+                    new CreateAddressAsyncTask<>(MapActivity.this).execute(
+                            getLastKnowLocation().getLatitude(), getLastKnowLocation().getLongitude());
+
+            } else {
+
+                new EditAddressAsyncTask<>(MapActivity.this).execute(
+                        addressViewModel.selectedClusterItem.get().getIdentifier());
+
+            }
 
         });
 
@@ -455,6 +490,15 @@ public class MapActivity
         });
 
 
+        requestQueue = Volley.newRequestQueue(this);
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+
+        gsonBuilder.setDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        gson = gsonBuilder.create();
+
+
     }
 
 
@@ -543,7 +587,19 @@ public class MapActivity
 
                 break;
 
+            case R.id.menu_markers_refresh:
+
+                drawer.closeDrawers();
+
+                refresh();
+
+                break;
+
             case R.id.menu_settings:
+
+                Intent settingsIntent = new Intent(MapActivity.this, SettingsActivity.class);
+
+                startActivity(settingsIntent);
 
                 drawer.closeDrawers();
 
@@ -806,69 +862,11 @@ public class MapActivity
     public void onClusterItemInfoWindowClick(AddressClusterItem addressClusterItem) {}
 
 
-    public void onCreateAddressPreExecute() {
-
-        progressDialog.setCancelable(false);
-
-        progressDialog.setTitle("Aguarde");
-
-        progressDialog.setMessage("Criando marcador...");
-
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-
-        progressDialog.setIndeterminate(true);
-
-        progressDialog.show();
-
-    }
-
-
-    public void onCreateAddressProgressInitialize(int progress, int max) {
-
-        progressDialog.setProgress(progress);
-
-        progressDialog.setMax(max);
-
-    }
-
-
-    public void onCreateAddressProgressUpdate(int status) {
-
-        progressDialog.incrementProgressBy(status);
-
-    }
-
-
-    public void onCreateAddressSuccess(Integer identifier) {
-
-        Intent addIntent = new Intent(MapActivity.this, ModifiedAddressActivity.class);
-
-        addIntent.putExtra(ModifiedAddressActivity.MODIFIED_ADDRESS_IDENTIFIER, identifier);
-
-        startActivity(addIntent);
-
-    }
-
-
-    public void onCreateAddressFailure(Messaging messaging) {
-
-        showAlertDialog(messaging);
-
-    }
-
-
-    public void onCreateAddressAddressCancelled() {
-
-        progressDialog.hide();
-
-    }
-
-
     private void showAlertDialog(Messaging messaging){
 
         if (progressDialog.isShowing())
 
-            progressDialog.hide();
+            progressDialog.dismiss();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MapActivity.this);
 
@@ -940,7 +938,7 @@ public class MapActivity
                 if (addressModel != null)
 
                     goToLocation(new LatLng(addressModel.getLatitude(),
-                            addressModel.getLongitude()),
+                                    addressModel.getLongitude()),
                             addressModel.getIdentifier());
 
                 else
@@ -1003,6 +1001,244 @@ public class MapActivity
 
 
     public void onEdificationLongClick(AddressEdificationRecyclerViewAdapter.AddressEdificationViewHolder addressEdificationModel) {}
+
+
+    public void refresh(){
+
+        progressDialog.setCancelable(false);
+
+        progressDialog.setTitle("Aguarde");
+
+        progressDialog.setMessage("Baixando atualização...");
+
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        progressDialog.setIndeterminate(true);
+
+        progressDialog.show();
+
+        StringRequest request = new StringRequest(Request.Method.GET, Constants.SERVER_BASE_URL + "download/dataset",
+
+                response -> {
+
+                    DatasetBean datasetBean = gson.fromJson(response, DatasetBean.class);
+
+                    new ImportAsyncTask<>(this).execute(datasetBean);
+
+                },
+
+                error -> {
+
+                    if (error instanceof NoConnectionError){
+
+                        Toast.makeText(getApplicationContext(), R.string.error_connection_failure, Toast.LENGTH_LONG).show();
+
+                    } else {
+
+                        try {
+
+                            if (error.networkResponse.data != null) {
+
+                                String responseBody = new String(error.networkResponse.data, "utf-8");
+
+                                Messaging messaging = gson.fromJson(responseBody, ExceptionBean.class);
+
+                                if (messaging != null && messaging.getMessages().length > 0)
+
+                                    Toast.makeText(getApplicationContext(), messaging.getMessages()[0], Toast.LENGTH_LONG).show();
+
+                            }
+
+                        } catch (UnsupportedEncodingException ignored) {}
+
+                    }
+
+                })
+
+        {
+
+            public String getBodyContentType() {
+
+                return Constants.JSON_CONTENT_TYPE;
+
+            }
+
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                String uft8String = new String(response.data, StandardCharsets.UTF_8);
+
+                return Response.success(uft8String, HttpHeaderParser.parseCacheHeaders(response));
+
+            }
+
+            public Map<String, String> getHeaders() {
+
+                Map<String, String> headers = new HashMap<>();
+
+                headers.put(Constants.AUTHORIZATION_HEADER, "Bearer " + preferences.getString(Constants.TOKEN_IDENTIFIER_PROPERTY, null));
+
+                return headers;
+
+            }
+
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        requestQueue.add(request);
+
+    }
+
+
+    public void onImportPreExecute() {
+
+        progressDialog.setMessage("Importando dados...");
+
+    }
+
+
+    public void onImportProgressUpdate(Integer progress) {
+
+        progressDialog.incrementProgressBy(progress);
+
+    }
+
+
+    public void onImportSuccess() {
+
+        progressDialog.hide();
+
+        Toast.makeText(this, R.string.download_sucess, Toast.LENGTH_LONG).show();
+
+    }
+
+
+    public void onImportFailure(Messaging messaging) {
+
+        showAlertDialog(messaging);
+
+    }
+
+
+    public void onImportCancelled() {
+
+        progressDialog.hide();
+
+    }
+
+
+    //////////////////////////////////
+    //////////////////////////////////
+    /// MARKERS //////////////////////
+
+
+    public void onEditAddressPreExecute() {
+
+        progressDialog.setCancelable(false);
+
+        progressDialog.setTitle("Aguarde");
+
+        progressDialog.setMessage("Editando marcador...");
+
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        progressDialog.setIndeterminate(true);
+
+        progressDialog.show();
+
+    }
+
+
+    public void onEditAddressProgressUpdate(int status) {
+
+        //progressDialog.incrementProgressBy(status);
+
+    }
+
+
+    public void onEditAddressSuccess(Integer identifier) {
+
+        Intent addIntent = new Intent(MapActivity.this, ModifiedAddressActivity.class);
+
+        addIntent.putExtra(ModifiedAddressActivity.MODIFIED_ADDRESS_IDENTIFIER, identifier);
+
+        startActivity(addIntent);
+
+    }
+
+
+    public void onEditAddressFailure(Messaging messaging) {
+
+        showAlertDialog(messaging);
+
+    }
+
+
+    public void onEditAddressAddressCancelled() {
+
+        progressDialog.hide();
+
+    }
+
+
+    //////////////////////////////////
+
+
+    public void onCreateAddressPreExecute() {
+
+        progressDialog.setCancelable(false);
+
+        progressDialog.setTitle("Aguarde");
+
+        progressDialog.setMessage("Criando marcador...");
+
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        progressDialog.setIndeterminate(true);
+
+        progressDialog.show();
+
+    }
+
+
+    public void onCreateAddressProgressUpdate(int status) {
+
+        //progressDialog.incrementProgressBy(status);
+
+    }
+
+
+    public void onCreateAddressSuccess(Integer identifier) {
+
+        Intent addIntent = new Intent(MapActivity.this, ModifiedAddressActivity.class);
+
+        addIntent.putExtra(ModifiedAddressActivity.MODIFIED_ADDRESS_IDENTIFIER, identifier);
+
+        startActivity(addIntent);
+
+    }
+
+
+    public void onCreateAddressFailure(Messaging messaging) {
+
+        showAlertDialog(messaging);
+
+    }
+
+
+    public void onCreateAddressAddressCancelled() {
+
+        progressDialog.hide();
+
+    }
+
+
+    /// MARKERS //////////////////////
+    //////////////////////////////////
+    //////////////////////////////////
 
 
 }

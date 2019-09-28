@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -656,7 +657,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
                                 Toast.makeText(getApplicationContext(), messaging.getMessages()[0], Toast.LENGTH_LONG).show();
 
-                        } catch (UnsupportedEncodingException e) {}
+                        } catch (UnsupportedEncodingException ignored) {}
 
                     }
 

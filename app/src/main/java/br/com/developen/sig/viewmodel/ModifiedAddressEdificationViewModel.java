@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.mlykotom.valifi.ValiFiForm;
 import com.mlykotom.valifi.fields.ValiFieldText;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.Map;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
 import br.com.developen.sig.database.TypeModel;
+import br.com.developen.sig.exception.ThereAreDwellersOnThisEdificationException;
 import br.com.developen.sig.repository.ModifiedAddressEdificationRepository;
 import br.com.developen.sig.util.App;
 
@@ -38,6 +40,10 @@ public class ModifiedAddressEdificationViewModel extends AndroidViewModel {
     public final ObservableField<TypeModel> type = new ObservableField<>();
 
     public final ObservableBoolean active = new ObservableBoolean();
+
+    public final ObservableField<Date> from = new ObservableField<>();
+
+    public final ObservableField<Date> to = new ObservableField<>();
 
     //FORM
     public final ValiFiForm form = new ValiFiForm(reference);
@@ -98,6 +104,10 @@ public class ModifiedAddressEdificationViewModel extends AndroidViewModel {
 
         active.set(modifiedAddressEdificationModel.getActive());
 
+        from.set(modifiedAddressEdificationModel.getFrom());
+
+        to.set(modifiedAddressEdificationModel.getTo());
+
     }
 
 
@@ -134,6 +144,32 @@ public class ModifiedAddressEdificationViewModel extends AndroidViewModel {
         values.put(ModifiedAddressEdificationRepository.EDIFICATION_PROPERTY, this.edification);
 
         repository.delete(values);
+
+    }
+
+
+    public void demolish() throws ThereAreDwellersOnThisEdificationException {
+
+        Map<Integer, Object> values = new HashMap<>();
+
+        values.put(ModifiedAddressEdificationRepository.MODIFIED_ADDRESS_PROPERTY, this.modifiedAddress);
+
+        values.put(ModifiedAddressEdificationRepository.EDIFICATION_PROPERTY, this.edification);
+
+        repository.demolish(values);
+
+    }
+
+
+    public void undoDemolish(){
+
+        Map<Integer, Object> values = new HashMap<>();
+
+        values.put(ModifiedAddressEdificationRepository.MODIFIED_ADDRESS_PROPERTY, this.modifiedAddress);
+
+        values.put(ModifiedAddressEdificationRepository.EDIFICATION_PROPERTY, this.edification);
+
+        repository.undoDemolish(values);
 
     }
 

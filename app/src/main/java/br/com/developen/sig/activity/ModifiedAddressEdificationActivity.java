@@ -3,6 +3,8 @@ package br.com.developen.sig.activity;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,8 +15,11 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.databinding.Observable;
 import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -22,10 +27,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.Date;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
+import br.com.developen.sig.exception.ThereAreDwellersOnThisEdificationException;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationTypeFragment;
 import br.com.developen.sig.task.CreateDwellerAsyncTask;
@@ -46,7 +55,13 @@ public class ModifiedAddressEdificationActivity
 
     private FloatingActionButton floatingActionButton;
 
+    private Snackbar demolishedSnackbar;
+
     private boolean isActive = false;
+
+    private boolean isNew = true;
+
+    private boolean wasDemolished = false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +89,7 @@ public class ModifiedAddressEdificationActivity
             @SuppressLint("RestrictedApi")
             public void onPageSelected(int position) {
 
-                floatingActionButton.setVisibility(position==1 ? View.VISIBLE : View.GONE);
+                floatingActionButton.setVisibility(position==1 && !wasDemolished ? View.VISIBLE : View.GONE);
 
             }
 
@@ -117,8 +132,48 @@ public class ModifiedAddressEdificationActivity
 
         });
 
+        modifiedAddressEdificationViewModel.from.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                isNew = ((ObservableField<Date>) sender).get() == null;
+
+                invalidateOptionsMenu();
+
+            }
+
+        });
+
+        modifiedAddressEdificationViewModel.to.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            @SuppressLint("RestrictedApi")
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                wasDemolished = ((ObservableField<Date>) sender).get() != null;
+
+                if (wasDemolished)
+
+                    getDemolishedSnackBar().show();
+
+                else
+
+                    getDemolishedSnackBar().dismiss();
+
+                floatingActionButton.setVisibility(viewPager.getCurrentItem() == 1 && !wasDemolished ? View.VISIBLE : View.GONE);
+
+                invalidateOptionsMenu();
+
+            }
+
+        });
+
         //UPDATE VIEW
         modifiedAddressEdificationViewModel.active.notifyChange();
+
+        modifiedAddressEdificationViewModel.from.notifyChange();
+
+        modifiedAddressEdificationViewModel.to.notifyChange();
+
 
     }
 
@@ -140,7 +195,19 @@ public class ModifiedAddressEdificationActivity
 
         MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_edification_delete);
 
-        deleteItem.setVisible(isActive);
+        deleteItem.setVisible(isActive && isNew);
+
+        MenuItem demolishItem = menu.findItem(R.id.menu_modified_address_edification_demolish);
+
+        Drawable drawable = demolishItem.getIcon();
+
+        drawable = DrawableCompat.wrap(drawable);
+
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(this,R.color.colorWhite));
+
+        demolishItem.setIcon(drawable);
+
+        demolishItem.setVisible(isActive && !isNew && !wasDemolished);
 
         return true;
 
@@ -204,6 +271,61 @@ public class ModifiedAddressEdificationActivity
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
                 builder.setMessage("Deseja realmente excluir a edificação?").
+                        setTitle("Atenção").
+                        setPositiveButton("Sim", dialogClickListener).
+                        setNegativeButton("Não", dialogClickListener).
+                        show();
+
+                return true;
+
+            }
+
+            case R.id.menu_modified_address_edification_demolish: {
+
+                try {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                } catch (Exception e) {}
+
+                DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+
+                    switch (which){
+
+                        case DialogInterface.BUTTON_POSITIVE:
+
+                            try {
+
+                                modifiedAddressEdificationViewModel.demolish();
+
+                                finish();
+
+                            } catch (ThereAreDwellersOnThisEdificationException e) {
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                                builder.setTitle("Atenção").
+                                        setMessage(e.getMessage()).
+                                        setPositiveButton(R.string.button_ok, (dialog1, which1) -> dialog1.dismiss()).
+                                        show();
+
+                            }
+
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+
+                            break;
+
+                    }
+
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setMessage("Deseja realmente demolir a edificação?").
                         setTitle("Atenção").
                         setPositiveButton("Sim", dialogClickListener).
                         setNegativeButton("Não", dialogClickListener).
@@ -314,6 +436,31 @@ public class ModifiedAddressEdificationActivity
             return 2;
 
         }
+
+    }
+
+
+    private Snackbar getDemolishedSnackBar(){
+
+        if (demolishedSnackbar == null){
+
+            demolishedSnackbar = Snackbar.make(findViewById(R.id.activity_modified_address_edification), "Demolida" , Snackbar.LENGTH_INDEFINITE);
+
+            demolishedSnackbar.setActionTextColor(Color.WHITE);
+
+            demolishedSnackbar.getView().setBackgroundResource(R.color.colorRedMedium);
+
+            demolishedSnackbar.setAction("Desfazer", view -> {
+
+                modifiedAddressEdificationViewModel.undoDemolish();
+
+                finish();
+
+            });
+
+        }
+
+        return demolishedSnackbar;
 
     }
 

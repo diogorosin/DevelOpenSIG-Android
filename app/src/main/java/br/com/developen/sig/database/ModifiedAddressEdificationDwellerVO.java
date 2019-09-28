@@ -72,7 +72,6 @@ public class ModifiedAddressEdificationDwellerVO {
     @ColumnInfo(name="gender")
     private String gender;
 
-    @NonNull
     @TypeConverters({DateConverter.class})
     @ColumnInfo(name="from")
     private Date from;

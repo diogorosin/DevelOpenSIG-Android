@@ -1,11 +1,24 @@
 package br.com.developen.sig.database;
 
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class LatLngModel {
 
     private Double latitude;
 
     private Double longitude;
+
+
+    public LatLngModel(){}
+
+    public LatLngModel(Double lat, Double lon){
+
+        this.latitude = lat;
+
+        this.longitude = lon;
+
+    }
 
     public Double getLatitude() {
 

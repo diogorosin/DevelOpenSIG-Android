@@ -30,6 +30,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/settings"
+            android:theme="@style/AppTheme"/>
+        <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/AppTheme.Green">
             <intent-filter>
@@ -41,17 +45,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:host="www.developen.com.br" />
-                <data android:scheme="https"/>
-                <data android:scheme="http"/>
+                <data android:scheme="https" />
+                <data android:scheme="http" />
                 <data android:pathPattern=".*" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.ConfigurationActivity"
-            android:theme="@style/AppTheme.Green"/>
+            android:theme="@style/AppTheme.Green" />
         <activity
             android:name=".activity.MapActivity"
-            android:theme="@style/AppTheme.Main"/>
+            android:theme="@style/AppTheme.Main" />
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/AppTheme.Green" />
@@ -74,6 +78,22 @@
             android:label="@string/title_activity_address_dweller"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <service
+            android:enabled="true"
+            android:exported="true"
+            android:name=".util.JobsService"
+            android:label="DevelOpenSIG Server"
+            android:permission="android.permission.BIND_JOB_SERVICE">
+        </service>
+        <receiver
+            android:name=".util.StartServiceReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

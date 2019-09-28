@@ -56,32 +56,18 @@ public class CreateDwellerAsyncTask<L extends CreateDwellerAsyncTask.Listener>
 
             modifiedAddressEdificationDwellerVO.setIndividual(null);
 
-//            modifiedAddressEdificationDwellerVO.setName("Diogo Buzin Rosin");
-
-//            modifiedAddressEdificationDwellerVO.setMotherName("Odilete Buzin");
-
-//            modifiedAddressEdificationDwellerVO.setFatherName("Ilonir Rosin");
-
             modifiedAddressEdificationDwellerVO.setGender("M");
-
-//            modifiedAddressEdificationDwellerVO.setBirthDate(new Date());
-
-//            modifiedAddressEdificationDwellerVO.setBirthPlace(null);
-
-//            modifiedAddressEdificationDwellerVO.setCpf(5369609926L);
-
-//            modifiedAddressEdificationDwellerVO.setRgNumber(3100191L);
 
             modifiedAddressEdificationDwellerVO.setRgAgency(1);
 
             modifiedAddressEdificationDwellerVO.setRgState(24);
 
-            modifiedAddressEdificationDwellerVO.setFrom(new Date());
+            //DEFINIDA PELO SERVIDOR NO MOMENTO DA IMPORTACAO
+            //modifiedAddressEdificationDwellerVO.setFrom(new Date());
 
             modifiedAddressEdificationDwellerVO.setActive(false);
 
             database.modifiedAddressEdificationDwellerDAO().create(modifiedAddressEdificationDwellerVO);
-
 
             database.setTransactionSuccessful();
 
@@ -100,6 +86,7 @@ public class CreateDwellerAsyncTask<L extends CreateDwellerAsyncTask.Listener>
                 database.endTransaction();
 
         }
+
 
     }
 

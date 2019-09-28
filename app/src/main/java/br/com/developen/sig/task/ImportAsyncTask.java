@@ -1,6 +1,8 @@
-package br.com.developen.sig.util;
+package br.com.developen.sig.task;
 
 import android.os.AsyncTask;
+
+import java.lang.ref.WeakReference;
 
 import br.com.developen.sig.bean.AddressBean;
 import br.com.developen.sig.bean.AddressEdificationBean;
@@ -35,23 +37,65 @@ import br.com.developen.sig.database.SubjectDAO;
 import br.com.developen.sig.database.SubjectVO;
 import br.com.developen.sig.database.TypeDAO;
 import br.com.developen.sig.database.TypeVO;
+import br.com.developen.sig.util.App;
+import br.com.developen.sig.util.DB;
+import br.com.developen.sig.util.Messaging;
 
-public class Sync {
+public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncTask<DatasetBean, Integer, Object> {
 
 
-    private DB database;
+    private WeakReference<L> listener;
 
 
-    public Sync(DB database) {
+    public ImportAsyncTask(L activity) {
 
-        this.database = database;
+        this.listener = new WeakReference<>(activity);
 
     }
 
 
-    public void dataset(DatasetBean datasetBean) {
+    protected void onPreExecute() {
+
+        L listener = this.listener.get();
+
+        if (listener != null)
+
+            listener.onImportPreExecute();
+
+    }
+
+
+    protected void onProgressUpdate(Integer... progress){
+
+        L listener = this.listener.get();
+
+        if (listener != null)
+
+            listener.onImportProgressUpdate(progress[0]);
+
+    }
+
+
+    public void onCancelled(){
+
+        L listener = this.listener.get();
+
+        if (listener != null)
+
+            listener.onImportCancelled();
+
+    }
+
+
+    protected Object doInBackground(DatasetBean... params) {
+
+        DatasetBean datasetBean = params[0];
+
+        DB database = DB.getInstance(App.getInstance());
 
         database.runInTransaction(() -> {
+
+            publishProgress(1);
 
             if (datasetBean.getTypes() != null &&
                     !datasetBean.getTypes().isEmpty()){
@@ -77,6 +121,8 @@ public class Sync {
                 }
 
             }
+
+            publishProgress(1);
 
             if (datasetBean.getAgencies() != null &&
                     !datasetBean.getAgencies().isEmpty()){
@@ -105,6 +151,8 @@ public class Sync {
 
             }
 
+            publishProgress(1);
+
             if (datasetBean.getCountries() != null &&
                     !datasetBean.getCountries().isEmpty()){
 
@@ -131,6 +179,8 @@ public class Sync {
                 }
 
             }
+
+            publishProgress(1);
 
             if (datasetBean.getStates() != null &&
                     !datasetBean.getStates().isEmpty()){
@@ -161,6 +211,8 @@ public class Sync {
 
             }
 
+            publishProgress(1);
+
             if (datasetBean.getCities() != null &&
                     !datasetBean.getCities().isEmpty()){
 
@@ -187,6 +239,8 @@ public class Sync {
                 }
 
             }
+
+            publishProgress(1);
 
             if (datasetBean.getIndividuals() != null &&
                     !datasetBean.getIndividuals().isEmpty()){
@@ -247,6 +301,8 @@ public class Sync {
 
             }
 
+            publishProgress(1);
+
             if (datasetBean.getOrganizations() != null &&
                     !datasetBean.getOrganizations().isEmpty()){
 
@@ -289,6 +345,8 @@ public class Sync {
                 }
 
             }
+
+            publishProgress(1);
 
             if (datasetBean.getAddresses() != null &&
                     !datasetBean.getAddresses().isEmpty()){
@@ -333,6 +391,8 @@ public class Sync {
 
             }
 
+            publishProgress(1);
+
             if (datasetBean.getAddressesEdifications() != null &&
                     !datasetBean.getAddressesEdifications().isEmpty()){
 
@@ -367,6 +427,8 @@ public class Sync {
                 }
 
             }
+
+            publishProgress(1);
 
             if (datasetBean.getAddressesEdificationsDwellers() != null &&
                     !datasetBean.getAddressesEdificationsDwellers().isEmpty()){
@@ -406,6 +468,47 @@ public class Sync {
 
         });
 
+        return true;
+
+    }
+
+
+    protected void onPostExecute(Object callResult) {
+
+        L listener = this.listener.get();
+
+        if (listener != null) {
+
+            if (callResult instanceof Boolean){
+
+                listener.onImportSuccess();
+
+            } else {
+
+                if (callResult instanceof Messaging){
+
+                    listener.onImportFailure((Messaging) callResult);
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    public interface Listener {
+
+        void onImportPreExecute();
+
+        void onImportProgressUpdate(Integer status);
+
+        void onImportSuccess();
+
+        void onImportFailure(Messaging messaging);
+
+        void onImportCancelled();
 
     }
 

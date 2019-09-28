@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableInt;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,6 +13,7 @@ import com.mlykotom.valifi.ValiFiForm;
 import com.mlykotom.valifi.fields.ValiFieldText;
 import com.mlykotom.valifi.fields.number.ValiFieldLong;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ import br.com.developen.sig.R;
 import br.com.developen.sig.database.AgencyModel;
 import br.com.developen.sig.database.CityModel;
 import br.com.developen.sig.database.GenderModel;
+import br.com.developen.sig.database.IndividualModel;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.database.StateModel;
 import br.com.developen.sig.exception.CityNotFoundException;
@@ -53,11 +56,19 @@ public class ModifiedAddressEdificationDwellerViewModel extends AndroidViewModel
     //FIELDS THAT NEED VALIDATION
     public final ObservableBoolean active = new ObservableBoolean();
 
+    public final ObservableBoolean editable = new ObservableBoolean();
+
+    public final ObservableField<Integer> individual = new ObservableField<>();
+
     public final ObservableField<AgencyModel> rgAgency = new ObservableField<>();
 
     public final ObservableField<StateModel> rgState = new ObservableField<>();
 
     public final ObservableField<GenderModel> gender = new ObservableField<>();
+
+    public final ObservableField<Date> from = new ObservableField<>();
+
+    public final ObservableField<Date> to = new ObservableField<>();
 
     //FORM
     public final ValiFiForm form = new ValiFiForm(name, motherName, fatherName, cpf, rgNumber, birthDate, birthPlace);
@@ -119,6 +130,12 @@ public class ModifiedAddressEdificationDwellerViewModel extends AndroidViewModel
         ModifiedAddressEdificationDwellerModel modifiedAddressEdificationDwellerModel =
                 this.repository.getModifiedAddressEdificationDweller(this.modifiedAddress, this.edification, this.dweller);
 
+        IndividualModel individualModel = modifiedAddressEdificationDwellerModel.getIndividual();
+
+        individual.set(individualModel == null ? null : individualModel.getIdentifier());
+
+        editable.set(individualModel == null);
+
         active.set(modifiedAddressEdificationDwellerModel.getActive());
 
         name.setValue(modifiedAddressEdificationDwellerModel.getName());
@@ -143,6 +160,10 @@ public class ModifiedAddressEdificationDwellerViewModel extends AndroidViewModel
 
         gender.set(modifiedAddressEdificationDwellerModel.getGender());
 
+        from.set(modifiedAddressEdificationDwellerModel.getFrom());
+
+        to.set(modifiedAddressEdificationDwellerModel.getTo());
+
     }
 
 
@@ -162,7 +183,7 @@ public class ModifiedAddressEdificationDwellerViewModel extends AndroidViewModel
 
         values.put(ModifiedAddressEdificationDwellerRepository.FATHER_NAME_PROPERTY, this.fatherName.get());
 
-        values.put(ModifiedAddressEdificationDwellerRepository.INDIVIDUAL_PROPERTY, null);
+        values.put(ModifiedAddressEdificationDwellerRepository.INDIVIDUAL_PROPERTY, this.individual.get());
 
         values.put(ModifiedAddressEdificationDwellerRepository.CPF_PROPERTY, StringUtils.parseCpf(this.cpf.get()));
 
@@ -177,6 +198,8 @@ public class ModifiedAddressEdificationDwellerViewModel extends AndroidViewModel
         values.put(ModifiedAddressEdificationDwellerRepository.BIRTH_PLACE_PROPERTY, this.birthPlace.get());
 
         values.put(ModifiedAddressEdificationDwellerRepository.GENDER_PROPERTY, this.gender.get());
+
+        values.put(ModifiedAddressEdificationDwellerRepository.TO_PROPERTY, this.to.get());
 
         repository.save(values);
 
@@ -194,6 +217,36 @@ public class ModifiedAddressEdificationDwellerViewModel extends AndroidViewModel
         values.put(ModifiedAddressEdificationDwellerRepository.DWELLER_PROPERTY, this.dweller);
 
         repository.delete(values);
+
+    }
+
+
+    public void move(){
+
+        Map<Integer, Object> values = new HashMap<>();
+
+        values.put(ModifiedAddressEdificationDwellerRepository.MODIFIED_ADDRESS_PROPERTY, this.modifiedAddress);
+
+        values.put(ModifiedAddressEdificationDwellerRepository.EDIFICATION_PROPERTY, this.edification);
+
+        values.put(ModifiedAddressEdificationDwellerRepository.DWELLER_PROPERTY, this.dweller);
+
+        repository.move(values);
+
+    }
+
+
+    public void undoMove(){
+
+        Map<Integer, Object> values = new HashMap<>();
+
+        values.put(ModifiedAddressEdificationDwellerRepository.MODIFIED_ADDRESS_PROPERTY, this.modifiedAddress);
+
+        values.put(ModifiedAddressEdificationDwellerRepository.EDIFICATION_PROPERTY, this.edification);
+
+        values.put(ModifiedAddressEdificationDwellerRepository.DWELLER_PROPERTY, this.dweller);
+
+        repository.undoMove(values);
 
     }
 

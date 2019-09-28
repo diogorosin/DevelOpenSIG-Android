@@ -49,7 +49,8 @@ public class CreateEdificationAsyncTask<L extends CreateEdificationAsyncTask.Lis
 
             modifiedAddressEdificationVO.setReference(null);
 
-            modifiedAddressEdificationVO.setFrom(new Date());
+            //DEFINIDA PELO SERVIDOR NO MOMENTO DA IMPORTACAO
+            //modifiedAddressEdificationVO.setFrom(new Date());
 
             modifiedAddressEdificationVO.setActive(false);
 

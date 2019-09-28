@@ -4,6 +4,13 @@
     tools:context="br.com.developen.sig.ModifiedAddressEdificationDwellerActivity">
 
     <item
+        android:id="@+id/menu_modified_address_edification_dweller_move"
+        android:orderInCategory="100"
+        android:title="@string/action_move"
+        android:icon="@drawable/icon_move_24"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_modified_address_edification_dweller_delete"
         android:orderInCategory="100"
         android:title="@string/action_delete"

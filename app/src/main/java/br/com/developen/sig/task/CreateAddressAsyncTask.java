@@ -20,7 +20,7 @@ import br.com.developen.sig.util.DB;
 import br.com.developen.sig.util.Messaging;
 import br.com.developen.sig.util.StringUtils;
 
-public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > extends AsyncTask<Double, Void, Object> {
+public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > extends AsyncTask<Double, Integer, Object> {
 
 
     private WeakReference<L> listener;
@@ -38,6 +38,7 @@ public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > 
 
     }
 
+
     protected void onPreExecute() {
 
         L listener = this.listener.get();
@@ -45,6 +46,28 @@ public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > 
         if (listener != null)
 
             listener.onCreateAddressPreExecute();
+
+    }
+
+
+    protected void onProgressUpdate(Integer... progress){
+
+        L listener = this.listener.get();
+
+        if (listener != null)
+
+            listener.onCreateAddressProgressUpdate(progress[0]);
+
+    }
+
+
+    public void onCancelled(){
+
+        L listener = this.listener.get();
+
+        if (listener != null)
+
+            listener.onCreateAddressAddressCancelled();
 
     }
 
@@ -79,8 +102,6 @@ public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > 
 
             return false;
 
-        listener.onCreateAddressProgressInitialize(1, 3);
-
         try {
 
             Geocoder geocoder = new Geocoder(App.getContext());
@@ -108,7 +129,7 @@ public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > 
 
             }
 
-            listener.onCreateAddressProgressUpdate(2);
+            publishProgress(1);
 
         } catch (IOException ignored) {}
 
@@ -157,7 +178,7 @@ public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > 
 
             database.setTransactionSuccessful();
 
-            listener.onCreateAddressProgressUpdate(3);
+            publishProgress(1);
 
             return identifier;
 
@@ -204,8 +225,6 @@ public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > 
     public interface Listener {
 
         void onCreateAddressPreExecute();
-
-        void onCreateAddressProgressInitialize(int progress, int max);
 
         void onCreateAddressProgressUpdate(int status);
 

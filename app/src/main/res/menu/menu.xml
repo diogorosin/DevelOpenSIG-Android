@@ -27,6 +27,11 @@
                     android:icon="@drawable/icon_edit_24"
                     android:title="@string/new_and_revised"
                     android:checkable="false"/>
+                <item
+                    android:id="@+id/menu_markers_refresh"
+                    android:icon="@drawable/icon_download_24"
+                    android:title="@string/refresh"
+                    android:checkable="false"/>
             </group>
         </menu>
     </item>

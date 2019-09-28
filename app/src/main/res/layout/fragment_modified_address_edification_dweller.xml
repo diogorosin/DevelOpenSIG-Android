@@ -51,6 +51,7 @@
                         android:imeOptions="actionNext"
                         android:inputType="textCapWords|textPersonName"
                         android:text="@={modifiedAddressEdificationDwellerViewModel.name.value}"
+                        android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"
                         android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -69,6 +70,7 @@
                         android:imeOptions="actionNext"
                         android:inputType="textCapWords|textPersonName"
                         android:text="@={modifiedAddressEdificationDwellerViewModel.motherName.value}"
+                        android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"
                         android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -87,6 +89,7 @@
                         android:imeOptions="actionNext"
                         android:inputType="textCapWords|textPersonName"
                         android:text="@={modifiedAddressEdificationDwellerViewModel.fatherName.value}"
+                        android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"
                         android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -107,6 +110,7 @@
                         android:minWidth="200dp"
                         android:maxLines="1"
                         android:text="@={modifiedAddressEdificationDwellerViewModel.cpf.value}"
+                        android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"
                         app:maskededittext_enforceMaskLength="true"
                         app:maskededittext_mask="###.###.###-##"
                         app:maskededittext_maskCharacter="#" />
@@ -139,7 +143,8 @@
                                 android:imeOptions="actionNext"
                                 android:inputType="number"
                                 android:maxLines="1"
-                                android:text="@={modifiedAddressEdificationDwellerViewModel.rgNumber.value}"/>
+                                android:text="@={modifiedAddressEdificationDwellerViewModel.rgNumber.value}"
+                                android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"/>
 
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -153,6 +158,7 @@
                             android:layout_gravity="start|bottom"
                             android:spinnerMode="dropdown"
                             bind:pmtOpt="@={modifiedAddressEdificationDwellerViewModel.rgAgency}"
+                            android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"
                             style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
                         <androidx.appcompat.widget.AppCompatSpinner
@@ -165,6 +171,7 @@
                             android:layout_gravity="end|bottom"
                             android:spinnerMode="dropdown"
                             bind:pmtOpt="@={modifiedAddressEdificationDwellerViewModel.rgState}"
+                            android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"
                             style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
                     </LinearLayout>
@@ -190,7 +197,8 @@
                             android:imeOptions="actionNext"
                             android:inputType="text"
                             android:maxLines="1"
-                            android:text="@={modifiedAddressEdificationDwellerViewModel.birthPlace.value}"/>
+                            android:text="@={modifiedAddressEdificationDwellerViewModel.birthPlace.value}"
+                            android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -218,6 +226,7 @@
                         android:minWidth="200dp"
                         android:maxLines="1"
                         android:text="@={modifiedAddressEdificationDwellerViewModel.birthDate.value}"
+                        android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"
                         app:maskededittext_enforceMaskLength="true"
                         app:maskededittext_mask="##/##/####"
                         app:maskededittext_maskCharacter="#"/>
@@ -233,6 +242,7 @@
                     android:textAlignment="textStart"
                     android:spinnerMode="dropdown"
                     bind:pmtOpt="@={modifiedAddressEdificationDwellerViewModel.gender}"
+                    android:enabled="@{modifiedAddressEdificationDwellerViewModel.editable}"
                     style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
             </LinearLayout>

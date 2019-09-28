@@ -70,6 +70,39 @@ public class ModifiedAddressRepository {
     }
 
 
+    public void create(ModifiedAddressModel modifiedAddressModel){
+
+        ModifiedAddressVO vo = new ModifiedAddressVO();
+
+        vo.setAddress(modifiedAddressModel.getAddress());
+
+        vo.setDenomination(modifiedAddressModel.getDenomination());
+
+        vo.setNumber(modifiedAddressModel.getNumber());
+
+        vo.setReference(modifiedAddressModel.getReference());
+
+        vo.setDistrict(modifiedAddressModel.getDistrict());
+
+        vo.setCity(modifiedAddressModel.getCity().getIdentifier());
+
+        vo.setPostalCode(modifiedAddressModel.getPostalCode());
+
+        vo.setModifiedBy(modifiedAddressModel.getModifiedBy());
+
+        vo.setModifiedAt(modifiedAddressModel.getModifiedAt());
+
+        vo.setLatitude(modifiedAddressModel.getLatLng().getLatitude());
+
+        vo.setLongitude(modifiedAddressModel.getLatLng().getLongitude());
+
+        vo.setActive(false);
+
+        modifiedAddressModel.setIdentifier(database.modifiedAddressDAO().create(vo).intValue());
+
+    }
+
+
     public void save(Map<Integer, Object> values) throws CityNotFoundException {
 
         ModifiedAddressVO vo = database.modifiedAddressDAO().retrieve(((Integer) values.get(IDENTIFIER_PROPERTY)));

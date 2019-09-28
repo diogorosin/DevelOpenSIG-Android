@@ -1,0 +1,23 @@
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:key="sync_auto"
+        app:title="Atualizar automaticamente"
+        app:summary="Permite o download de atualizações periodicamente."/>
+
+    <ListPreference
+        app:defaultValue="day"
+        app:dependency="sync_auto"
+        app:entries="@array/sync_auto_frequence"
+        app:entryValues="@array/sync_auto_frequence_values"
+        app:key="sync_auto_frequence"
+        app:title="Frequência"
+        app:useSimpleSummaryProvider="true" />
+
+    <SwitchPreferenceCompat
+        app:dependency="sync_auto"
+        app:key="sync_auto_wifi"
+        app:title="Somente em redes wi-fi"
+        app:summary="Realiza o download somente quando conectado na rede wi-fi"/>
+
+</androidx.preference.PreferenceScreen>

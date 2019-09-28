@@ -60,6 +60,15 @@ public interface AddressEdificationDAO {
             " I.motherName AS 'individual_motherName', " +
             " I.fatherName AS 'individual_fatherName', " +
             " I.cpf AS 'individual_cpf', " +
+            " I.rgNumber AS 'individual_rgNumber', " +
+            " RgAgency.identifier AS 'individual_rgAgency_identifier', " +
+            " RgAgency.denomination AS 'individual_rgAgency_denomination', " +
+            " RgAgency.acronym AS 'individual_rgAgency_acronym', " +
+            " RgState.identifier AS 'individual_rgState_identifier', " +
+            " RgState.denomination AS 'individual_rgState_denomination', " +
+            " RgState.acronym AS 'individual_rgState_acronym', " +
+            " BirthPlace.identifier AS 'individual_birthPlace_identifier', " +
+            " BirthPlace.denomination AS 'individual_birthPlace_denomination', " +
             " I.birthDate AS 'individual_birthDate', " +
             " I.gender AS 'individual_gender_identifier', " +
             " CASE WHEN I.gender = 'M' THEN '" + Constants.MALE_GENDER_DENOMINATION + "' ELSE '" + Constants.FEMALE_GENDER_DENOMINATION + "' END AS 'individual_gender_denomination', " +
@@ -73,6 +82,9 @@ public interface AddressEdificationDAO {
             "INNER JOIN State AddressCityState ON AddressCityState.identifier = AddressCity.state " +
             "INNER JOIN Country AddressCityStateCountry ON AddressCityStateCountry.identifier = AddressCityState.country " +
             "INNER JOIN Individual I ON I.identifier = AED.individual " +
+            "INNER JOIN Agency RgAgency ON RgAgency.identifier = I.rgAgency " +
+            "INNER JOIN State RgState ON RgState.identifier = I.rgState " +
+            "INNER JOIN City BirthPlace ON BirthPlace.identifier = I.birthPlace " +
             "WHERE A.identifier = :address AND AE.edification = :edification AND AED.'to' IS NULL")
     List<AddressEdificationDwellerModel> getDwellersOfAddressEdification(Integer address, Integer edification);
 

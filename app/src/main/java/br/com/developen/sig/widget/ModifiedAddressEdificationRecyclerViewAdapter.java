@@ -1,11 +1,14 @@
 package br.com.developen.sig.widget;
 
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 import br.com.developen.sig.R;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationFragment;
+import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.StringUtils;
 
 public class ModifiedAddressEdificationRecyclerViewAdapter
@@ -138,7 +142,9 @@ public class ModifiedAddressEdificationRecyclerViewAdapter
 
         }
 
-        holder.from.setText("desde " + StringUtils.formatDate(modifiedAddressEdifications.get(position).getFrom()));
+        if (modifiedAddressEdifications.get(position).getFrom()!=null)
+
+            holder.from.setText("desde " + StringUtils.formatDate(modifiedAddressEdifications.get(position).getFrom()));
 
         holder.itemView.setOnClickListener(v -> {
 
@@ -157,6 +163,40 @@ public class ModifiedAddressEdificationRecyclerViewAdapter
             return false;
 
         });
+
+        if (modifiedAddressEdifications.get(position).getTo() != null) {
+
+            holder.itemView.setBackgroundResource(R.color.colorRedLight);
+
+            holder.thumbnail.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(App.getContext(), R.color.colorWhite)));
+
+            holder.thumbnailBackground.setBackgroundResource(R.color.colorRedMedium);
+
+            holder.type.setTextColor(ColorStateList.valueOf( ContextCompat.getColor(App.getContext(), R.color.colorWhite)));
+
+            holder.reference.setTextColor(ColorStateList.valueOf( ContextCompat.getColor(App.getContext(), R.color.colorWhite)));
+
+            holder.dweller.setTextColor(ColorStateList.valueOf( ContextCompat.getColor(App.getContext(), R.color.colorWhite)));
+
+            holder.from.setTextColor(ColorStateList.valueOf( ContextCompat.getColor(App.getContext(), R.color.colorWhite)));
+
+        } else {
+
+            holder.itemView.setBackgroundResource(R.color.colorWhite);
+
+            holder.thumbnail.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(App.getContext(), R.color.colorBlackMedium)));
+
+            holder.thumbnailBackground.setBackgroundResource(R.color.colorGreyMedium);
+
+            holder.type.setTextColor(ColorStateList.valueOf( ContextCompat.getColor(App.getContext(), R.color.colorBlackMedium)));
+
+            holder.dweller.setTextColor(ColorStateList.valueOf( ContextCompat.getColor(App.getContext(), R.color.colorBlackMedium)));
+
+            holder.reference.setTextColor(ColorStateList.valueOf( ContextCompat.getColor(App.getContext(), R.color.colorBlackMedium)));
+
+            holder.from.setTextColor(ColorStateList.valueOf( ContextCompat.getColor(App.getContext(), R.color.colorBlackMedium)));
+
+        }
 
     }
 
@@ -188,6 +228,10 @@ public class ModifiedAddressEdificationRecyclerViewAdapter
 
         public ModifiedAddressEdificationModel modifiedAddressEdificationModel;
 
+        public ImageView thumbnail;
+
+        public View thumbnailBackground;
+
         public TextView type;
 
         public TextView reference;
@@ -199,6 +243,10 @@ public class ModifiedAddressEdificationRecyclerViewAdapter
         public ModifiedAddressEdificationViewHolder(View view) {
 
             super(view);
+
+            thumbnail = view.findViewById(R.id.fragment_modified_address_edification_list_thumbnail_imageview);
+
+            thumbnailBackground = view.findViewById(R.id.fragment_modified_address_edification_list_thumbnail_background);
 
             type = view.findViewById(R.id.fragment_modified_address_edification_list_type_textview);
 

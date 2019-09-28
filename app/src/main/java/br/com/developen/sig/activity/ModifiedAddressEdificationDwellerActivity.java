@@ -1,6 +1,8 @@
 package br.com.developen.sig.activity;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,12 +12,18 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.databinding.Observable;
 import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.mlykotom.valifi.BR;
 import com.mlykotom.valifi.ValiFiValidable;
+
+import java.util.Date;
 
 import br.com.developen.sig.R;
 import br.com.developen.sig.exception.CityNotFoundException;
@@ -35,9 +43,15 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
     private ModifiedAddressEdificationDwellerViewModel modifiedAddressEdificationDwellerViewModel;
 
+    private Snackbar movedSnackbar;
+
     private boolean isActive = false;
 
     private boolean isValid = false;
+
+    private boolean isNew = true;
+
+    private boolean wasMoved = false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +67,7 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, ModifiedAddressEdificationDwellerIndividualFragment.newInstance(
+                .replace(R.id.activity_modified_address_edification_dweller_scrollview, ModifiedAddressEdificationDwellerIndividualFragment.newInstance(
                         getIntent().getIntExtra(MODIFIED_ADDRESS_IDENTIFIER, 0),
                         getIntent().getIntExtra(EDIFICATION_IDENTIFIER, 0),
                         getIntent().getIntExtra(DWELLER_IDENTIFIER, 0)))
@@ -99,8 +113,44 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
         });
 
+        modifiedAddressEdificationDwellerViewModel.from.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                isNew = ((ObservableField<Date>) sender).get() == null;
+
+                invalidateOptionsMenu();
+
+            }
+
+        });
+
+        modifiedAddressEdificationDwellerViewModel.to.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+
+            public void onPropertyChanged(Observable sender, int propertyId) {
+
+                wasMoved = ((ObservableField<Date>) sender).get() != null;
+
+                if (wasMoved)
+
+                    getMovedSnackBar().show();
+
+                else
+
+                    getMovedSnackBar().dismiss();
+
+                invalidateOptionsMenu();
+
+            }
+
+        });
+
         //UPDATE VIEW
         modifiedAddressEdificationDwellerViewModel.active.notifyChange();
+
+        modifiedAddressEdificationDwellerViewModel.from.notifyChange();
+
+        modifiedAddressEdificationDwellerViewModel.to.notifyChange();
 
     }
 
@@ -126,7 +176,19 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
         MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_edification_dweller_delete);
 
-        deleteItem.setVisible(isActive);
+        deleteItem.setVisible(isActive && isNew);
+
+        MenuItem moveItem = menu.findItem(R.id.menu_modified_address_edification_dweller_move);
+
+        Drawable drawable = moveItem.getIcon();
+
+        drawable = DrawableCompat.wrap(drawable);
+
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(this,R.color.colorWhite));
+
+        moveItem.setIcon(drawable);
+
+        moveItem.setVisible(isActive && !isNew && !wasMoved);
 
         return true;
 
@@ -163,8 +225,13 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
                     builder.setTitle("Atenção").
                             setMessage(e.getMessage()).
-                            setPositiveButton(R.string.button_ok, (dialog, which) -> dialog.dismiss()).
-                            show();
+                            setPositiveButton(R.string.button_ok, (dialog, which) -> {
+
+                                dialog.dismiss();
+
+                                findViewById(R.id.fragment_modified_address_edification_dweller_birthplace_autocomplete).requestFocus();
+
+                            }).show();
 
                 } catch (DocumentNotFoundException e) {
 
@@ -172,14 +239,20 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
                     builder.setTitle("Atenção").
                             setMessage(e.getMessage()).
-                            setPositiveButton(R.string.button_ok, (dialog, which) -> dialog.dismiss()).
-                            show();
+                            setPositiveButton(R.string.button_ok, (dialog, which) -> {
+
+                                dialog.dismiss();
+
+                                findViewById(R.id.fragment_modified_address_edification_dweller_cpf_edittext).requestFocus();
+
+                            }).show();
 
                 }
 
                 return true;
 
             }
+
 
             case R.id.menu_modified_address_edification_dweller_delete: {
 
@@ -223,9 +296,78 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
             }
 
+
+            case R.id.menu_modified_address_edification_dweller_move: {
+
+                try {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                } catch (Exception e) {}
+
+                DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+
+                    switch (which){
+
+                        case DialogInterface.BUTTON_POSITIVE:
+
+                            modifiedAddressEdificationDwellerViewModel.move();
+
+                            finish();
+
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+
+                            break;
+
+                    }
+
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setMessage("Deseja realmente mover o morador?").
+                        setTitle("Atenção").
+                        setPositiveButton("Sim", dialogClickListener).
+                        setNegativeButton("Não", dialogClickListener).
+                        show();
+
+                return true;
+
+            }
+
+
         }
 
         return super.onOptionsItemSelected(item);
+
+    }
+
+
+    private Snackbar getMovedSnackBar(){
+
+        if (movedSnackbar == null){
+
+            movedSnackbar = Snackbar.make(findViewById(R.id.activity_modified_address_edification_dweller_scrollview), "Mudou-se" , Snackbar.LENGTH_INDEFINITE);
+
+            movedSnackbar.setActionTextColor(Color.WHITE);
+
+            movedSnackbar.getView().setBackgroundResource(R.color.colorRedMedium);
+
+            movedSnackbar.setAction("Desfazer", view -> {
+
+                modifiedAddressEdificationDwellerViewModel.undoMove();
+
+                finish();
+
+            });
+
+        }
+
+        return movedSnackbar;
 
     }
 

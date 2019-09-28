@@ -10,6 +10,7 @@ import br.com.developen.sig.database.ModifiedAddressEdificationDwellerModel;
 import br.com.developen.sig.database.ModifiedAddressEdificationModel;
 import br.com.developen.sig.database.ModifiedAddressEdificationVO;
 import br.com.developen.sig.database.TypeModel;
+import br.com.developen.sig.exception.ThereAreDwellersOnThisEdificationException;
 import br.com.developen.sig.util.DB;
 
 public class ModifiedAddressEdificationRepository {
@@ -78,6 +79,29 @@ public class ModifiedAddressEdificationRepository {
     }
 
 
+    public void create(ModifiedAddressEdificationModel modifiedAddressEdificationModel){
+
+        ModifiedAddressEdificationVO modifiedAddressEdificationVO = new ModifiedAddressEdificationVO();
+
+        modifiedAddressEdificationVO.setModifiedAddress(modifiedAddressEdificationModel.getModifiedAddress().getIdentifier());
+
+        modifiedAddressEdificationVO.setEdification(modifiedAddressEdificationModel.getEdification());
+
+        modifiedAddressEdificationVO.setReference(modifiedAddressEdificationModel.getReference());
+
+        modifiedAddressEdificationVO.setType(modifiedAddressEdificationModel.getType().getIdentifier() );
+
+        modifiedAddressEdificationVO.setFrom(modifiedAddressEdificationModel.getFrom());
+
+        modifiedAddressEdificationVO.setTo(modifiedAddressEdificationModel.getTo());
+
+        modifiedAddressEdificationVO.setActive(modifiedAddressEdificationModel.getActive());
+
+        database.modifiedAddressEdificationDAO().create(modifiedAddressEdificationVO);
+
+    }
+
+
     public void save(Map<Integer, Object> values) {
 
         ModifiedAddressEdificationVO vo = database.modifiedAddressEdificationDAO().
@@ -124,19 +148,43 @@ public class ModifiedAddressEdificationRepository {
     }
 
 
-    public void demolish(Map<Integer, Object> values){
+    public void demolish(Map<Integer, Object> values) throws ThereAreDwellersOnThisEdificationException {
 
-        ModifiedAddressEdificationVO vo = database.modifiedAddressEdificationDAO().
-                retrieve(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
-                        (Integer) values.get(EDIFICATION_PROPERTY));
+        Integer modifiedAddress = (Integer) values.get(MODIFIED_ADDRESS_PROPERTY);
 
-        vo.setTo(new Date());
+        Integer edification = (Integer) values.get(EDIFICATION_PROPERTY);
+
+        if (database.modifiedAddressEdificationDAO().canBeDemolished(modifiedAddress, edification)) {
+
+            defineTo(modifiedAddress, edification, new Date());
+
+        } else
+
+            throw new ThereAreDwellersOnThisEdificationException();
+
+    }
+
+
+    public void undoDemolish(Map<Integer, Object> values){
+
+        defineTo(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
+                (Integer) values.get(EDIFICATION_PROPERTY),
+                null);
+
+    }
+
+
+    private void defineTo(Integer modifiedAddress, Integer edification, Date to){
+
+        ModifiedAddressEdificationVO vo = database.
+                modifiedAddressEdificationDAO().
+                retrieve(modifiedAddress, edification);
+
+        vo.setTo(to);
 
         database.getTransactionExecutor().execute(() -> {
 
-            if (database.modifiedAddressEdificationDAO().exists(
-                    (Integer) values.get(MODIFIED_ADDRESS_PROPERTY),
-                    (Integer) values.get(EDIFICATION_PROPERTY)))
+            if (database.modifiedAddressEdificationDAO().exists(vo.getModifiedAddress(), vo.getEdification()))
 
                 database.modifiedAddressEdificationDAO().update(vo);
 

@@ -45,6 +45,9 @@ public class App extends Application {
                         setErrorResource(ValiFi.Builder.ERROR_RES_NOT_EMPTY, R.string.validation_error_not_empty).
                         build());
 
+        //AGENDA AS ATUALIZACOES
+        Jobs.scheduleJob(instance);
+
     }
 
 

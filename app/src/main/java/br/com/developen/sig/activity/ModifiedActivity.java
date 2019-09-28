@@ -3,6 +3,7 @@ package br.com.developen.sig.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -17,6 +18,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -151,6 +154,8 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
                 modifiedRecyclerViewAdapter.submitList(modifiedAddressesThatWasNotSynced);
 
+            invalidateOptionsMenu();
+
         });
 
 
@@ -179,6 +184,16 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
         MenuItem uploadItem = menu.findItem(R.id.menu_modified_upload);
 
         uploadItem.setEnabled(true);
+
+        Drawable drawable = uploadItem.getIcon();
+
+        drawable = DrawableCompat.wrap(drawable);
+
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(this,R.color.colorWhite));
+
+        uploadItem.setIcon(drawable);
+
+        uploadItem.setVisible( modifiedRecyclerViewAdapter.getItemCount() > 0 );
 
         return true;
 
@@ -288,7 +303,13 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
                 requestQueue.add(request);
 
-                requestQueue.addRequestFinishedListener((RequestQueue.RequestFinishedListener<String>) request1 -> progressDialog.hide());
+                requestQueue.addRequestFinishedListener((RequestQueue.RequestFinishedListener<String>) request1 -> {
+
+                    invalidateOptionsMenu();
+
+                    progressDialog.hide();
+
+                });
 
                 return true;
 
@@ -414,6 +435,8 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
 
     public void onDeleteModifiedAddressSuccess() {
+
+        invalidateOptionsMenu();
 
         progressDialog.hide();
 

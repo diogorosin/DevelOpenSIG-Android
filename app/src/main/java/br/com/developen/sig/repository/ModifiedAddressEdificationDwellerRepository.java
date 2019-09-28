@@ -45,6 +45,8 @@ public class ModifiedAddressEdificationDwellerRepository {
 
     public static final int GENDER_PROPERTY = 14;
 
+    public static final int TO_PROPERTY = 15;
+
 
     private static ModifiedAddressEdificationDwellerRepository instance;
 
@@ -82,6 +84,66 @@ public class ModifiedAddressEdificationDwellerRepository {
     public ModifiedAddressEdificationDwellerModel getModifiedAddressEdificationDweller(int modifiedAddress, int edification, int dweller) {
 
         return database.modifiedAddressEdificationDwellerDAO().getModifiedAddressEdificationDweller(modifiedAddress, edification, dweller);
+
+    }
+
+
+    public void create(ModifiedAddressEdificationDwellerModel modifiedAddressEdificationDwellerModel){
+
+        ModifiedAddressEdificationDwellerVO modifiedAddressEdificationDwellerVO = new ModifiedAddressEdificationDwellerVO();
+
+        modifiedAddressEdificationDwellerVO.setModifiedAddress(modifiedAddressEdificationDwellerModel.
+                getModifiedAddressEdification().
+                getModifiedAddress().
+                getIdentifier());
+
+        modifiedAddressEdificationDwellerVO.setEdification(modifiedAddressEdificationDwellerModel.
+                getModifiedAddressEdification().
+                getEdification());
+
+        modifiedAddressEdificationDwellerVO.setDweller(modifiedAddressEdificationDwellerModel.
+                getDweller());
+
+        modifiedAddressEdificationDwellerVO.setIndividual(modifiedAddressEdificationDwellerModel.
+                getIndividual().
+                getIdentifier());
+
+        modifiedAddressEdificationDwellerVO.setName(modifiedAddressEdificationDwellerModel.getName());
+
+        modifiedAddressEdificationDwellerVO.setMotherName(modifiedAddressEdificationDwellerModel.getMotherName());
+
+        modifiedAddressEdificationDwellerVO.setFatherName(modifiedAddressEdificationDwellerModel.getFatherName());
+
+        modifiedAddressEdificationDwellerVO.setCpf(modifiedAddressEdificationDwellerModel.getCpf());
+
+        modifiedAddressEdificationDwellerVO.setRgNumber(modifiedAddressEdificationDwellerModel.getRgNumber());
+
+        modifiedAddressEdificationDwellerVO.setRgAgency(modifiedAddressEdificationDwellerModel.
+                getRgAgency().
+                getIdentifier());
+
+        modifiedAddressEdificationDwellerVO.setRgState(modifiedAddressEdificationDwellerModel.
+                getRgState().
+                getIdentifier());
+
+        modifiedAddressEdificationDwellerVO.setBirthPlace(modifiedAddressEdificationDwellerModel.
+                getBirthPlace().
+                getIdentifier());
+
+        modifiedAddressEdificationDwellerVO.setBirthDate(modifiedAddressEdificationDwellerModel.
+                getBirthDate());
+
+        modifiedAddressEdificationDwellerVO.setActive(modifiedAddressEdificationDwellerModel.getActive());
+
+        modifiedAddressEdificationDwellerVO.setGender(modifiedAddressEdificationDwellerModel.
+                getGender().
+                getIdentifier());
+
+        modifiedAddressEdificationDwellerVO.setFrom(modifiedAddressEdificationDwellerModel.getFrom());
+
+        modifiedAddressEdificationDwellerVO.setTo(modifiedAddressEdificationDwellerModel.getTo());
+
+        database.modifiedAddressEdificationDwellerDAO().create(modifiedAddressEdificationDwellerVO);
 
     }
 
@@ -157,6 +219,8 @@ public class ModifiedAddressEdificationDwellerRepository {
 
         vo.setGender(((GenderModel) values.get(GENDER_PROPERTY)).getIdentifier());
 
+        vo.setTo((Date) values.get(TO_PROPERTY));
+
         vo.setActive(true);
 
         if (vo.getCpf() == null && vo.getRgNumber() == null)
@@ -192,6 +256,47 @@ public class ModifiedAddressEdificationDwellerRepository {
                     (Integer) values.get(MODIFIED_ADDRESS_PROPERTY),
                     (Integer) values.get(EDIFICATION_PROPERTY),
                     (Integer) values.get(DWELLER_PROPERTY)))
+
+                database.modifiedAddressEdificationDwellerDAO().update(vo);
+
+        });
+
+    }
+
+
+    public void move(Map<Integer, Object> values){
+
+        defineTo(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
+                (Integer) values.get(EDIFICATION_PROPERTY),
+                (Integer) values.get(DWELLER_PROPERTY), new Date());
+
+    }
+
+
+    public void undoMove(Map<Integer, Object> values){
+
+        defineTo(((Integer) values.get(MODIFIED_ADDRESS_PROPERTY)),
+                (Integer) values.get(EDIFICATION_PROPERTY),
+                (Integer) values.get(DWELLER_PROPERTY),
+                null);
+
+    }
+
+
+    private void defineTo(Integer modifiedAddress, Integer edification, Integer dweller, Date to){
+
+        ModifiedAddressEdificationDwellerVO vo = database.
+                modifiedAddressEdificationDwellerDAO().
+                retrieve(modifiedAddress, edification, dweller);
+
+        vo.setTo(to);
+
+        database.getTransactionExecutor().execute(() -> {
+
+            if (database.modifiedAddressEdificationDwellerDAO().exists(
+                    vo.getModifiedAddress(),
+                    vo.getEdification(),
+                    vo.getDweller()))
 
                 database.modifiedAddressEdificationDwellerDAO().update(vo);
 
