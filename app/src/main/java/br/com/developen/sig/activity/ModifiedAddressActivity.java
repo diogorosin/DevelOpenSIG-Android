@@ -37,6 +37,7 @@ import br.com.developen.sig.fragment.ModifiedAddressAddressFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationFragment;
 import br.com.developen.sig.fragment.ModifiedAddressLocationFragment;
 import br.com.developen.sig.task.CreateEdificationAsyncTask;
+import br.com.developen.sig.util.IconUtils;
 import br.com.developen.sig.util.Messaging;
 import br.com.developen.sig.viewmodel.ModifiedAddressViewModel;
 
@@ -213,9 +214,13 @@ public class ModifiedAddressActivity extends AppCompatActivity implements
 
         MenuItem saveItem = menu.findItem(R.id.menu_modified_address_save);
 
+        IconUtils.paintItWhite(saveItem);
+
         saveItem.setEnabled(isValid);
 
         MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_delete);
+
+        IconUtils.paintItWhite(deleteItem);
 
         deleteItem.setVisible(isActive);
 

@@ -112,9 +112,11 @@ public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<
 
             holder.reference.setVisibility(View.VISIBLE);
 
-        } else
+        } else {
 
             holder.reference.setVisibility(View.GONE);
+
+        }
 
         holder.itemView.setOnClickListener(v -> {
 

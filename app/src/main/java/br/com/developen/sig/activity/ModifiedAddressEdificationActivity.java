@@ -38,6 +38,7 @@ import br.com.developen.sig.exception.ThereAreDwellersOnThisEdificationException
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerFragment;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationTypeFragment;
 import br.com.developen.sig.task.CreateDwellerAsyncTask;
+import br.com.developen.sig.util.IconUtils;
 import br.com.developen.sig.util.Messaging;
 import br.com.developen.sig.viewmodel.ModifiedAddressEdificationViewModel;
 
@@ -195,17 +196,13 @@ public class ModifiedAddressEdificationActivity
 
         MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_edification_delete);
 
+        IconUtils.paintItWhite(deleteItem);
+
         deleteItem.setVisible(isActive && isNew);
 
         MenuItem demolishItem = menu.findItem(R.id.menu_modified_address_edification_demolish);
 
-        Drawable drawable = demolishItem.getIcon();
-
-        drawable = DrawableCompat.wrap(drawable);
-
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(this,R.color.colorWhite));
-
-        demolishItem.setIcon(drawable);
+        IconUtils.paintItWhite(demolishItem);
 
         demolishItem.setVisible(isActive && !isNew && !wasDemolished);
 

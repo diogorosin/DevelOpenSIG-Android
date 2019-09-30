@@ -29,6 +29,7 @@ import br.com.developen.sig.R;
 import br.com.developen.sig.exception.CityNotFoundException;
 import br.com.developen.sig.exception.DocumentNotFoundException;
 import br.com.developen.sig.fragment.ModifiedAddressEdificationDwellerIndividualFragment;
+import br.com.developen.sig.util.IconUtils;
 import br.com.developen.sig.viewmodel.ModifiedAddressEdificationDwellerViewModel;
 
 public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity {
@@ -172,21 +173,19 @@ public class ModifiedAddressEdificationDwellerActivity extends AppCompatActivity
 
         MenuItem saveItem = menu.findItem(R.id.menu_modified_address_edification_dweller_save);
 
+        IconUtils.paintItWhite(saveItem);
+
         saveItem.setEnabled(isValid);
 
         MenuItem deleteItem = menu.findItem(R.id.menu_modified_address_edification_dweller_delete);
+
+        IconUtils.paintItWhite(deleteItem);
 
         deleteItem.setVisible(isActive && isNew);
 
         MenuItem moveItem = menu.findItem(R.id.menu_modified_address_edification_dweller_move);
 
-        Drawable drawable = moveItem.getIcon();
-
-        drawable = DrawableCompat.wrap(drawable);
-
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(this,R.color.colorWhite));
-
-        moveItem.setIcon(drawable);
+        IconUtils.paintItWhite(moveItem);
 
         moveItem.setVisible(isActive && !isNew && !wasMoved);
 
