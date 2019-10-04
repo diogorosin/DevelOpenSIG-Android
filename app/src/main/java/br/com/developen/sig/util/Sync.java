@@ -1,7 +1,5 @@
 package br.com.developen.sig.util;
 
-import android.os.AsyncTask;
-
 import br.com.developen.sig.bean.AddressBean;
 import br.com.developen.sig.bean.AddressEdificationBean;
 import br.com.developen.sig.bean.AddressEdificationDwellerBean;

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
+import androidx.preference.PreferenceManager;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +25,10 @@ public final class UpdateActiveOfModifiedAddressesAsyncTask<L extends UpdateActi
 
     private WeakReference<L> listener;
 
-    private SharedPreferences preferences;
-
 
     public UpdateActiveOfModifiedAddressesAsyncTask(L listener) {
 
         this.listener = new WeakReference<>(listener);
-
-        this.preferences = App.getInstance().
-                getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, 0);
 
     }
 

@@ -1,13 +1,13 @@
 <resources>
-    <!-- Sync Preference -->
+    <!-- Sync Preference
     <string-array name="sync_auto_frequence">
         <item>Diária</item>
         <item>Semanal</item>
-        <item>Mensal</item>
+        <item>Quinzenal</item>
     </string-array>
     <string-array name="sync_auto_frequence_values">
         <item>daily</item>
         <item>weekly</item>
-        <item>monthly</item>
-    </string-array>
+        <item>biweekly</item>
+    </string-array> -->
 </resources>

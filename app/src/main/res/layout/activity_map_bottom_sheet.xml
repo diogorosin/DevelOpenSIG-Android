@@ -136,7 +136,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
 
-        <br.com.developen.sig.widget.SelectableRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/activity_map_bottom_sheet_edifications"
             android:layout_width="0dp"
             android:layout_height="match_parent"

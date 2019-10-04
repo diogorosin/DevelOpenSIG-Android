@@ -35,6 +35,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -278,8 +279,7 @@ public class MapActivity
 
         DrawerLayout drawerLayout = findViewById(R.id.activity_map_drawer);
 
-        preferences = getSharedPreferences(
-                Constants.SHARED_PREFERENCES_NAME, 0);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         TextView userTextView = navigationView.getHeaderView(0).findViewById(R.id.activity_map_navigator_header_name);
 

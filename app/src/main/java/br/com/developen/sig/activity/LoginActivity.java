@@ -14,10 +14,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
@@ -85,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 
         signInButton.setOnClickListener(view -> validateFieldsAndAttemptLogin());
 
-        preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, 0);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         requestQueue = Volley.newRequestQueue(this);
 
@@ -222,6 +227,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 }
 
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+                    String uft8String = new String(response.data, StandardCharsets.UTF_8);
+
+                    return Response.success(uft8String, HttpHeaderParser.parseCacheHeaders(response));
+
+                }
+
                 public byte[] getBody() {
 
                     return gson.toJson(credentialBean).getBytes(StandardCharsets.UTF_8);
@@ -229,6 +242,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
             };
+
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    1000 * 10,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
             requestQueue.add(request);
 

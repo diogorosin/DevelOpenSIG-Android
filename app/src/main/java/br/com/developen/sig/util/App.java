@@ -3,11 +3,13 @@ package br.com.developen.sig.util;
 import android.app.Application;
 import android.content.Context;
 
+import com.evernote.android.job.JobManager;
 import com.mlykotom.valifi.ValiFi;
 
 import java.util.TimeZone;
 
 import br.com.developen.sig.R;
+import br.com.developen.sig.job.AppJobCreator;
 import br.com.developen.sig.repository.AddressEdificationRepository;
 import br.com.developen.sig.repository.AddressRepository;
 import br.com.developen.sig.repository.CityRepository;
@@ -31,6 +33,20 @@ public class App extends Application {
     }
 
 
+    public static App getInstance() {
+
+        return instance;
+
+    }
+
+
+    public static Context getContext(){
+
+        return instance;
+
+    }
+
+
     public void initialize(){
 
         //AJUSTA O TIMEZONE PARA CALCULOS DE DATA E HORA
@@ -45,22 +61,8 @@ public class App extends Application {
                         setErrorResource(ValiFi.Builder.ERROR_RES_NOT_EMPTY, R.string.validation_error_not_empty).
                         build());
 
-        //AGENDA AS ATUALIZACOES
-        Jobs.scheduleJob(instance);
-
-    }
-
-
-    public static App getInstance() {
-
-        return instance;
-
-    }
-
-
-    public static Context getContext(){
-
-        return instance;
+        //AGENDA OS SERVICOS
+        JobManager.create(this).addJobCreator(new AppJobCreator());
 
     }
 

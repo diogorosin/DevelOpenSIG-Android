@@ -21,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -169,8 +170,7 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
         gson = gsonBuilder.create();
 
-        preferences = App.getInstance().
-                getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, 0);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     }
 

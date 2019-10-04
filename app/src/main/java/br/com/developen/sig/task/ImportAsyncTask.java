@@ -44,6 +44,8 @@ import br.com.developen.sig.util.Messaging;
 public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncTask<DatasetBean, Integer, Object> {
 
 
+    public static final int MAX_PROGRESS = 10;
+
     private WeakReference<L> listener;
 
 
@@ -122,7 +124,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(2);
 
             if (datasetBean.getAgencies() != null &&
                     !datasetBean.getAgencies().isEmpty()){
@@ -151,7 +153,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(3);
 
             if (datasetBean.getCountries() != null &&
                     !datasetBean.getCountries().isEmpty()){
@@ -180,7 +182,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(4);
 
             if (datasetBean.getStates() != null &&
                     !datasetBean.getStates().isEmpty()){
@@ -211,7 +213,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(5);
 
             if (datasetBean.getCities() != null &&
                     !datasetBean.getCities().isEmpty()){
@@ -240,7 +242,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(6);
 
             if (datasetBean.getIndividuals() != null &&
                     !datasetBean.getIndividuals().isEmpty()){
@@ -301,7 +303,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(7);
 
             if (datasetBean.getOrganizations() != null &&
                     !datasetBean.getOrganizations().isEmpty()){
@@ -346,7 +348,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(8);
 
             if (datasetBean.getAddresses() != null &&
                     !datasetBean.getAddresses().isEmpty()){
@@ -391,7 +393,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(9);
 
             if (datasetBean.getAddressesEdifications() != null &&
                     !datasetBean.getAddressesEdifications().isEmpty()){
@@ -428,7 +430,7 @@ public class ImportAsyncTask<L extends ImportAsyncTask.Listener > extends AsyncT
 
             }
 
-            publishProgress(1);
+            publishProgress(10);
 
             if (datasetBean.getAddressesEdificationsDwellers() != null &&
                     !datasetBean.getAddressesEdificationsDwellers().isEmpty()){

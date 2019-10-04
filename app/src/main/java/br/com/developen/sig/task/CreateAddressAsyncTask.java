@@ -5,6 +5,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 
+import androidx.preference.PreferenceManager;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Date;
@@ -32,9 +34,7 @@ public class CreateAddressAsyncTask<L extends CreateAddressAsyncTask.Listener > 
 
         this.listener = new WeakReference<>(activity);
 
-        this.preferences = App.
-                getInstance().
-                getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, 0);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(App.getContext());
 
     }
 

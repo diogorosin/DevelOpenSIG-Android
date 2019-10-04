@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,9 +25,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -37,6 +38,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.evernote.android.job.JobRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -59,6 +61,7 @@ import br.com.developen.sig.bean.ExceptionBean;
 import br.com.developen.sig.bean.GovernmentBean;
 import br.com.developen.sig.bean.IntegerBean;
 import br.com.developen.sig.bean.TokenBean;
+import br.com.developen.sig.job.DownloadJob;
 import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.Constants;
 import br.com.developen.sig.util.DB;
@@ -194,6 +197,13 @@ public class ConfigurationActivity extends AppCompatActivity {
 
                 case FINISH_STEP:
 
+                    //INICIA SCHEDULER PARA DOWNLOAD DE ATUALIZACOES
+                    preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+                    if (preferences.getBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true))
+
+                        DownloadJob.schedule(preferences.getBoolean(Constants.DOWNLOAD_AUTO_METERED_PROPERTY, false) ? JobRequest.NetworkType.UNMETERED : JobRequest.NetworkType.ANY);
+
                     Intent intent = new Intent(ConfigurationActivity.this, MapActivity.class);
 
                     startActivity(intent);
@@ -206,7 +216,7 @@ public class ConfigurationActivity extends AppCompatActivity {
 
         });
 
-        preferences = getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, 0);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         requestQueue = Volley.newRequestQueue(this);
 
@@ -594,6 +604,11 @@ public class ConfigurationActivity extends AppCompatActivity {
 
             };
 
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    1000 * 10,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
             requestQueue.add(request);
 
             requestQueue.addRequestFinishedListener((RequestQueue.RequestFinishedListener<String>) request1 -> showProgress(false));
@@ -632,6 +647,10 @@ public class ConfigurationActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = preferences.edit();
 
                     editor.putBoolean(Constants.DEVICE_CONFIGURED_PROPERTY, true);
+
+                    editor.putBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true);
+
+                    editor.putBoolean(Constants.DOWNLOAD_AUTO_METERED_PROPERTY, true);
 
                     editor.apply();
 
@@ -690,6 +709,11 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
         };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                1000 * 10,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(request);
 
@@ -812,6 +836,11 @@ public class ConfigurationActivity extends AppCompatActivity {
 
                     };
 
+                    request.setRetryPolicy(new DefaultRetryPolicy(
+                            1000 * 10,
+                            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
                     requestQueue.add(request);
 
                     requestQueue.addRequestFinishedListener((RequestQueue.RequestFinishedListener<String>) request1 -> showProgress(false));
@@ -915,6 +944,11 @@ public class ConfigurationActivity extends AppCompatActivity {
             }
 
         };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                1000 * 10,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         requestQueue.add(request);
 

@@ -32,7 +32,7 @@ public class IconUtils {
 
     public static void paintItWhite(MenuItem menuItem){
 
-        menuItem.setIcon( IconUtils.changeColorOfDrawable(menuItem.getIcon(), R.color.colorWhite)  );
+        menuItem.setIcon(IconUtils.changeColorOfDrawable(menuItem.getIcon(), R.color.colorWhite));
 
     }
 

@@ -91,7 +91,7 @@ public interface AddressDAO {
             "LEFT OUTER JOIN City AddressCity ON AddressCity.identifier = A.city " +
             "LEFT OUTER JOIN State AddressCityState ON AddressCityState.identifier = AddressCity.state " +
             "LEFT OUTER JOIN Country AddressCityStateCountry ON AddressCityStateCountry.identifier = AddressCityState.country " +
-            "WHERE A.identifier = :address " +
+            "WHERE A.identifier = :address AND AE.'to' IS NULL " +
             "ORDER BY AE.type, AE.reference";
 
     @Insert

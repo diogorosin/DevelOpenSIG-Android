@@ -2,13 +2,13 @@ package br.com.developen.sig.util;
 
 public class Constants {
 
+
     public static final String SERVER_BASE_URL = "http://200.98.202.29:8080/sig/rest/";
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
     public static final String JSON_CONTENT_TYPE = "application/json";
 
-    public static final String SHARED_PREFERENCES_NAME = "DEVELOPEN_SIG";
 
     public static final String DEVICE_CONFIGURED_PROPERTY = "DEVICE_CONFIGURED_PROPERTY";
 
@@ -28,10 +28,16 @@ public class Constants {
 
     public static final String TOKEN_IDENTIFIER_PROPERTY = "TOKEN_IDENTIFIER_PROPERTY";
 
+    public static final String DOWNLOAD_AUTO_PROPERTY = "DOWNLOAD_AUTO_PROPERTY";
+
+    public static final String DOWNLOAD_AUTO_METERED_PROPERTY = "DOWNLOAD_AUTO_METERED_PROPERTY";
+
+
     public static final String MALE_GENDER_DENOMINATION = "Masculino";
 
     public static final String FEMALE_GENDER_DENOMINATION = "Feminino";
 
     public static final String DEFAULT_ADDRESS = "DefaultAddress";
+
 
 }

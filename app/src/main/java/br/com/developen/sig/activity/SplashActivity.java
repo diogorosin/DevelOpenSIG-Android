@@ -9,10 +9,14 @@ import android.os.Handler;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
+import com.evernote.android.job.JobRequest;
 
 import java.util.List;
 
 import br.com.developen.sig.R;
+import br.com.developen.sig.job.DownloadJob;
 import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.Constants;
 
@@ -41,10 +45,16 @@ public class SplashActivity extends AppCompatActivity {
 
             Intent intent;
 
-            SharedPreferences preferences = getSharedPreferences(
-                    Constants.SHARED_PREFERENCES_NAME, 0);
+            SharedPreferences preferences =  PreferenceManager.getDefaultSharedPreferences(this);
 
             if (preferences.getBoolean(Constants.DEVICE_CONFIGURED_PROPERTY, false)) {
+
+                //INICIA SCHEDULER PARA DOWNLOAD DE ATUALIZACOES
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+                if (sharedPreferences.getBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true))
+
+                    DownloadJob.schedule(sharedPreferences.getBoolean(Constants.DOWNLOAD_AUTO_METERED_PROPERTY, false) ? JobRequest.NetworkType.UNMETERED : JobRequest.NetworkType.ANY);
 
                 if (preferences.getInt(Constants.USER_IDENTIFIER_PROPERTY, 0) == 0) {
 

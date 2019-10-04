@@ -68,6 +68,8 @@ dependencies {
     implementation 'mk.webfactory.dz:maskededittext:2.0'
     //Validator
     implementation 'com.mlykotom:valifi:1.4.2'
+    //Job
+    implementation 'com.evernote:android-job:1.4.1'
 
 }
 

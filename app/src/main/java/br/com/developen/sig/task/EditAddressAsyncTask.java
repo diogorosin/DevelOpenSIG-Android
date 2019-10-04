@@ -3,6 +3,8 @@ package br.com.developen.sig.task;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
+import androidx.preference.PreferenceManager;
+
 import java.lang.ref.WeakReference;
 import java.util.Date;
 
@@ -30,9 +32,7 @@ public class EditAddressAsyncTask<L extends EditAddressAsyncTask.Listener > exte
 
         listener = new WeakReference<>(activity);
 
-        preferences = App.
-                getInstance().
-                getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, 0);
+        preferences = PreferenceManager.getDefaultSharedPreferences(App.getContext());
 
     }
 

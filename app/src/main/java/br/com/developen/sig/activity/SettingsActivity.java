@@ -1,14 +1,20 @@
 package br.com.developen.sig.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+
+import com.evernote.android.job.JobRequest;
 
 import br.com.developen.sig.R;
+import br.com.developen.sig.job.DownloadJob;
+import br.com.developen.sig.util.Constants;
 
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
@@ -36,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.settings, new HeaderFragment())
+                    .replace(R.id.activity_settings_framelayout, new PreferencesFragment())
                     .commit();
 
         } else {
@@ -55,6 +61,38 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
                     }
 
                 });
+
+        PreferenceManager.getDefaultSharedPreferences(this).
+                registerOnSharedPreferenceChangeListener(
+                        (preferences, key) -> {
+
+                            Log.d("SIGESC", "Configuração " + key + " alterada.");
+
+                            switch (key){
+
+                                case Constants.DOWNLOAD_AUTO_PROPERTY:
+
+                                    if (preferences.getBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true))
+
+                                        DownloadJob.reschedule(preferences.getBoolean(Constants.DOWNLOAD_AUTO_METERED_PROPERTY, false) ? JobRequest.NetworkType.UNMETERED : JobRequest.NetworkType.ANY);
+
+                                    else
+
+                                        DownloadJob.finish();
+
+                                    break;
+
+                                case Constants.DOWNLOAD_AUTO_METERED_PROPERTY:
+
+                                    if (preferences.getBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true))
+
+                                        DownloadJob.reschedule(preferences.getBoolean(Constants.DOWNLOAD_AUTO_METERED_PROPERTY, false) ? JobRequest.NetworkType.UNMETERED : JobRequest.NetworkType.ANY);
+
+                                    break;
+
+                            }
+
+                        });
 
     }
 
@@ -98,7 +136,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         fragment.setTargetFragment(caller, 0);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.settings, fragment)
+                .replace(R.id.activity_settings_framelayout, fragment)
                 .addToBackStack(null)
                 .commit();
 
@@ -109,22 +147,11 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     }
 
 
-    public static class HeaderFragment extends PreferenceFragmentCompat {
+    public static class PreferencesFragment extends PreferenceFragmentCompat {
 
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
-            setPreferencesFromResource(R.xml.header_preferences, rootKey);
-
-        }
-
-    }
-
-
-    public static class SyncFragment extends PreferenceFragmentCompat {
-
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-
-            setPreferencesFromResource(R.xml.sync_preferences, rootKey);
+            setPreferencesFromResource(R.xml.preferences, rootKey);
 
         }
 
