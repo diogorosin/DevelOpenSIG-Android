@@ -37,7 +37,6 @@
     <string name="markers">Marcadores</string>
     <string name="new_and_revised">Revisões</string>
 
-
     <!-- AccountActivity -->
     <string name="configuration_welcome_step_title">Bem-vindo!</string>
     <string name="configuration_welcome_step_message"> Esse aplicativo contém informações sigilosas sobre população e território. O servidor público ou qualquer outra pessoa que divulgar, expor ou utilizar de forma indevida essas informações será responsabilizado nos termos da lei.</string>
@@ -112,7 +111,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="refence">Referência</string>
-    <string name="upload_sucess">Registro(s) envido(s) com sucesso.</string>
+    <string name="upload_sucess">Envio concluído.</string>
     <string name="download_sucess">Base de dados atualizada com sucesso.</string>
     <string name="navigate">Ir</string>
     <string name="share">Compartilhar</string>
@@ -132,6 +131,5 @@
 
     <string name="refresh">Atualizar</string>
     <string name="action_move">Mudar</string>
-
 
 </resources>

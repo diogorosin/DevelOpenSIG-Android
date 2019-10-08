@@ -27,8 +27,11 @@ import com.google.gson.GsonBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -47,13 +50,13 @@ public class DownloadJob extends DailyJob implements ImportAsyncTask.Listener {
 
     private static final String NOTIFY_CHANNEL = "download_job";
 
-    private static final long BEGIN = TimeUnit.HOURS.toMillis(1);
+//    private static final long BEGIN = TimeUnit.HOURS.toMillis(1);
 
-    private static final long FINISH = TimeUnit.HOURS.toMillis(6);
+//    private static final long FINISH = TimeUnit.HOURS.toMillis(6);
 
-//    private static final long BEGIN = TimeUnit.HOURS.toMillis(18) + TimeUnit.MINUTES.toMillis(40) ;
+    private static final long BEGIN = TimeUnit.HOURS.toMillis(13) + TimeUnit.MINUTES.toMillis(50) ;
 
-//    private static final long FINISH = TimeUnit.HOURS.toMillis(18) + TimeUnit.MINUTES.toMillis(31);
+    private static final long FINISH = TimeUnit.HOURS.toMillis(13) + TimeUnit.MINUTES.toMillis(51);
 
 
     private CountDownLatch countDownLatch;
@@ -196,30 +199,56 @@ public class DownloadJob extends DailyJob implements ImportAsyncTask.Listener {
     }
 
 
-    public static void schedule(JobRequest.NetworkType requiredNetwork) {
+    public static Date schedule(JobRequest.NetworkType requiredNetwork) {
+
+        Date nextExecutionAt = null;
 
         if (JobManager.instance().getAllJobRequestsForTag(TAG).isEmpty()) {
 
-            JobRequest.Builder builder = new JobRequest.Builder(TAG).setRequiredNetworkType(requiredNetwork);
+            JobRequest.Builder builder = new JobRequest.Builder(TAG).
+                    setRequiresBatteryNotLow(true).
+                    setRequiredNetworkType(requiredNetwork);
 
             DailyJob.schedule(builder, BEGIN, FINISH);
 
             Log.d(TAG, "Tarefa agendada com sucesso.");
 
+            Calendar calendar = Calendar.getInstance();
+
+            calendar.setTimeInMillis(BEGIN);
+
+            nextExecutionAt = calendar.getTime();
+
         } else {
+
+            Set<JobRequest> jobRequests = JobManager.instance().getAllJobRequestsForTag(TAG);
+
+            for (JobRequest jobRequest : jobRequests) {
+
+                Calendar calendar = Calendar.getInstance();
+
+                calendar.setTimeInMillis(jobRequest.getStartMs());
+
+                nextExecutionAt = calendar.getTime();
+
+                break;
+
+            }
 
             Log.d(TAG, "Tarefa já encontra-se agendada.");
 
         }
 
+        return nextExecutionAt;
+
     }
 
 
-    public static void reschedule(JobRequest.NetworkType requiredNetwork) {
+    public static Date reschedule(JobRequest.NetworkType requiredNetwork) {
 
         finish();
 
-        schedule(requiredNetwork);
+        return schedule(requiredNetwork);
 
     }
 

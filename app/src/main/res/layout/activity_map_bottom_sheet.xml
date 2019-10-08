@@ -27,9 +27,9 @@
 
             <br.com.developen.sig.widget.SquareImageView
                 android:id="@+id/fragment_modified_address_edification_list_thumbnail_imageview"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/icon_marker_24"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/icon_address_24"
                 android:backgroundTint="@color/colorWhite"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.5"
-            android:drawableTop="@drawable/icon_navigate_24"
+            android:drawableTop="@drawable/icon_navigation_24"
             android:drawablePadding="15dp"
             android:drawableTint="@color/colorWhite"
             android:text="@string/navigate"

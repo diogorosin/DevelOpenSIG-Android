@@ -2,6 +2,7 @@ package br.com.developen.sig.activity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,8 +13,11 @@ import androidx.preference.PreferenceManager;
 
 import com.evernote.android.job.JobRequest;
 
+import java.util.Date;
+
 import br.com.developen.sig.R;
 import br.com.developen.sig.job.DownloadJob;
+import br.com.developen.sig.util.App;
 import br.com.developen.sig.util.Constants;
 
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -72,21 +76,33 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
 
                                 case Constants.DOWNLOAD_AUTO_PROPERTY:
 
-                                    if (preferences.getBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true))
+                                    if (preferences.getBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true)) {
 
-                                        DownloadJob.reschedule(preferences.getBoolean(Constants.DOWNLOAD_AUTO_METERED_PROPERTY, false) ? JobRequest.NetworkType.UNMETERED : JobRequest.NetworkType.ANY);
+                                        Date nextExecutionAt = DownloadJob.reschedule(preferences.getBoolean(Constants.DOWNLOAD_AUTO_METERED_PROPERTY, false) ? JobRequest.NetworkType.UNMETERED : JobRequest.NetworkType.ANY);
 
-                                    else
+                                        if (nextExecutionAt != null)
+
+                                            Toast.makeText(App.getContext(), "Tarefa foi agendada" /* para " + StringUtils.formatDateTime(nextExecutionAt) */, Toast.LENGTH_LONG).show();
+
+                                    } else {
 
                                         DownloadJob.finish();
+
+                                        Toast.makeText(App.getContext(), "Tarefa foi cancelada", Toast.LENGTH_LONG).show();
+
+                                    }
 
                                     break;
 
                                 case Constants.DOWNLOAD_AUTO_METERED_PROPERTY:
 
-                                    if (preferences.getBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true))
+                                    if (preferences.getBoolean(Constants.DOWNLOAD_AUTO_PROPERTY, true)) {
 
                                         DownloadJob.reschedule(preferences.getBoolean(Constants.DOWNLOAD_AUTO_METERED_PROPERTY, false) ? JobRequest.NetworkType.UNMETERED : JobRequest.NetworkType.ANY);
+
+                                        Toast.makeText(App.getContext(), "Tarefa foi reconfigurada", Toast.LENGTH_LONG).show();
+
+                                    }
 
                                     break;
 
