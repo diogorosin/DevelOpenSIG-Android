@@ -34,7 +34,6 @@ import androidx.databinding.ObservableField;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,8 +76,10 @@ import br.com.developen.sig.R;
 import br.com.developen.sig.bean.DatasetBean;
 import br.com.developen.sig.bean.ExceptionBean;
 import br.com.developen.sig.database.AddressEdificationDwellerModel;
-import br.com.developen.sig.database.AddressEdificationModel;
 import br.com.developen.sig.database.AddressModel;
+import br.com.developen.sig.database.Dweller;
+import br.com.developen.sig.database.Edification;
+import br.com.developen.sig.database.MarkerModel;
 import br.com.developen.sig.task.CreateAddressAsyncTask;
 import br.com.developen.sig.task.EditAddressAsyncTask;
 import br.com.developen.sig.task.FindAddressesByIndividualNameAsyncTask;
@@ -88,33 +89,33 @@ import br.com.developen.sig.util.Constants;
 import br.com.developen.sig.util.IconUtils;
 import br.com.developen.sig.util.Messaging;
 import br.com.developen.sig.util.StringUtils;
-import br.com.developen.sig.viewmodel.AddressViewModel;
-import br.com.developen.sig.widget.AddressClusterItem;
-import br.com.developen.sig.widget.AddressClusterRenderer;
-import br.com.developen.sig.widget.AddressEdificationDwellerRecyclerViewAdapter;
+import br.com.developen.sig.viewmodel.MarkerViewModel;
 import br.com.developen.sig.widget.AddressEdificationDwellerSuggestions;
-import br.com.developen.sig.widget.AddressEdificationRecyclerViewAdapter;
+import br.com.developen.sig.widget.DwellerRecyclerViewAdapter;
+import br.com.developen.sig.widget.EdificationRecyclerViewAdapter;
+import br.com.developen.sig.widget.MarkerClusterItem;
+import br.com.developen.sig.widget.MarkerClusterRenderer;
 
 
 public class MapActivity
         extends FragmentActivity
         implements OnMapReadyCallback,
         ImportAsyncTask.Listener,
-        AddressEdificationRecyclerViewAdapter.EdificationClickListener,
+        EdificationRecyclerViewAdapter.EdificationClickListener,
         GoogleMap.OnMyLocationChangeListener,
         CreateAddressAsyncTask.Listener,
         NavigationView.OnNavigationItemSelectedListener,
         FindAddressesByIndividualNameAsyncTask.Listener,
         EditAddressAsyncTask.Listener,
-        ClusterManager.OnClusterClickListener<AddressClusterItem>,
-        ClusterManager.OnClusterInfoWindowClickListener<AddressClusterItem>,
-        ClusterManager.OnClusterItemClickListener<AddressClusterItem>,
-        ClusterManager.OnClusterItemInfoWindowClickListener<AddressClusterItem> {
+        ClusterManager.OnClusterClickListener<MarkerClusterItem>,
+        ClusterManager.OnClusterInfoWindowClickListener<MarkerClusterItem>,
+        ClusterManager.OnClusterItemClickListener<MarkerClusterItem>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<MarkerClusterItem> {
 
 
     public static final int MY_LOCATION_PERMISSION_REQUEST = 1;
 
-    private ClusterManager<AddressClusterItem> clusterManager;
+    private ClusterManager<MarkerClusterItem> clusterManager;
 
 
     public static ProgressDialog progressDialog;
@@ -127,12 +128,16 @@ public class MapActivity
 
     private SharedPreferences preferences;
 
-    private AddressViewModel addressViewModel;
+    //private AddressViewModel addressViewModel;
+
+    private MarkerViewModel markerViewModel;
 
     private BottomSheetBehavior bottomSheetBehavior;
 
     private FloatingActionButton fab;
 
+
+    private Button shareButton;
 
     private TextView denominationTextView;
 
@@ -146,9 +151,9 @@ public class MapActivity
 
     private ProgressBar progressBar;
 
-    private AddressEdificationRecyclerViewAdapter edificationAdapter;
+    private EdificationRecyclerViewAdapter edificationAdapter;
 
-    private AddressEdificationDwellerRecyclerViewAdapter dwellerAdapter;
+    private DwellerRecyclerViewAdapter dwellerAdapter;
 
 
     private MenuItem menuItemNormal;
@@ -213,13 +218,13 @@ public class MapActivity
 
         navigateButton.setOnClickListener(v -> {
 
-            if (addressViewModel.selectedClusterItem.get()==null)
+            if (markerViewModel.selectedClusterItem.get()==null)
 
                 return;
 
             Uri gmmIntentUri = Uri.parse("google.navigation:q=" +
-                    addressViewModel.selectedClusterItem.get().getPosition().latitude + "," +
-                    addressViewModel.selectedClusterItem.get().getPosition().longitude);
+                    markerViewModel.selectedClusterItem.get().getPosition().latitude + "," +
+                    markerViewModel.selectedClusterItem.get().getPosition().longitude);
 
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
 
@@ -230,17 +235,17 @@ public class MapActivity
         });
 
 
-        Button shareButton = findViewById(R.id.activity_map_bottom_sheet_share);
+        shareButton = findViewById(R.id.activity_map_bottom_sheet_share);
 
         shareButton.setOnClickListener(v -> {
 
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-            if (addressViewModel.selectedClusterItem.get()==null)
+            if (markerViewModel.selectedClusterItem.get() == null)
 
                 return;
 
-            AddressClusterItem addressClusterItem = addressViewModel.selectedClusterItem.get();
+            MarkerClusterItem markerClusterItem = markerViewModel.selectedClusterItem.get();
 
             Intent sendIntent = new Intent();
 
@@ -248,21 +253,21 @@ public class MapActivity
 
             sendIntent.putExtra(Intent.EXTRA_TEXT, StringUtils.formatAddressForShare(
 
-                    addressClusterItem.getIdentifier(),
+                    markerClusterItem.getIdentifier(),
 
-                    addressClusterItem.getDenomination(),
+                    markerClusterItem.getDenomination(),
 
-                    addressClusterItem.getNumber(),
+                    markerClusterItem.getNumber(),
 
-                    addressClusterItem.getReference(),
+                    markerClusterItem.getReference(),
 
-                    addressClusterItem.getDistrict(),
+                    markerClusterItem.getDistrict(),
 
-                    addressClusterItem.getPostalCode(),
+                    markerClusterItem.getPostalCode(),
 
-                    addressClusterItem.getCity(),
+                    markerClusterItem.getCity(),
 
-                    addressClusterItem.getPosition()
+                    markerClusterItem.getPosition()
 
             ));
 
@@ -381,13 +386,31 @@ public class MapActivity
 
                 if (getLastKnowLocation() != null)
 
-                    new CreateAddressAsyncTask<>(MapActivity.this).execute(
-                            getLastKnowLocation().getLatitude(), getLastKnowLocation().getLongitude());
+                    new CreateAddressAsyncTask<>(MapActivity.this).execute(getLastKnowLocation().getLatitude(), getLastKnowLocation().getLongitude());
 
             } else {
 
-                new EditAddressAsyncTask<>(MapActivity.this).execute(
-                        addressViewModel.selectedClusterItem.get().getIdentifier());
+                switch (markerViewModel.selectedClusterItem.get().getType()) {
+
+                    case Constants.MARKER_TYPE_ADDRESS:
+
+                        new EditAddressAsyncTask<>(MapActivity.this).execute(markerViewModel.selectedClusterItem.get().getIdentifier());
+
+                        break;
+
+                    case Constants.MARKER_TYPE_MODIFIED:
+
+                        Intent addIntent = new Intent(MapActivity.this, ModifiedAddressActivity.class);
+
+                        addIntent.putExtra(ModifiedAddressActivity.MODIFIED_ADDRESS_IDENTIFIER, markerViewModel.selectedClusterItem.get().getIdentifier());
+
+                        startActivity(addIntent);
+
+                        break;
+
+                }
+
+                hideBottomSheet();
 
             }
 
@@ -437,9 +460,7 @@ public class MapActivity
         progressBar = findViewById(R.id.activity_map_bottom_sheet_progress);
 
 
-        List<AddressEdificationModel> addressEdificationModels = new ArrayList<>();
-
-        edificationAdapter = new AddressEdificationRecyclerViewAdapter(addressEdificationModels, this);
+        edificationAdapter = new EdificationRecyclerViewAdapter(new ArrayList<>(), this);
 
         RecyclerView edificationRecyclerView = findViewById(R.id.activity_map_bottom_sheet_edifications);
 
@@ -448,9 +469,7 @@ public class MapActivity
         edificationRecyclerView.setAdapter(edificationAdapter);
 
 
-        List<AddressEdificationDwellerModel> addressEdificationDwellerModels = new ArrayList<>();
-
-        dwellerAdapter = new AddressEdificationDwellerRecyclerViewAdapter(addressEdificationDwellerModels);
+        dwellerAdapter = new DwellerRecyclerViewAdapter(new ArrayList<>());
 
         RecyclerView dwellerRecyclerView = findViewById(R.id.activity_map_bottom_sheet_dwellers);
 
@@ -459,27 +478,27 @@ public class MapActivity
         dwellerRecyclerView.setAdapter(dwellerAdapter);
 
 
-        AddressViewModel.Factory factory = new AddressViewModel.Factory(getApplication());
+        MarkerViewModel.Factory factory = new MarkerViewModel.Factory(getApplication());
 
-        addressViewModel = new ViewModelProvider(this, factory).get(AddressViewModel.class);
+        markerViewModel = new ViewModelProvider(this, factory).get(MarkerViewModel.class);
 
-        addressViewModel.selectedClusterItem.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+        markerViewModel.selectedClusterItem.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
 
             public void onPropertyChanged(Observable sender, int propertyId) {
 
                 reloadEdifications = true;
 
-                AddressClusterItem addressClusterItem = ((ObservableField<AddressClusterItem>) sender).get();
+                MarkerClusterItem markerClusterItem = ((ObservableField<MarkerClusterItem>) sender).get();
 
-                denominationTextView.setText(StringUtils.formatDenominationWithNumber(addressClusterItem.getDenomination(), addressClusterItem.getNumber()));
+                denominationTextView.setText(StringUtils.formatDenominationWithNumber(markerClusterItem.getDenomination(), markerClusterItem.getNumber()));
 
-                referenceTextView.setText(addressClusterItem.getReference());
+                referenceTextView.setText(markerClusterItem.getReference());
 
-                referenceTextView.setVisibility(addressClusterItem.getReference() != null && !addressClusterItem.getReference().isEmpty() ? View.VISIBLE : View.GONE);
+                referenceTextView.setVisibility(markerClusterItem.getReference() != null && !markerClusterItem.getReference().isEmpty() ? View.VISIBLE : View.GONE);
 
-                districtTextView.setText(addressClusterItem.getDistrict());
+                districtTextView.setText(markerClusterItem.getDistrict());
 
-                cityTextView.setText(addressClusterItem.getCity());
+                cityTextView.setText(markerClusterItem.getCity());
 
                 if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && reloadEdifications)
 
@@ -498,6 +517,13 @@ public class MapActivity
 
         gson = gsonBuilder.create();
 
+
+    }
+
+
+    private void hideBottomSheet(){
+
+        new Handler().post(() -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN));
 
     }
 
@@ -707,7 +733,7 @@ public class MapActivity
 
             clusterManager.setOnClusterItemInfoWindowClickListener(this);
 
-            clusterManager.setRenderer(new AddressClusterRenderer(
+            clusterManager.setRenderer(new MarkerClusterRenderer(
                     getApplicationContext(),
                     getGoogleMap(),
                     clusterManager));
@@ -741,39 +767,43 @@ public class MapActivity
 
         getGoogleMap().setOnInfoWindowClickListener(getClusterManager());
 
-        addressViewModel = ViewModelProviders.of(this).get(AddressViewModel.class);
-
-        addressViewModel.getAddresses().observe(MapActivity.this, addresses -> {
+        markerViewModel.getMarkers().observe(MapActivity.this, markers -> {
 
             getClusterManager().clearItems();
 
-            if (addresses!=null && !addresses.isEmpty()){
+            if (markers!=null && !markers.isEmpty()){
 
-                for (AddressModel address: addresses) {
+                for (MarkerModel marker: markers) {
 
-                    AddressClusterItem addressClusterItem = new AddressClusterItem();
+                    MarkerClusterItem markerClusterItem = new MarkerClusterItem();
 
-                    addressClusterItem.setIdentifier(address.getIdentifier());
+                    markerClusterItem.setIdentifier(marker.getIdentifier());
 
-                    addressClusterItem.setDenomination(address.getDenomination());
+                    markerClusterItem.setType(marker.getType());
 
-                    addressClusterItem.setNumber(address.getNumber());
+                    markerClusterItem.setAddress(marker.getAddress());
 
-                    addressClusterItem.setReference(address.getReference());
+                    markerClusterItem.setDenomination(marker.getDenomination());
 
-                    addressClusterItem.setDistrict(address.getDistrict());
+                    markerClusterItem.setNumber(marker.getNumber());
 
-                    addressClusterItem.setCity(StringUtils.formatCityWithState(address.getCity()));
+                    markerClusterItem.setReference(marker.getReference());
 
-                    addressClusterItem.setPostalCode(address.getPostalCode());
+                    markerClusterItem.setDistrict(marker.getDistrict());
 
-                    addressClusterItem.setPosition(new LatLng(address.getLatitude(), address.getLongitude()));
+                    markerClusterItem.setCity(StringUtils.formatCityWithState(marker.getCity()));
 
-                    getClusterManager().addItem(addressClusterItem);
+                    markerClusterItem.setPostalCode(marker.getPostalCode());
+
+                    markerClusterItem.setPosition(new LatLng(marker.getLatitude(), marker.getLongitude()));
+
+                    getClusterManager().addItem(markerClusterItem);
 
                 }
 
             }
+
+            getClusterManager().cluster();
 
         });
 
@@ -792,23 +822,23 @@ public class MapActivity
     }
 
 
-    public boolean onClusterClick(Cluster<AddressClusterItem> cluster) {
+    public boolean onClusterClick(Cluster<MarkerClusterItem> cluster) {
 
         return false;
 
     }
 
 
-    public void onClusterInfoWindowClick(Cluster<AddressClusterItem> cluster) {}
+    public void onClusterInfoWindowClick(Cluster<MarkerClusterItem> cluster) {}
 
 
-    public boolean onClusterItemClick(AddressClusterItem addressClusterItem) {
+    public boolean onClusterItemClick(MarkerClusterItem markerClusterItem) {
 
         if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN)
 
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        addressViewModel.selectedClusterItem.set(addressClusterItem);
+        markerViewModel.selectedClusterItem.set(markerClusterItem);
 
         return true;
 
@@ -821,29 +851,77 @@ public class MapActivity
 
             progressBar.setVisibility(View.VISIBLE);
 
-            List<AddressEdificationModel> edifications = App.
-                    getInstance().
-                    getAddressRepository().
-                    getEdificationsOfAddress(addressViewModel.selectedClusterItem.get().getIdentifier());
+            List<Edification> newEdifications = new ArrayList<>();
 
-            List<AddressEdificationDwellerModel> dwellers = new ArrayList<>();
+            switch (markerViewModel.selectedClusterItem.get().getType()){
 
-            if (!edifications.isEmpty())
+                case Constants.MARKER_TYPE_ADDRESS:
 
-                dwellers = App.getInstance().getAddressEdificationRepository().getDwellersOfAddressEdifications(
-                        edifications.get(0).getAddress().getIdentifier(),
-                        edifications.get(0).getEdification());
+                    newEdifications.addAll(App.
+                            getInstance().
+                            getAddressRepository().
+                            getEdificationsOfAddress(markerViewModel.selectedClusterItem.get().getIdentifier()));
+
+                    break;
+
+                case Constants.MARKER_TYPE_MODIFIED:
+
+                    newEdifications.addAll(App.
+                            getInstance().
+                            getModifiedAddressRepository().
+                            getEdificationsOfModifiedAddressAsList(markerViewModel.selectedClusterItem.get().getIdentifier()));
+
+                    break;
+
+            }
+
+            List<Dweller> newDwellers = new ArrayList<>();
+
+            if (!newEdifications.isEmpty()) {
+
+                Edification firstEdification = newEdifications.get(0);
+
+                switch (firstEdification.getParentType()) {
+
+                    case Constants.MARKER_TYPE_ADDRESS:
+
+                        newDwellers.addAll(App.
+                                getInstance().
+                                getAddressEdificationRepository().
+                                getDwellersOfAddressEdifications(
+                                        firstEdification.getParentIdentifier(),
+                                        firstEdification.getEdification()));
+
+                        break;
+
+                    case Constants.MARKER_TYPE_MODIFIED:
+
+                        newDwellers.addAll(App.
+                                getInstance().
+                                getModifiedAddressEdificationRepository().
+                                getDwellersOfModifiedAddressEdificationAsList(
+                                        firstEdification.getParentIdentifier(),
+                                        firstEdification.getEdification()));
+
+                        break;
+
+                }
+
+            }
+
+            //SHARE ONLY ADDRESS ON SERVER
+            shareButton.setEnabled(markerViewModel.selectedClusterItem.get().getAddress() != null);
 
             //SET DATA TO EDIFICATIONS RECYCLER VIEW
             edificationAdapter.resetFocusedItem();
 
-            edificationAdapter.setAddressEdifications(edifications);
+            edificationAdapter.setEdifications(newEdifications);
 
             //SET DATA TO DWELLERS RECYCLER VIEW
-            dwellerAdapter.setAddressEdificationDwellers(dwellers);
+            dwellerAdapter.setDwellers(newDwellers);
 
             //HIDE OR SHOW NO DATA FOUND
-            noDataFoundTextView.setVisibility(edifications.isEmpty() ? View.VISIBLE : View.GONE);
+            noDataFoundTextView.setVisibility(newEdifications.isEmpty() ? View.VISIBLE : View.GONE);
 
             //WAIT TO HIDE PROGRESS. RECYCLERVIEW STILL WORKING...
             new Handler().postDelayed(() -> {
@@ -859,7 +937,7 @@ public class MapActivity
     }
 
 
-    public void onClusterItemInfoWindowClick(AddressClusterItem addressClusterItem) {}
+    public void onClusterItemInfoWindowClick(MarkerClusterItem markerClusterItem) {}
 
 
     private void showAlertDialog(Messaging messaging){
@@ -905,9 +983,9 @@ public class MapActivity
 
                     for (Marker marker : clusterManager.getMarkerCollection().getMarkers()) {
 
-                        AddressClusterItem addressClusterItem = (AddressClusterItem) marker.getTag();
+                        MarkerClusterItem markerClusterItem = (MarkerClusterItem) marker.getTag();
 
-                        if (marker.getTag() != null && addressClusterItem.getIdentifier().equals(address)) {
+                        if (marker.getTag() != null && markerClusterItem.getIdentifier().equals(address)) {
 
                             marker.showInfoWindow();
 
@@ -975,32 +1053,52 @@ public class MapActivity
     }
 
 
-    public void onEdificationClicked(AddressEdificationRecyclerViewAdapter.AddressEdificationViewHolder addressEdificationModel) {
+    public void onEdificationClicked(EdificationRecyclerViewAdapter.EdificationViewHolder edificationViewHolder) {
 
-        addressEdificationModel.itemView.setSelected(true);
+        edificationViewHolder.itemView.setSelected(true);
 
         new Handler().post(() -> {
 
-            List<AddressEdificationDwellerModel> dwellers = App.
-                    getInstance().
-                    getAddressEdificationRepository().
-                    getDwellersOfAddressEdifications(
-                            addressEdificationModel.addressEdificationModel.getAddress().getIdentifier(),
-                            addressEdificationModel.addressEdificationModel.getEdification());
+            List<Dweller> dwellers = new ArrayList<>();
 
-            dwellerAdapter.setAddressEdificationDwellers(dwellers);
+            switch (edificationViewHolder.edification.getParentType()) {
 
-//            noDataFoundTextView.setVisibility(dwellers.isEmpty() ? View.VISIBLE : View.GONE);
+                case Constants.MARKER_TYPE_ADDRESS:
 
+                    dwellers.addAll(App.
+                            getInstance().
+                            getAddressEdificationRepository().
+                            getDwellersOfAddressEdifications(
+                                    edificationViewHolder.edification.getParentIdentifier(),
+                                    edificationViewHolder.edification.getEdification()));
+
+                    break;
+
+                case Constants.MARKER_TYPE_MODIFIED:
+
+                    dwellers.addAll(App.
+                            getInstance().
+                            getModifiedAddressEdificationRepository().
+                            getDwellersOfModifiedAddressEdificationAsList(
+                                    edificationViewHolder.edification.getParentIdentifier(),
+                                    edificationViewHolder.edification.getEdification()));
+
+                    break;
+
+            }
+
+            dwellerAdapter.setDwellers(dwellers);
+
+            //noDataFoundTextView.setVisibility(dwellers.isEmpty() ? View.VISIBLE : View.GONE);
             //WAIT TO HIDE PROGRESS. RECYCLERVIEW STILL WORKING...
-//            new Handler().postDelayed(() -> progressBar.setVisibility(View.GONE), 500);
+            //new Handler().postDelayed(() -> progressBar.setVisibility(View.GONE), 500);
 
         });
 
     }
 
 
-    public void onEdificationLongClick(AddressEdificationRecyclerViewAdapter.AddressEdificationViewHolder addressEdificationModel) {}
+    public void onEdificationLongClick(EdificationRecyclerViewAdapter.EdificationViewHolder addressEdificationModel) {}
 
 
     public void refresh(){
@@ -1110,6 +1208,8 @@ public class MapActivity
     public void onImportSuccess() {
 
         progressDialog.hide();
+
+        getClusterManager().cluster();
 
         Toast.makeText(this, R.string.download_sucess, Toast.LENGTH_LONG).show();
 

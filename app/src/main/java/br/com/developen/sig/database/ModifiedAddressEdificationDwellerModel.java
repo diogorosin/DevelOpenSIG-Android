@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Objects;
 
 
-public class ModifiedAddressEdificationDwellerModel {
+public class ModifiedAddressEdificationDwellerModel implements Dweller {
 
     @Embedded(prefix = "modifiedAddressEdification_")
     private ModifiedAddressEdificationModel modifiedAddressEdification;

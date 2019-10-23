@@ -37,6 +37,10 @@ public class Constants {
 
     public static final String FEMALE_GENDER_DENOMINATION = "Feminino";
 
+    public static final String MARKER_TYPE_ADDRESS = "A";
+
+    public static final String MARKER_TYPE_MODIFIED = "M";
+
     public static final String DEFAULT_ADDRESS = "DefaultAddress";
 
 

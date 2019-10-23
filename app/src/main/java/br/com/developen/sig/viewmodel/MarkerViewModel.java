@@ -10,19 +10,18 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.util.List;
 
-import br.com.developen.sig.database.AddressModel;
-import br.com.developen.sig.repository.AddressRepository;
+import br.com.developen.sig.database.MarkerModel;
+import br.com.developen.sig.repository.MarkerRepository;
 import br.com.developen.sig.util.App;
 import br.com.developen.sig.widget.MarkerClusterItem;
 
-public class AddressViewModel extends AndroidViewModel {
+public class MarkerViewModel extends AndroidViewModel {
 
 
     //KEYS
-    private Integer identifier;
 
     //REPOSITORY
-    private AddressRepository repository;
+    private MarkerRepository repository;
 
     //FIELDS THAT NEED VALIDATION
     public final ObservableField<MarkerClusterItem> selectedClusterItem = new ObservableField<>();
@@ -37,58 +36,41 @@ public class AddressViewModel extends AndroidViewModel {
 
         private final App application;
 
-        private final Integer identifier;
-
-        private final AddressRepository repository;
-
-        public Factory(Application application, Integer identifier) {
-
-            this.application = (App) application;
-
-            this.repository = this.application.getAddressRepository();
-
-            this.identifier = identifier;
-
-        }
+        private final MarkerRepository repository;
 
         public Factory(Application application) {
 
             this.application = (App) application;
 
-            this.repository = this.application.getAddressRepository();
-
-            this.identifier = null;
+            this.repository = this.application.getMarkerRepository();
 
         }
 
         public <T extends ViewModel> T create(Class<T> modelClass) {
 
-            return (T) new AddressViewModel(application, identifier, repository);
+            return (T) new MarkerViewModel(application, repository);
 
         }
 
     }
 
 
-    public AddressViewModel(Application application){
+    public MarkerViewModel(Application application){
 
         super(application);
 
-        this.repository = App.getInstance().getAddressRepository();
+        this.repository = App.getInstance().getMarkerRepository();
 
         this.selectedClusterItem.set(null);
 
     }
 
 
-    public AddressViewModel(Application application,
-                            Integer identifier,
-                            AddressRepository repository) {
+    public MarkerViewModel(Application application,
+                           MarkerRepository repository) {
 
 
         super(application);
-
-        this.identifier = identifier;
 
         this.repository = repository;
 
@@ -97,9 +79,9 @@ public class AddressViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<AddressModel>> getAddresses(){
+    public LiveData<List<MarkerModel>> getMarkers(){
 
-        return repository.getAddresses();
+        return repository.getMarkers();
 
     }
 

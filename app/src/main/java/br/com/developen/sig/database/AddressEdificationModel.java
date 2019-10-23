@@ -5,7 +5,9 @@ import androidx.room.TypeConverters;
 
 import java.util.Date;
 
-public class AddressEdificationModel {
+import br.com.developen.sig.util.Constants;
+
+public class AddressEdificationModel implements Edification {
 
     @Embedded(prefix = "address_")
     private AddressModel address;
@@ -32,6 +34,18 @@ public class AddressEdificationModel {
     public void setAddress(AddressModel address) {
 
         this.address = address;
+
+    }
+
+    public Integer getParentIdentifier() {
+
+        return this.address.getIdentifier();
+
+    }
+
+    public String getParentType() {
+
+        return Constants.MARKER_TYPE_ADDRESS;
 
     }
 

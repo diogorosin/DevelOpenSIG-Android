@@ -50,13 +50,13 @@ public class DownloadJob extends DailyJob implements ImportAsyncTask.Listener {
 
     private static final String NOTIFY_CHANNEL = "download_job";
 
-//    private static final long BEGIN = TimeUnit.HOURS.toMillis(1);
+    private static final long BEGIN = TimeUnit.HOURS.toMillis(1);
 
-//    private static final long FINISH = TimeUnit.HOURS.toMillis(6);
+    private static final long FINISH = TimeUnit.HOURS.toMillis(6);
 
-    private static final long BEGIN = TimeUnit.HOURS.toMillis(13) + TimeUnit.MINUTES.toMillis(50) ;
+//    private static final long BEGIN = TimeUnit.HOURS.toMillis(13) + TimeUnit.MINUTES.toMillis(50) ;
 
-    private static final long FINISH = TimeUnit.HOURS.toMillis(13) + TimeUnit.MINUTES.toMillis(51);
+//    private static final long FINISH = TimeUnit.HOURS.toMillis(13) + TimeUnit.MINUTES.toMillis(51);
 
 
     private CountDownLatch countDownLatch;

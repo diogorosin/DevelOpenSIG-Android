@@ -79,6 +79,9 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
+
+
+
 <!--        <service
             android:enabled="true"
             android:exported="true"

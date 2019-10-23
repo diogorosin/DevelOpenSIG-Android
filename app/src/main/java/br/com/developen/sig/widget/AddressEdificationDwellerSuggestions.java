@@ -72,6 +72,7 @@ public class AddressEdificationDwellerSuggestions implements SearchSuggestion {
 
     }
 
+
     public boolean equals(Object o) {
 
         if (this == o) return true;
@@ -81,10 +82,12 @@ public class AddressEdificationDwellerSuggestions implements SearchSuggestion {
 
     }
 
+
     public int hashCode() {
 
         return Objects.hash(addressEdificationDwellerModel);
 
     }
+
 
 }

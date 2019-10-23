@@ -20,6 +20,8 @@ import br.com.developen.sig.database.CountryDAO;
 import br.com.developen.sig.database.CountryVO;
 import br.com.developen.sig.database.IndividualDAO;
 import br.com.developen.sig.database.IndividualVO;
+import br.com.developen.sig.database.MarkerDAO;
+import br.com.developen.sig.database.MarkerModel;
 import br.com.developen.sig.database.ModifiedAddressDAO;
 import br.com.developen.sig.database.ModifiedAddressEdificationDAO;
 import br.com.developen.sig.database.ModifiedAddressEdificationDwellerDAO;
@@ -51,6 +53,7 @@ import br.com.developen.sig.database.TypeVO;
         ModifiedAddressVO.class,
         ModifiedAddressEdificationVO.class,
         ModifiedAddressEdificationDwellerVO.class},
+        views = { MarkerModel.class },
         version = 001, exportSchema = false)
 public abstract class DB extends RoomDatabase {
 
@@ -86,6 +89,8 @@ public abstract class DB extends RoomDatabase {
     public abstract TypeDAO typeDAO();
 
     public abstract CityDAO cityDAO();
+
+    public abstract MarkerDAO markerDAO();
 
     public abstract AddressDAO addressDAO();
 

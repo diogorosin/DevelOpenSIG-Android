@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import br.com.developen.sig.R;
-import br.com.developen.sig.database.AddressEdificationModel;
+import br.com.developen.sig.database.Edification;
 
-public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<AddressEdificationRecyclerViewAdapter.AddressEdificationViewHolder> {
+public class EdificationRecyclerViewAdapter extends RecyclerView.Adapter<EdificationRecyclerViewAdapter.EdificationViewHolder> {
 
 
     private static final int HOUSE_EDIFICATION = 1;
@@ -27,17 +27,16 @@ public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<
     private static final int OTHER_EDIFICATION = 5;
 
 
-    private List<AddressEdificationModel> addressEdifications;
+    private List<Edification> edifications;
 
     private EdificationClickListener listener;
 
     private int focusedItem = 0;
 
 
-    public AddressEdificationRecyclerViewAdapter(List<AddressEdificationModel> addressEdifications,
-                                                 EdificationClickListener listener) {
+    public EdificationRecyclerViewAdapter(List<Edification> edifications, EdificationClickListener listener) {
 
-        this.addressEdifications = addressEdifications;
+        this.edifications = edifications;
 
         this.listener = listener;
 
@@ -46,7 +45,7 @@ public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
 
-    public AddressEdificationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EdificationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         int layout = 0;
 
@@ -71,14 +70,14 @@ public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<
 
         View view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        return new AddressEdificationViewHolder(view);
+        return new EdificationViewHolder(view);
 
     }
 
 
     public int getItemViewType(int position) {
 
-        switch (addressEdifications.get(position).getType().getIdentifier()){
+        switch (edifications.get(position).getType().getIdentifier()){
 
             case 1: return HOUSE_EDIFICATION;
 
@@ -100,15 +99,15 @@ public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<
 
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
-    public void onBindViewHolder(final AddressEdificationViewHolder holder, int position) {
+    public void onBindViewHolder(final EdificationViewHolder holder, int position) {
 
-        holder.addressEdificationModel = addressEdifications.get(position);
+        holder.edification = edifications.get(position);
 
         holder.itemView.setSelected(position==focusedItem);
 
-        if (addressEdifications.get(position).getReference() != null){
+        if (edifications.get(position).getReference() != null){
 
-            holder.reference.setText(addressEdifications.get(position).getReference());
+            holder.reference.setText(edifications.get(position).getReference());
 
             holder.reference.setVisibility(View.VISIBLE);
 
@@ -149,21 +148,21 @@ public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<
 
     public int getItemCount() {
 
-        return addressEdifications.size();
+        return edifications.size();
 
     }
 
 
     public long getItemId(int position){
 
-        return addressEdifications.get(position).hashCode();
+        return edifications.get(position).hashCode();
 
     }
 
 
-    public void setAddressEdifications(List<AddressEdificationModel> addressEdifications){
+    public void setEdifications(List<Edification> edifications){
 
-        this.addressEdifications = addressEdifications;
+        this.edifications = edifications;
 
         notifyDataSetChanged();
 
@@ -177,13 +176,13 @@ public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<
     }
 
 
-    public class AddressEdificationViewHolder extends RecyclerView.ViewHolder {
+    public class EdificationViewHolder extends RecyclerView.ViewHolder {
 
-        public AddressEdificationModel addressEdificationModel;
+        public Edification edification;
 
         public TextView reference;
 
-        public AddressEdificationViewHolder(View view) {
+        public EdificationViewHolder(View view) {
 
             super(view);
 
@@ -193,11 +192,12 @@ public class AddressEdificationRecyclerViewAdapter extends RecyclerView.Adapter<
 
     }
 
+
     public interface EdificationClickListener {
 
-        void onEdificationClicked(AddressEdificationRecyclerViewAdapter.AddressEdificationViewHolder addressEdificationModel);
+        void onEdificationClicked(EdificationViewHolder edificationViewHolder);
 
-        void onEdificationLongClick(AddressEdificationRecyclerViewAdapter.AddressEdificationViewHolder addressEdificationModel);
+        void onEdificationLongClick(EdificationViewHolder edificationViewHolder);
 
     }
 

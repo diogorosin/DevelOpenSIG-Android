@@ -3,9 +3,13 @@ package br.com.developen.sig.widget;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-public class AddressClusterItem implements ClusterItem {
+public class MarkerClusterItem implements ClusterItem {
 
     private Integer identifier;
+
+    private Integer address;
+
+    private String type;
 
     private String denomination;
 
@@ -30,6 +34,30 @@ public class AddressClusterItem implements ClusterItem {
     public void setIdentifier(Integer identifier) {
 
         this.identifier = identifier;
+
+    }
+
+    public Integer getAddress() {
+
+        return address;
+
+    }
+
+    public void setAddress(Integer address) {
+
+        this.address = address;
+
+    }
+
+    public String getType() {
+
+        return type;
+
+    }
+
+    public void setType(String type) {
+
+        this.type = type;
 
     }
 

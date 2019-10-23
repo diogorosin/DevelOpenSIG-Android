@@ -7,7 +7,7 @@ import androidx.room.TypeConverters;
 import java.util.Date;
 import java.util.Objects;
 
-public class AddressEdificationDwellerModel {
+public class AddressEdificationDwellerModel implements Dweller {
 
 
     @Embedded(prefix = "addressEdification_")
@@ -50,6 +50,20 @@ public class AddressEdificationDwellerModel {
     public void setDweller(Integer dweller) {
 
         this.dweller = dweller;
+
+    }
+
+
+    public String getName() {
+
+        return this.individual.getName();
+
+    }
+
+
+    public GenderModel getGender() {
+
+        return this.individual.getGender();
 
     }
 

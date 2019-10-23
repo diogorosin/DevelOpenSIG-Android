@@ -109,7 +109,6 @@ public class ModifiedAddressViewModel extends AndroidViewModel {
                                     Integer identifier,
                                     ModifiedAddressRepository repository) {
 
-
         super(application);
 
         this.identifier = identifier;

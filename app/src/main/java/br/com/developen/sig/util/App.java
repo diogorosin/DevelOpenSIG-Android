@@ -13,6 +13,7 @@ import br.com.developen.sig.job.AppJobCreator;
 import br.com.developen.sig.repository.AddressEdificationRepository;
 import br.com.developen.sig.repository.AddressRepository;
 import br.com.developen.sig.repository.CityRepository;
+import br.com.developen.sig.repository.MarkerRepository;
 import br.com.developen.sig.repository.ModifiedAddressEdificationDwellerRepository;
 import br.com.developen.sig.repository.ModifiedAddressEdificationRepository;
 import br.com.developen.sig.repository.ModifiedAddressRepository;
@@ -91,6 +92,13 @@ public class App extends Application {
     public ModifiedAddressRepository getModifiedAddressRepository() {
 
         return ModifiedAddressRepository.getInstance(DB.getInstance(this));
+
+    }
+
+
+    public MarkerRepository getMarkerRepository() {
+
+        return MarkerRepository.getInstance(DB.getInstance(this));
 
     }
 
