@@ -17,7 +17,7 @@
             android:id="@+id/activity_map_bottom_sheet_edification_image"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:backgroundTint="@color/colorWhite"
+            android:backgroundTint="@color/colorBlackDark"
             android:background="@drawable/icon_house_60"/>
 
     </LinearLayout>
@@ -41,7 +41,7 @@
                 android:layout_weight="0.5"
                 android:gravity="center_vertical"
                 android:textSize="12sp"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorBlackDark"
                 android:textStyle="bold"/>
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="0.5"
                 android:gravity="center_vertical"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorBlackDark"
                 android:textSize="12sp" />
 
         </LinearLayout>

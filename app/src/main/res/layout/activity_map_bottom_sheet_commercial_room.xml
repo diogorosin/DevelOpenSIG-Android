@@ -17,7 +17,7 @@
             android:id="@+id/activity_map_bottom_sheet_edification_image"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:backgroundTint="@color/colorWhite"
+            android:backgroundTint="@color/colorBlackDark"
             android:background="@drawable/icon_commercial_room_60"/>
 
     </LinearLayout>
@@ -40,14 +40,14 @@
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:textSize="12sp"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorBlackDark"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/activity_map_bottom_sheet_edification_reference"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorBlackDark"
                 android:textSize="12sp" />
 
         </LinearLayout>

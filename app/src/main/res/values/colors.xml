@@ -9,7 +9,6 @@
     <color name="colorGreyDark">#dfdfdf</color>
     <color name="colorGreyHiDark">#C0C0C0</color>
 
-
     <color name="colorBlackLight">#8c8c8c</color>
     <color name="colorBlackMedium">#5c5c5c</color>
     <color name="colorBlackDark">#454545</color>
@@ -29,14 +28,17 @@
     <color name="colorBlueDark">#4b89da</color>
 
     <!-- SISTEMA           -->
-    <color name="colorPrimary">@color/colorGreenLight</color>
+<!--    <color name="colorPrimary">@color/colorGreenLight</color>
     <color name="colorPrimaryDark">@color/colorGreenMedium</color>
     <color name="colorAccent">@color/colorGreenDark</color>
+-->
 
-    <!-- ACCOUNT           -->
+    <color name="colorPrimary">@color/colorBlackLight</color>
+    <color name="colorPrimaryDark">@color/colorBlackMedium</color>
+    <color name="colorAccent">@color/colorBlackDark</color>
+
     <color name="colorStatusBar">#212121</color>
-
-    <!-- CASH              -->
+     -->
     <color name="colorCashOpened">@color/colorGreenMedium</color>
     <color name="colorCashClosed">@color/colorRedMedium</color>
 

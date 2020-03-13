@@ -4,7 +4,7 @@
     android:id="@+id/activity_map_bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorGreenMedium"
+    android:background="@color/colorGreyMedium"
     android:orientation="vertical"
     app:behavior_hideable="true"
     app:behavior_peekHeight="80dp"
@@ -30,7 +30,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="@drawable/icon_address_24"
-                android:backgroundTint="@color/colorWhite"
+                android:backgroundTint="@color/colorBlackHiDark"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,36 +51,32 @@
                 android:id="@+id/activity_map_bottom_sheet_denomination"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorGreenMedium"
                 android:text="@string/marker"
-                android:textColor="@android:color/white"
+                android:textColor="@color/colorBlackHiDark"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/activity_map_bottom_sheet_reference"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorGreenMedium"
                 android:text="@string/marker"
-                android:textColor="@android:color/white"
+                android:textColor="@color/colorBlackHiDark"
                 android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/activity_map_bottom_sheet_district"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorGreenMedium"
                 android:text="@string/marker"
-                android:textColor="@android:color/white"
+                android:textColor="@color/colorBlackHiDark"
                 android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/activity_map_bottom_sheet_city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorGreenMedium"
                 android:text="@string/marker"
-                android:textColor="@android:color/white"
+                android:textColor="@color/colorBlackHiDark"
                 android:textSize="12sp" />
 
         </LinearLayout>
@@ -105,9 +101,9 @@
             android:layout_weight="0.5"
             android:drawableTop="@drawable/icon_navigation_24"
             android:drawablePadding="15dp"
-            android:drawableTint="@color/colorWhite"
+            android:drawableTint="@color/colorBlackHiDark"
             android:text="@string/navigate"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorBlackHiDark" />
 
         <Button
             android:id="@+id/activity_map_bottom_sheet_share"
@@ -117,9 +113,9 @@
             android:layout_weight="0.5"
             android:drawableTop="@drawable/icon_share_24"
             android:drawablePadding="15dp"
-            android:drawableTint="@color/colorWhite"
+            android:drawableTint="@color/colorBlackHiDark"
             android:text="@string/share"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@color/colorBlackHiDark"/>
 
     </LinearLayout>
 
@@ -144,8 +140,8 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/activity_map_bottom_sheet_dwellers"
+            android:background="@color/colorGreyDark"
             android:layout_width="0dp"
-            android:background="@color/colorGreenHiMedium"
             android:layout_height="match_parent"
             android:layout_weight="0.5"/>
 
@@ -156,7 +152,7 @@
             android:layout_margin="50dp"
             android:elevation="10dp"
             android:indeterminateTintMode="src_atop"
-            android:indeterminateTint="@color/colorWhite"
+            android:indeterminateTint="@color/colorBlackHiDark"
             android:visibility="gone"/>
 
         <TextView
@@ -165,8 +161,8 @@
             android:layout_height="match_parent"
             android:layout_marginTop="50dp"
             android:layout_marginBottom="50dp"
-            android:textColor="@color/colorWhite"
-            android:drawableTint="@color/colorWhite"
+            android:textColor="@color/colorBlackHiDark"
+            android:drawableTint="@color/colorBlackHiDark"
             android:drawableTop="@drawable/icon_grass_24"
             android:text="@string/no_results"
             android:gravity="center"/>

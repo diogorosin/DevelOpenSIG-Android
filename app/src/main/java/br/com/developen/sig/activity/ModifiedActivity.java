@@ -242,7 +242,7 @@ public class ModifiedActivity extends AppCompatActivity implements UpdateActiveO
 
                                 try {
 
-                                    if (error.networkResponse.data != null) {
+                                    if (error.networkResponse != null) {
 
                                         String responseBody = new String(error.networkResponse.data, "utf-8");
 

@@ -17,7 +17,7 @@
             android:id="@+id/activity_map_bottom_sheet_dweller_image"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:backgroundTint="@color/colorWhite"
+            android:backgroundTint="@color/colorBlackDark"
             android:background="@drawable/icon_female_60"/>
 
     </LinearLayout>
@@ -41,7 +41,7 @@
                 android:baselineAligned="false"
                 android:gravity="center_vertical"
                 android:textSize="12sp"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorBlackDark"
                 android:textStyle="bold" />
 
         </LinearLayout>

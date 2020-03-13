@@ -279,6 +279,7 @@ public class MapActivity
 
         });
 
+
         noDataFoundTextView = findViewById(R.id.activity_map_bottom_sheet_empty);
 
 
@@ -439,15 +440,15 @@ public class MapActivity
 
                 fab.setImageTintList(newState == BottomSheetBehavior.STATE_HIDDEN ?
                         ColorStateList.valueOf(getResources().getColor(R.color.colorBlackDark)):
-                        ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+                        ColorStateList.valueOf(getResources().getColor(R.color.colorBlackDark)));
 
                 fab.setBackgroundTintList(newState == BottomSheetBehavior.STATE_HIDDEN ?
                         ColorStateList.valueOf(getResources().getColor(R.color.colorGreyDark)):
-                        ColorStateList.valueOf(getResources().getColor(R.color.colorGreenHiMedium)));
+                        ColorStateList.valueOf(getResources().getColor(R.color.colorGreyDark)));
 
                 fab.setRippleColor(newState == BottomSheetBehavior.STATE_HIDDEN ?
                         getResources().getColor(R.color.colorGreyDark) :
-                        getResources().getColor(R.color.colorGreenHiMedium));
+                        getResources().getColor(R.color.colorGreyDark));
 
             }
 

@@ -11,7 +11,7 @@
         android:id="@+id/activity_modified_address_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorGreenMedium"
+        android:background="@color/colorPrimaryDark"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:paddingTop="@dimen/appbar_padding_top">
 
@@ -20,14 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_weight="1"
-            android:background="@color/colorGreenMedium"
+            android:background="@color/colorPrimaryDark"
             app:layout_scrollFlags="snap"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/marker"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/activity_modified_address_tabs"
-            android:background="@color/colorGreenMedium"
+            android:background="@color/colorPrimaryDark"
             app:tabIndicatorColor="@color/colorGreyDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
